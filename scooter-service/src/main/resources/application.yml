@@ -1,0 +1,16 @@
+server:
+  port: 8081   # Puerto HTTP para scooter-service
+spring:
+  application:
+   name: scooter-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/scooterdb?createDatabaseIfNotExist=true
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update   # crea/actualiza las tablas automáticamente
+    show-sql: true       #  muestra las queries en consola
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
