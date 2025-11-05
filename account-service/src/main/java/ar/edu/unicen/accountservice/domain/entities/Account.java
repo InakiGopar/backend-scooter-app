@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.*;
+import java.sql.Date;
 
 @Entity
 @Getter
@@ -17,7 +18,10 @@ public class Account {
     @Column(name = "id_account")
     private Long accountId;
     @Column(name = "account_name")
-    private String Accountname;
+    private String accountName;
     private float amount;
     private AccountState state;
+    private AccountType type;
+    @Column(name = "created")
+    private Date createdAt;
 }

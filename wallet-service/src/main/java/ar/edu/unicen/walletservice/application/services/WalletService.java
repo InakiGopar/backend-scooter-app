@@ -13,14 +13,17 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class WalletService {
     private final WalletRepository walletRepository;
     private final UserFeignClient userFeignClient;
     private final AccountFeignClient accountFeignClient;
+
     @Transactional
-    public WalletResponseDTO saveWallet(WalletCreateRequestDTO request){
+    public WalletResponseDTO saveWallet(WalletCreateRequestDTO request) {
         User user = userFeignClient.findUserById(request.userId());
         Account account = accountFeignClient.findAccountById(request.accountId());
         if(account == null && user == null){
@@ -52,16 +55,14 @@ public class WalletService {
         );
 
     }
-    @Transactional
-    public WalletResponseDTO patchAmount(Long walletId, WalletUpdateRequestDTO request){
-        Wallet wallet = walletRepository.findById(walletId)
-                .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + walletId));
-        if(!(wallet.getAmount()>0 && wallet.getAmount()>request.amount())){
-            throw new RuntimeException("Insufficient funds in wallet with id: " + walletId);
-        }
 
-        float resta = wallet.getAmount()-request.amount();
-        wallet.setAmount(resta);
+  //todo cambiar el nombre del método
+
+    @Transactional
+    public WalletResponseDTO patchAmount(Long userId, Long accountId  ,WalletUpdateRequestDTO request) {
+
+        Wallet wallet = Objects.requireNonNull(walletRepository.findByUserIdAndAccountId(userId, accountId),
+                "Wallet not found with user id: " + userId + " and account id: " + accountId);
 
         walletRepository.save(wallet);
 
