@@ -14,6 +14,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class SupportService {
@@ -23,17 +25,20 @@ public class SupportService {
     @Transactional
     public SupportResponseDTO create(SupportRequestCreateDTO request) {
 
-        Scooter scooter = scooterFeignClient.getScooterById(request.scooterId());
-
         // check number 1
-       if (scooter == null) {
-           throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Scooter Not Found");
-       }
+        Scooter scooter = Objects.requireNonNull(scooterFeignClient.getScooterById(request.scooterId()),
+                "Scooter with id " + request.scooterId() + " not found");
+
+        //todo improve
+        if (scooter.getState().equals(ScooterState.MAINTENANCE)) {
+            return null;
+        }
+
         // check number 2
-       if (scooter.getState() == ScooterState.ACTIVE || scooter.getState() == ScooterState.MAINTENANCE) {
+       if (scooter.getState().equals(ScooterState.ACTIVE)) {
            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter cannot use");
        }
-        // updated the scooter to the state IN MAINTENANCE
+        // updated the scooter to the state MAINTENANCE
        scooterFeignClient.updateScooterStatus(request.scooterId(), ScooterState.MAINTENANCE);
 
        // create the new support
