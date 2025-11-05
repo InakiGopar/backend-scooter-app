@@ -23,6 +23,9 @@ public class WalletService {
     public WalletResponseDTO saveWallet(WalletCreateRequestDTO request){
         User user = userFeignClient.findUserById(request.userId());
         Account account = accountFeignClient.findAccountById(request.accountId());
+        if(account == null && user == null){
+            throw new RuntimeException("User or Account not found");
+        }
         Wallet wallet = new Wallet();
         wallet.setUserId(request.userId());
         wallet.setAccountId(request.accountId());
