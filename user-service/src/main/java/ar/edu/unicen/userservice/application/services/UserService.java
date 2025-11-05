@@ -29,6 +29,7 @@ public class UserService {
         userRepository.save(user);
 
         return new UserResponseDTO(
+                user.getUserId(),
                 user.getName(),
                 user.getLastName(),
                 user.getEmail(),
@@ -37,7 +38,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO updateUser(UserUpdateRequestDTO request){
+    public UserResponseDTO updateUser(Long id, UserUpdateRequestDTO request){
         User user = userRepository.findById(request.userId()).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
 
@@ -49,10 +50,32 @@ public class UserService {
         userRepository.save(user);
 
         return new UserResponseDTO(
+                user.getUserId(),
                 user.getName(),
                 user.getLastName(),
                 user.getEmail(),
                 user.getPhone()
         );
     }
+
+    public UserResponseDTO getUserById(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User not found"));
+
+        return new UserResponseDTO(
+                user.getUserId(),
+                user.getName(),
+                user.getLastName(),
+                user.getEmail(),
+                user.getPhone()
+        );
+    }
+
+    public void deleteUser(Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User not found"));
+        userRepository.delete(user);
+    }
+
+
 }
