@@ -23,7 +23,7 @@ public class Trip {
     private Long stopSartId;
     @Column(name = "id_stop_end")
     private Long stopEndId;
-    //En Java, para los datos de fecha en MongoDB se utiliza la clase java.util.Date.
+    //In Java, for date data on MongoDB use java.util.Date.
     private Date date;
     @Column(name = "start_time")
     private Date startTime;
