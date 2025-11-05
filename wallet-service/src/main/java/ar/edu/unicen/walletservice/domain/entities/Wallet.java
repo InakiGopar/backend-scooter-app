@@ -19,4 +19,10 @@ public class Wallet {
     @Column(name = "id_user")
     private Long userId;
     private float amount;
+
+    public Wallet(Long accountId, Long userId, float amount) {
+        this.accountId = accountId;
+        this.userId = userId;
+        this.amount = amount;
+    }
 }

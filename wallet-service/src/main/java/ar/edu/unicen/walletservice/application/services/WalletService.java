@@ -24,55 +24,47 @@ public class WalletService {
 
     @Transactional
     public WalletResponseDTO saveWallet(WalletCreateRequestDTO request) {
+
         User user = userFeignClient.findUserById(request.userId());
         Account account = accountFeignClient.findAccountById(request.accountId());
-        if(account == null && user == null){
+
+        //checks
+        if (account == null && user == null){
             throw new RuntimeException("User or Account not found");
         }
-        Wallet wallet = new Wallet();
-        wallet.setUserId(request.userId());
-        wallet.setAccountId(request.accountId());
-        wallet.setAmount(request.amount());
-        return new WalletResponseDTO(
-                wallet.getWalletId(),
-                wallet.getUserId(),
-                wallet.getAccountId(),
-                wallet.getAmount()
-        );
+
+        Wallet wallet = request.toEntity();
+        walletRepository.save(wallet);
+
+        return WalletResponseDTO.toDTO(wallet);
     }
+
     @Transactional
-    public WalletResponseDTO updateWallet(Long walletId,WalletUpdateRequestDTO request){
+    public WalletResponseDTO updateWallet( Long walletId, WalletUpdateRequestDTO request ) {
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + walletId));;
 
-        wallet.setAmount(request.amount());
-        walletRepository.save(wallet);
-        return new WalletResponseDTO(
-                wallet.getWalletId(),
-                wallet.getUserId(),
-                wallet.getAccountId(),
-                wallet.getAmount()
-        );
+        walletRepository.save(request.toEntity());
 
+        return WalletResponseDTO.toDTO(wallet);
     }
 
-  //todo cambiar el nombre del método
 
     @Transactional
-    public WalletResponseDTO patchAmount(Long userId, Long accountId  ,WalletUpdateRequestDTO request) {
+    public WalletResponseDTO updateAmount(Long userId, Long accountId  ,WalletUpdateRequestDTO request) {
 
+        //check 1
         Wallet wallet = Objects.requireNonNull(walletRepository.findByUserIdAndAccountId(userId, accountId),
                 "Wallet not found with user id: " + userId + " and account id: " + accountId);
 
+        //updated the amount
+        wallet.setAmount(request.amount());
         walletRepository.save(wallet);
 
-        return new WalletResponseDTO(
-                wallet.getWalletId(),
-                wallet.getUserId(),
-                wallet.getAccountId(),
-                wallet.getAmount()
-        );
+        return WalletResponseDTO.toDTO(wallet);
     }
+
+
     public void deleteWallet(Long id){
         Wallet wallet = walletRepository.findById(id)
                 .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + id));

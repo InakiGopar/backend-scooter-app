@@ -27,8 +27,11 @@ public class WalletController {
     }
 
     @PatchMapping("/userId/{userId}/accountId/{accountId}")
-    public ResponseEntity<WalletResponseDTO> patchAmount(@PathVariable Long userId, @PathVariable Long accountId ,@RequestBody WalletUpdateRequestDTO request) {
-        WalletResponseDTO response = walletService.patchAmount(userId, accountId ,request);
+    public ResponseEntity<WalletResponseDTO> patchAmount(
+            @PathVariable Long userId,
+            @PathVariable Long accountId,
+            @RequestBody WalletUpdateRequestDTO request ) {
+        WalletResponseDTO response = walletService.updateAmount(userId, accountId ,request);
         return ResponseEntity.ok(response);
     }
 
