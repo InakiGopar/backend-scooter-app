@@ -1,5 +1,7 @@
 package ar.edu.unicen.supportservice.domain.dtos.request;
 
+import ar.edu.unicen.supportservice.domain.entities.Support;
+
 import java.util.Date;
 
 public record SupportRequestCreateDTO(
@@ -8,4 +10,12 @@ public record SupportRequestCreateDTO(
         Date endDate
 
 ) {
+
+    public Support toEntity() {
+        return new Support(
+            scooterId,
+            startDate,
+            endDate
+        );
+    }
 }

@@ -24,4 +24,10 @@ public class Support {
     private Date startDate;
     @Column(name = "end_date")
     private Date endDate;
+
+    public Support(Long scooterId, Date startDate, Date endDate) {
+        this.scooterId = scooterId;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 }

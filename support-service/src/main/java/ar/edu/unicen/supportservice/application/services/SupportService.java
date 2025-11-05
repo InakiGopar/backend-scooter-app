@@ -29,9 +29,9 @@ public class SupportService {
         Scooter scooter = Objects.requireNonNull(scooterFeignClient.getScooterById(request.scooterId()),
                 "Scooter with id " + request.scooterId() + " not found");
 
-        //todo improve
+        // check number 3
         if (scooter.getState().equals(ScooterState.MAINTENANCE)) {
-            return null;
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter with id " + request.scooterId() +  " is already on maintenance");
         }
 
         // check number 2
@@ -41,21 +41,11 @@ public class SupportService {
         // updated the scooter to the state MAINTENANCE
        scooterFeignClient.updateScooterStatus(request.scooterId(), ScooterState.MAINTENANCE);
 
-       // create the new support
-        Support support = new Support();
-        support.setScooterId(request.scooterId());
-        support.setStartDate(request.startDate());
-        support.setEndDate(request.endDate());
-
-
+       // persist the new support
+        Support support = request.toEntity();
         supportRepository.save(support);
 
-        return new SupportResponseDTO(
-                support.getSupportId(),
-                support.getScooterId(),
-                support.getStartDate(),
-                support.getEndDate()
-        );
+        return SupportResponseDTO.toDTO(support);
 
     }
 
@@ -78,19 +68,8 @@ public class SupportService {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found"));
 
 
-        //updated the support
-        support.setScooterId(request.scooterId());
-        support.setStartDate(request.startDate());
-        support.setEndDate(request.endDate());
-
-        supportRepository.save(support);
-
-        return new SupportResponseDTO(
-                supportId,
-                support.getScooterId(),
-                support.getStartDate(),
-                support.getEndDate()
-        );
+        supportRepository.save(request.toEntity());
+        return SupportResponseDTO.toDTO(support);
     }
 
     public void delete(Long supportId) {
@@ -110,14 +89,8 @@ public class SupportService {
         Support support = supportRepository.findById(supportId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found")
         );
-        return new SupportResponseDTO(
-                support.getSupportId(),
-                support.getScooterId(),
-                support.getStartDate(),
-                support.getEndDate()
-        );
+        return SupportResponseDTO.toDTO(support);
     }
-
 
 
 }
