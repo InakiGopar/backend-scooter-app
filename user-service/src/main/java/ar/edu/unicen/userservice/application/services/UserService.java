@@ -17,58 +17,28 @@ public class UserService {
 
     @Transactional
     public UserResponseDTO createUser(UserCreateRequestDTO request){
-        User user = new User();
-        user.setName(request.name());
-        user.setLastName(request.lastName());
-        user.setEmail(request.email());
-        user.setPhone(request.phone());
-
-        Role roleDefault = Role.USER;
-        user.setRole(roleDefault);
+        User user = request.toEntity();
 
         userRepository.save(user);
 
-        return new UserResponseDTO(
-                user.getUserId(),
-                user.getName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone()
-        );
+        return UserResponseDTO.toDTO(user);
     }
 
     @Transactional
-    public UserResponseDTO updateUser(Long id, UserUpdateRequestDTO request){
-        User user = userRepository.findById(request.userId()).orElseThrow(
+    public UserResponseDTO updateUser(Long userId, UserUpdateRequestDTO request){
+        User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
 
-        user.setName(request.name());
-        user.setLastName(request.lastName());
-        user.setEmail(request.email());
-        user.setPhone(request.phone());
+        userRepository.save(request.toEntity());
 
-        userRepository.save(user);
-
-        return new UserResponseDTO(
-                user.getUserId(),
-                user.getName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone()
-        );
+        return UserResponseDTO.toDTO(user);
     }
 
     public UserResponseDTO getUserById(Long userId){
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
 
-        return new UserResponseDTO(
-                user.getUserId(),
-                user.getName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone()
-        );
+        return UserResponseDTO.toDTO(user);
     }
 
     public void deleteUser(Long userId){
