@@ -14,8 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Date;
-
 @Service
 @RequiredArgsConstructor
 public class SupportService {
@@ -32,11 +30,11 @@ public class SupportService {
            throw  new ResponseStatusException(HttpStatus.NOT_FOUND, "Scooter Not Found");
        }
         // check number 2
-       if (scooter.getState() == ScooterState.ACTIVE || scooter.getState() == ScooterState.INMAINTENANCE) {
+       if (scooter.getState() == ScooterState.ACTIVE || scooter.getState() == ScooterState.MAINTENANCE) {
            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter cannot use");
        }
         // updated the scooter to the state IN MAINTENANCE
-       scooterFeignClient.updateScooterStatus(request.scooterId(), ScooterState.INMAINTENANCE);
+       scooterFeignClient.updateScooterStatus(request.scooterId(), ScooterState.MAINTENANCE);
 
        // create the new support
         Support support = new Support();
@@ -103,6 +101,17 @@ public class SupportService {
     }
 
 
+    public SupportResponseDTO findById(Long supportId) {
+        Support support = supportRepository.findById(supportId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found")
+        );
+        return new SupportResponseDTO(
+                support.getSupportId(),
+                support.getScooterId(),
+                support.getStartDate(),
+                support.getEndDate()
+        );
+    }
 
 
 
