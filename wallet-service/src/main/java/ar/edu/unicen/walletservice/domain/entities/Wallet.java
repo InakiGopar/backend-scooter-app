@@ -13,10 +13,10 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_wallet")
-    private Long idWallet;
+    private Long walletId;
     @Column(name = "id_account")
-    private Long idAccount;
+    private Long accountId;
     @Column(name = "id_user")
-    private Long idUser;
+    private Long userId;
     private float amount;
 }

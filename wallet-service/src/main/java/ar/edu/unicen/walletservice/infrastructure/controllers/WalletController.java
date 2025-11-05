@@ -1,13 +1,40 @@
 package ar.edu.unicen.walletservice.infrastructure.controllers;
 
 import ar.edu.unicen.walletservice.application.services.WalletService;
+import ar.edu.unicen.walletservice.domain.dtos.request.WalletCreateRequestDTO;
+import ar.edu.unicen.walletservice.domain.dtos.request.WalletUpdateRequestDTO;
+import ar.edu.unicen.walletservice.domain.dtos.response.WalletResponseDTO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/wallet")
 @RequiredArgsConstructor
 public class WalletController {
     private final WalletService walletService;
+
+    @PostMapping
+    public ResponseEntity<WalletResponseDTO> saveWallet(@RequestBody WalletCreateRequestDTO request){
+        WalletResponseDTO response = walletService.saveWallet(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletUpdateRequestDTO request){
+        WalletResponseDTO response = walletService.updateWallet(id,request);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<WalletResponseDTO> patchAmount(@PathVariable Long id, @RequestBody WalletUpdateRequestDTO request) {
+        WalletResponseDTO response = walletService.patchAmount(id,request);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteWallet(@PathVariable Long id){
+        walletService.deleteWallet(id);
+        return ResponseEntity.noContent().build();
+    }
 }
