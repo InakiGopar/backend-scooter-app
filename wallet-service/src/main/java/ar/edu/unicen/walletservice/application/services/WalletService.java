@@ -7,9 +7,11 @@ import ar.edu.unicen.walletservice.domain.dtos.response.WalletResponseDTO;
 import ar.edu.unicen.walletservice.domain.entities.Wallet;
 import ar.edu.unicen.walletservice.domain.model.Account;
 import ar.edu.unicen.walletservice.domain.model.User;
+
 import ar.edu.unicen.walletservice.infrastructure.feingClients.AccountFeignClient;
 import ar.edu.unicen.walletservice.infrastructure.feingClients.UserFeignClient;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class WalletService {
     private final WalletRepository walletRepository;
-    private final UserFeignClient userFeignClient;
     private final AccountFeignClient accountFeignClient;
+    private final UserFeignClient userFeignClient;
     @Transactional
     public WalletResponseDTO saveWallet(WalletCreateRequestDTO request){
         User user = userFeignClient.findUserById(request.userId());
