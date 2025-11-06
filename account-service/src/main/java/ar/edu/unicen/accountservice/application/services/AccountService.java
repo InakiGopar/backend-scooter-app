@@ -39,7 +39,7 @@ public class AccountService {
         return AccountResponseDTO.toDTO(account);
     }
     public void delete(Long accountId){
-        Account account  = accountRespository.findById(accountId)
+        Account account  = accountRepository.findById(accountId)
                 .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + accountId));
         accountRepository.delete(account);
     }
