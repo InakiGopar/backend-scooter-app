@@ -19,7 +19,7 @@ public class WalletController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{walletId}")
     public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletRequestDTO request){
         WalletResponseDTO response = walletService.updateWallet(id,request);
         return ResponseEntity.ok(response);
@@ -34,7 +34,7 @@ public class WalletController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{walletId}")
     public ResponseEntity<Void> deleteWallet(@PathVariable Long id){
         walletService.deleteWallet(id);
         return ResponseEntity.noContent().build();
