@@ -20,8 +20,16 @@ public class Account {
     @Column(name = "account_name")
     private String accountName;
     private float amount;
-    private AccountState state;
-    private AccountType type;
     @Column(name = "created")
     private Date createdAt;
+    private AccountState state;
+    private AccountType type;
+
+    public Account(String accountName, float amount, Date createdAt, AccountState state, AccountType type) {
+        this.accountName = accountName;
+        this.amount = amount;
+        this.createdAt = createdAt;
+        this.state = state;
+        this.type = type;
+    }
 }

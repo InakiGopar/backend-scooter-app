@@ -41,9 +41,13 @@ public class WalletService {
     @Transactional
     public WalletResponseDTO updateWallet( Long walletId, WalletRequestDTO request ) {
         Wallet wallet = walletRepository.findById(walletId)
-                .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + walletId));;
+                .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + walletId));
 
-        walletRepository.save(request.toEntity());
+        wallet.setAmount(request.amount());
+        wallet.setUserId(request.userId());
+        wallet.setAccountId(request.accountId());
+
+        walletRepository.save(wallet);
 
         return WalletResponseDTO.toDTO(wallet);
     }
