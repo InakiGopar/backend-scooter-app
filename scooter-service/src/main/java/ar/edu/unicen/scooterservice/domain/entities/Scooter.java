@@ -16,7 +16,7 @@ public class Scooter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_scooter")
     private Long scooterId;
-    private int latitude;
-    private int longitude;
+    private float latitude;
+    private float longitude;
     private ScooterState state;
 }
