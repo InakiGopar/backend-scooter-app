@@ -66,8 +66,12 @@ public class SupportService {
         Support support = supportRepository.findById(supportId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found"));
 
+        support.setScooterId(request.scooterId());
+        support.setStartDate(request.startDate());
+        support.setEndDate(request.endDate());
 
-        supportRepository.save(request.toEntity());
+        supportRepository.save(support);
+
         return SupportResponseDTO.toDTO(support);
     }
 
