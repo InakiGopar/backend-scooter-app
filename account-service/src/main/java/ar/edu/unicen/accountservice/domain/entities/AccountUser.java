@@ -16,12 +16,10 @@ public class AccountUser {
         TO-DO:
     * hay que hacer la clave primaria compuesta
     * */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    @Column(name = "id_account")
-    private Long accountId;
-    @Column(name = "id_user")
-    private Long userId;
+    //@Id
+    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EmbeddedId
+    private AccountUserID id;
+
 
 }

@@ -20,8 +20,8 @@ public class WalletController {
     }
 
     @PutMapping("/{walletId}")
-    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletRequestDTO request){
-        WalletResponseDTO response = walletService.updateWallet(id,request);
+    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long walletId, @RequestBody WalletRequestDTO request){
+        WalletResponseDTO response = walletService.updateWallet(walletId,request);
         return ResponseEntity.ok(response);
     }
 
