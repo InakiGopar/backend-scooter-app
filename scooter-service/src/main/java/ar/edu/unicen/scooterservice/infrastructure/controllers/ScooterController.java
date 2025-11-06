@@ -19,26 +19,26 @@ public class ScooterController {
         return ResponseEntity.status(HttpStatus.CREATED).body(scooterService.createScooter(request));
     }
 
-    @GetMapping("{scooterId}")
+    @GetMapping("/{scooterId}")
     public ResponseEntity<ScooterResponseDTO> getById(@PathVariable Long scooterId){
         return ResponseEntity.ok(scooterService.getScooterById(scooterId));
     }
 
-    @PutMapping("{scooterId}")
+    @PutMapping("/{scooterId}")
     public ResponseEntity<ScooterResponseDTO> update(
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestDTO request) {
         return ResponseEntity.ok(scooterService.updateScooter(scooterId, request));
     }
 
-    @PatchMapping("{scooterId}/status")
+    @PatchMapping("/{scooterId}/status")
     public ResponseEntity<ScooterResponseDTO> updateStatus(
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestDTO request) {
         return ResponseEntity.ok(scooterService.updateScooterStatus(scooterId, request));
     }
 
-    @DeleteMapping("{scooterId}")
+    @DeleteMapping("/{scooterId}")
     public ResponseEntity<ScooterResponseDTO> delete(@PathVariable Long scooterId) {
         scooterService.deleteScooter(scooterId);
         return ResponseEntity.noContent().build();

@@ -56,6 +56,18 @@ public class ScooterService {
         return ScooterResponseDTO.toDTO(scooter);
     }
 
+    @Transactional
+    public ScooterResponseDTO updateScooterStop( Long scooterId, ScooterRequestDTO request ) {
+        Scooter scooter = scooterRepository.findById(scooterId)
+                .orElseThrow(()-> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
+
+        scooter.setCurrentStop(request.currentStop());
+
+        scooterRepository.save(scooter);
+
+        return ScooterResponseDTO.toDTO(scooter);
+    }
+
     public void deleteScooter(Long scooterId) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));

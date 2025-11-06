@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -16,9 +18,14 @@ public class Stop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_stop")
     private Long stopId;
-    @ManyToOne
-    @JoinColumn(name = "id_scooter")
-    private Scooter scooterId;
+    @OneToMany(mappedBy = "")
+    private List<Scooter> scooterId;
     private int latitude;
     private int longitude;
+    //Cambiar a private String street para simplificar logica?
+
+    public Stop(int latitude, int longitude) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
 }
