@@ -23,4 +23,5 @@ public class AccountUser {
     private Long accountId;
     @Column(name = "id_user")
     private Long userId;
+
 }
