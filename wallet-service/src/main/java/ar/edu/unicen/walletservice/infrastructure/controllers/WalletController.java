@@ -1,8 +1,7 @@
 package ar.edu.unicen.walletservice.infrastructure.controllers;
 
 import ar.edu.unicen.walletservice.application.services.WalletService;
-import ar.edu.unicen.walletservice.domain.dtos.request.WalletCreateRequestDTO;
-import ar.edu.unicen.walletservice.domain.dtos.request.WalletUpdateRequestDTO;
+import ar.edu.unicen.walletservice.domain.dtos.request.WalletRequestDTO;
 import ar.edu.unicen.walletservice.domain.dtos.response.WalletResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +14,13 @@ public class WalletController {
     private final WalletService walletService;
 
     @PostMapping
-    public ResponseEntity<WalletResponseDTO> saveWallet(@RequestBody WalletCreateRequestDTO request){
+    public ResponseEntity<WalletResponseDTO> saveWallet(@RequestBody WalletRequestDTO request){
         WalletResponseDTO response = walletService.saveWallet(request);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletUpdateRequestDTO request){
+    public ResponseEntity<WalletResponseDTO> updateWallet(@PathVariable Long id, @RequestBody WalletRequestDTO request){
         WalletResponseDTO response = walletService.updateWallet(id,request);
         return ResponseEntity.ok(response);
     }
@@ -30,7 +29,7 @@ public class WalletController {
     public ResponseEntity<WalletResponseDTO> patchAmount(
             @PathVariable Long userId,
             @PathVariable Long accountId,
-            @RequestBody WalletUpdateRequestDTO request ) {
+            @RequestBody WalletRequestDTO request ) {
         WalletResponseDTO response = walletService.updateAmount(userId, accountId ,request);
         return ResponseEntity.ok(response);
     }

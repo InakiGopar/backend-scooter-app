@@ -1,8 +1,7 @@
 package ar.edu.unicen.walletservice.application.services;
 
 import ar.edu.unicen.walletservice.application.repositories.WalletRepository;
-import ar.edu.unicen.walletservice.domain.dtos.request.WalletCreateRequestDTO;
-import ar.edu.unicen.walletservice.domain.dtos.request.WalletUpdateRequestDTO;
+import ar.edu.unicen.walletservice.domain.dtos.request.WalletRequestDTO;
 import ar.edu.unicen.walletservice.domain.dtos.response.WalletResponseDTO;
 import ar.edu.unicen.walletservice.domain.entities.Wallet;
 import ar.edu.unicen.walletservice.domain.model.Account;
@@ -23,7 +22,7 @@ public class WalletService {
     private final AccountFeignClient accountFeignClient;
 
     @Transactional
-    public WalletResponseDTO saveWallet(WalletCreateRequestDTO request) {
+    public WalletResponseDTO saveWallet(WalletRequestDTO request) {
 
         User user = userFeignClient.findUserById(request.userId());
         Account account = accountFeignClient.findAccountById(request.accountId());
@@ -40,7 +39,7 @@ public class WalletService {
     }
 
     @Transactional
-    public WalletResponseDTO updateWallet( Long walletId, WalletUpdateRequestDTO request ) {
+    public WalletResponseDTO updateWallet( Long walletId, WalletRequestDTO request ) {
         Wallet wallet = walletRepository.findById(walletId)
                 .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + walletId));;
 
@@ -51,7 +50,7 @@ public class WalletService {
 
 
     @Transactional
-    public WalletResponseDTO updateAmount(Long userId, Long accountId  ,WalletUpdateRequestDTO request) {
+    public WalletResponseDTO updateAmount(Long userId, Long accountId  ,WalletRequestDTO request) {
 
         //check 1
         Wallet wallet = Objects.requireNonNull(walletRepository.findByUserIdAndAccountId(userId, accountId),
