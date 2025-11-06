@@ -3,7 +3,6 @@ package ar.edu.unicen.userservice.application.services;
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
-import ar.edu.unicen.userservice.domain.entities.Role;
 import ar.edu.unicen.userservice.domain.entities.User;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -16,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserResponseDTO createUser(UserCreateRequestDTO request){
+    public UserResponseDTO createUser(UserRequestDTO request){
         User user = request.toEntity();
 
         userRepository.save(user);
@@ -25,7 +24,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponseDTO updateUser(Long userId, UserUpdateRequestDTO request){
+    public UserResponseDTO updateUser(Long userId, UserRequestDTO request){
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
 
