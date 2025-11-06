@@ -28,7 +28,13 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
 
-        userRepository.save(request.toEntity());
+        user.setRole(request.role());
+        user.setName(request.name());
+        user.setLastName(request.lastName());
+        user.setEmail(request.email());
+        user.setPhone(request.phone());
+
+        userRepository.save(user);
 
         return UserResponseDTO.toDTO(user);
     }
