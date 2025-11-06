@@ -19,4 +19,10 @@ public class Scooter {
     private float latitude;
     private float longitude;
     private ScooterState state;
+
+    public Scooter(float latitude, float longitude, ScooterState state) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.state = state;
+    }
 }
