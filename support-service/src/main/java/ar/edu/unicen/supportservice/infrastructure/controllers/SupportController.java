@@ -1,8 +1,7 @@
 package ar.edu.unicen.supportservice.infrastructure.controllers;
 
 import ar.edu.unicen.supportservice.application.services.SupportService;
-import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestCreateDTO;
-import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestUpdateDTO;
+import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestDTO;
 import ar.edu.unicen.supportservice.domain.dtos.response.SupportResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,13 +14,13 @@ public class SupportController {
     private final SupportService supportService;
 
     @PostMapping
-    public ResponseEntity<SupportResponseDTO> create (@RequestBody SupportRequestCreateDTO request) {
+    public ResponseEntity<SupportResponseDTO> create (@RequestBody SupportRequestDTO request) {
         SupportResponseDTO response = supportService.create(request);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SupportResponseDTO> update (@PathVariable Long id, @RequestBody SupportRequestUpdateDTO request) {
+    public ResponseEntity<SupportResponseDTO> update (@PathVariable Long id, @RequestBody SupportRequestDTO request) {
         SupportResponseDTO response = supportService.update(id, request);
         return ResponseEntity.ok(response);
     }

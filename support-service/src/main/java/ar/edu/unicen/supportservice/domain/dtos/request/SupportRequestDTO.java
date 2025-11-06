@@ -4,7 +4,7 @@ import ar.edu.unicen.supportservice.domain.entities.Support;
 
 import java.util.Date;
 
-public record SupportRequestCreateDTO(
+public record SupportRequestDTO(
         Long scooterId,
         Date startDate,
         Date endDate

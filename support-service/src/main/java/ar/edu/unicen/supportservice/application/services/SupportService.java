@@ -1,8 +1,7 @@
 package ar.edu.unicen.supportservice.application.services;
 
 import ar.edu.unicen.supportservice.application.repositories.SupportRepository;
-import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestCreateDTO;
-import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestUpdateDTO;
+import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestDTO;
 import ar.edu.unicen.supportservice.domain.dtos.response.SupportResponseDTO;
 import ar.edu.unicen.supportservice.domain.entities.Support;
 import ar.edu.unicen.supportservice.domain.model.Scooter;
@@ -23,7 +22,7 @@ public class SupportService {
     private final ScooterFeignClient scooterFeignClient;
 
     @Transactional
-    public SupportResponseDTO create(SupportRequestCreateDTO request) {
+    public SupportResponseDTO create(SupportRequestDTO request) {
 
         // check number 1
         Scooter scooter = Objects.requireNonNull(scooterFeignClient.getScooterById(request.scooterId()),
@@ -50,7 +49,7 @@ public class SupportService {
     }
 
     @Transactional
-    public SupportResponseDTO update( Long supportId, SupportRequestUpdateDTO request ) {
+    public SupportResponseDTO update( Long supportId, SupportRequestDTO request ) {
         Scooter scooter = scooterFeignClient.getScooterById(request.scooterId());
 
         // check number 1
