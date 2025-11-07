@@ -12,11 +12,12 @@ public record TripResponseDTO(
         Long stopSartId,
         Long stopEndId,
         Date date,
-        Date startTime,
-        Date endTime,
+        Date startDate,
+        Date endDate,
         Long kmTraveled,
         Date pause,
-        float totalPrice
+        float totalPrice,
+        String feeId
 ) {
 
     public static  TripResponseDTO toDTO(Trip trip) {
@@ -27,11 +28,12 @@ public record TripResponseDTO(
                 trip.getStopSartId(),
                 trip.getStopEndId(),
                 trip.getDate(),
-                trip.getStartTime(),
-                trip.getEndTime(),
+                trip.getStartDate(),
+                trip.getEndDate(),
                 trip.getKmTraveled(),
                 trip.getPause(),
-                trip.getTotalPrice()
+                trip.getTotalPrice(),
+                trip.getFeeId()
         );
     }
 }

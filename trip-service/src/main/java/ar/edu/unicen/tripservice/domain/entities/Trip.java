@@ -24,24 +24,28 @@ public class Trip {
     private Long stopEndId;
     //In Java, for date data on MongoDB use java.util.Date.
     private Date date;
-    private Date startTime;
-    private Date endTime;
+    private Date startDate;
+    private Date endDate;
     private Long kmTraveled;
     private Date pause;
     private float totalPrice;
     private String feeId;
 
 
-    public Trip(Long userId, Long scooterId, Long stopSartId, Long stopEndId, Date date, Date startTime, Date endTime, Long kmTraveled, Date pause, float totalPrice) {
+    public Trip(Long userId, Long scooterId,
+                Long stopSartId, Long stopEndId, Date date,
+                Date startDate, Date endDate, Long kmTraveled,
+                Date pause, float totalPrice, String feeId) {
         this.userId = userId;
         this.scooterId = scooterId;
         this.stopSartId = stopSartId;
         this.stopEndId = stopEndId;
         this.date = date;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.startDate = startDate;
+        this.endDate = endDate;
         this.kmTraveled = kmTraveled;
         this.pause = pause;
         this.totalPrice = totalPrice;
+        this.feeId = feeId;
     }
 }

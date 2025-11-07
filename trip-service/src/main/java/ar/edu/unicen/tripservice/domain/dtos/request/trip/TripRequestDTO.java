@@ -10,11 +10,12 @@ public record TripRequestDTO(
         Long stopSartId,
         Long stopEndId,
         Date date,
-        Date startTime,
-        Date endTime,
+        Date startDate,
+        Date endDate,
         Long kmTraveled,
         Date pause,
-        float totalPrice
+        float totalPrice,
+        String feeId
 ) {
     public Trip toEntity() {
         return new Trip(
@@ -23,11 +24,12 @@ public record TripRequestDTO(
                 stopSartId,
                 stopEndId,
                 date,
-                startTime,
-                endTime,
+                startDate,
+                endDate,
                 kmTraveled,
                 pause,
-                totalPrice
+                totalPrice,
+                feeId
         );
     }
 }
