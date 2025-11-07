@@ -4,7 +4,10 @@ import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
+import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
 import ar.edu.unicen.tripservice.domain.model.user.User;
+import ar.edu.unicen.tripservice.infrastructure.feingClients.ScooterFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.UserFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,9 +21,20 @@ import java.util.List;
 public class TripService {
     private final TripRepository tripRepository;
     private final UserFeignClient userFeignClient;
+    private final ScooterFeignClient scooterFeignClient;
 
-    public TripResponseDTO create(TripRequestDTO request) {
+    public TripResponseDTO startTrip(TripRequestDTO request) {
         User user = userFeignClient.getUserById(request.userId());
+
+        ScooterState scooterState = scooterFeignClient.getScooterById(request.scooterId()).getState();
+
+        if (scooterState.equals(ScooterState.ACTIVE)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter already active");
+        }
+
+        scooterFeignClient.updateScooterStatus(request.scooterId(),
+                new Scooter(request.scooterId(), ScooterState.ACTIVE));
+
 
         if (user == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + request.userId() + " not found");
@@ -41,7 +55,7 @@ public class TripService {
 
         trip.setUserId(request.userId());
         trip.setScooterId(request.scooterId());
-        trip.setStopSartId(request.stopSartId());
+        trip.setStopStartId(request.stopSartId());
         trip.setStopEndId(request.stopEndId());
         trip.setDate(request.date());
         trip.setStartDate(request.startDate());
@@ -54,6 +68,7 @@ public class TripService {
         tripRepository.save(trip);
         return TripResponseDTO.toDTO(trip);
     }
+
 
     public void delete(String tripId) {
         Trip trip = tripRepository.findById(tripId)

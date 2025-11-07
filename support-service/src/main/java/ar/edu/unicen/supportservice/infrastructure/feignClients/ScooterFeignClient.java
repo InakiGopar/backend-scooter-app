@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.*;
 
 @FeignClient(name="scooter-service", url="http://localhost:8081/scooter")
 public interface ScooterFeignClient {
-    @GetMapping("/{id}")
-    Scooter getScooterById(@PathVariable("id") Long id);
+    @GetMapping("/{scooterId}")
+    Scooter getScooterById(@PathVariable Long scooterId);
 
-    @PatchMapping("/{id}/status")
-    void updateScooterStatus(@PathVariable("id") Long id, @RequestParam ScooterState status);
+    @PatchMapping("/{scooterId}/status")
+    void updateScooterStatus(@PathVariable Long scooterId, @RequestParam ScooterState status);
 
 }

@@ -25,7 +25,7 @@ public record TripResponseDTO(
                 trip.getTripId(),
                 trip.getUserId(),
                 trip.getScooterId(),
-                trip.getStopSartId(),
+                trip.getStopStartId(),
                 trip.getStopEndId(),
                 trip.getDate(),
                 trip.getStartDate(),
