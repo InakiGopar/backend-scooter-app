@@ -1,37 +1,47 @@
 package ar.edu.unicen.tripservice.domain.entities;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.util.Date;
+import java.util.UUID;
 
-@Entity
+@Document(collection = "trips")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Trip {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_trip")
-    private Long tripId;
-    @Column(name = "id_user")
+    @Field(targetType = FieldType.STRING)
+    private UUID tripId = UUID.randomUUID();
     private Long userId;
-    @Column(name = "id_scooter")
     private Long scooterId;
-    @Column(name = "id_stop_start")
     private Long stopSartId;
-    @Column(name = "id_stop_end")
     private Long stopEndId;
     //In Java, for date data on MongoDB use java.util.Date.
     private Date date;
-    @Column(name = "start_time")
     private Date startTime;
-    @Column(name = "end_time")
     private Date endTime;
-    @Column(name = "km_traveled")
     private Long kmTraveled;
     private Date pause;
-    @Column(name = "total_price")
     private float totalPrice;
+    private String feeId;
+
+
+    public Trip(Long userId, Long scooterId, Long stopSartId, Long stopEndId, Date date, Date startTime, Date endTime, Long kmTraveled, Date pause, float totalPrice) {
+        this.userId = userId;
+        this.scooterId = scooterId;
+        this.stopSartId = stopSartId;
+        this.stopEndId = stopEndId;
+        this.date = date;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.kmTraveled = kmTraveled;
+        this.pause = pause;
+        this.totalPrice = totalPrice;
+    }
 }

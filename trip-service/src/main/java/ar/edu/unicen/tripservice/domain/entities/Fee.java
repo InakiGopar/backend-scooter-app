@@ -1,25 +1,36 @@
 package ar.edu.unicen.tripservice.domain.entities;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@Entity
+@Document(collection = "fees")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Fee {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_fee")
-    private Long feeId;
-    @Column(name = "start_date")
+    private String feeId; // would be "fee_YYYYMM"
+
     private Date startDate;
-    @Column(name = "end_date")
     private Date endDate;
-    @Column(name = "price_x_hour")
     private float pricePerHour;
+
+    public Fee(Date startDate, Date endDate, float pricePerHour) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.pricePerHour = pricePerHour;
+        this.feeId = generateFeeId(startDate);
+    }
+
+    private String generateFeeId(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM");
+        return "fee_" + formatter.format(date);
+    }
 }
