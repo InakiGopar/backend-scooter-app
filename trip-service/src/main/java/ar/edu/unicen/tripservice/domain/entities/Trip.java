@@ -20,7 +20,7 @@ public class Trip {
     private UUID tripId = UUID.randomUUID();
     private Long userId;
     private Long scooterId;
-    private Long stopSartId;
+    private Long stopStartId;
     private Long stopEndId;
     //In Java, for date data on MongoDB use java.util.Date.
     private Date date;
@@ -33,12 +33,12 @@ public class Trip {
 
 
     public Trip(Long userId, Long scooterId,
-                Long stopSartId, Long stopEndId, Date date,
+                Long stopStartId, Long stopEndId, Date date,
                 Date startDate, Date endDate, Long kmTraveled,
                 Date pause, float totalPrice, String feeId) {
         this.userId = userId;
         this.scooterId = scooterId;
-        this.stopSartId = stopSartId;
+        this.stopStartId = stopStartId;
         this.stopEndId = stopEndId;
         this.date = date;
         this.startDate = startDate;

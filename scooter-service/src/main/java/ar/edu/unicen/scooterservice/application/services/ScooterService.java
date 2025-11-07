@@ -44,6 +44,7 @@ public class ScooterService {
         return ScooterResponseDTO.toDTO(scooter);
     }
 
+
     @Transactional
     public ScooterResponseDTO updateScooterStatus(Long scooterId, ScooterRequestDTO request) {
         Scooter scooter = scooterRepository.findById(scooterId)

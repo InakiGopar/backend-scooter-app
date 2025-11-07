@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("api/trip")
@@ -18,7 +17,7 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<TripResponseDTO> create(@RequestBody TripRequestDTO dto) {
-        return ResponseEntity.status(201).body(tripService.create(dto));
+        return ResponseEntity.status(201).body(tripService.startTrip(dto));
     }
 
     @PutMapping("/{tripId}")
