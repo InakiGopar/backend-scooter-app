@@ -18,6 +18,7 @@ public class Scooter {
     public Scooter(Long scooterId, ScooterState state, Stop currentStop) {
         this.scooterId = scooterId;
         this.state = state;
+        this.currentStop = currentStop;
     }
     //Check if it is necessary to convert this class into a record and rename it to ScooterDTO.
 }
