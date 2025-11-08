@@ -4,8 +4,8 @@ import ar.edu.unicen.scooterservice.domain.entities.Stop;
 
 public record StopRequestDTO(
         Long stopId,
-        int latitude,
-        int longitude
+        float latitude,
+        float longitude
 ) {
   public Stop toEntity() {
       return new Stop(

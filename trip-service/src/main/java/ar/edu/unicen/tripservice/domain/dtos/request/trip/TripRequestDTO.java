@@ -10,10 +10,9 @@ public record TripRequestDTO(
         Long stopStartId,
         Long stopEndId,
         Date date,
-        Date startDate,
-        Date endDate,
+        int tripHours,
         Long kmTraveled,
-        Date pause,
+        int pause,
         float totalPrice,
         String feeId
 ) {
@@ -24,8 +23,7 @@ public record TripRequestDTO(
                 stopStartId,
                 stopEndId,
                 date,
-                startDate,
-                endDate,
+                tripHours,
                 kmTraveled,
                 pause,
                 totalPrice,

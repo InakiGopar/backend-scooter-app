@@ -15,7 +15,7 @@ public record TripResponseDTO(
         Date startDate,
         Date endDate,
         Long kmTraveled,
-        Date pause,
+        int pause,
         float totalPrice,
         String feeId
 ) {
