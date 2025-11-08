@@ -7,7 +7,7 @@ import java.util.Date;
 public record TripRequestDTO(
         Long userId,
         Long scooterId,
-        Long stopSartId,
+        Long stopStartId,
         Long stopEndId,
         Date date,
         Date startDate,
@@ -21,7 +21,7 @@ public record TripRequestDTO(
         return new Trip(
                 userId,
                 scooterId,
-                stopSartId,
+                stopStartId,
                 stopEndId,
                 date,
                 startDate,
