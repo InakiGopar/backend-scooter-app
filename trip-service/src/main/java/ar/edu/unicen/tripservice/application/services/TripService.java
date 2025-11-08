@@ -6,6 +6,7 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
+import ar.edu.unicen.tripservice.domain.model.scooter.Stop;
 import ar.edu.unicen.tripservice.domain.model.user.User;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.ScooterFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.UserFeignClient;
@@ -26,6 +27,10 @@ public class TripService {
     public TripResponseDTO startTrip(TripRequestDTO request) {
         User user = userFeignClient.getUserById(request.userId());
 
+        if (user == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + request.userId() + " not found");
+        }
+
         ScooterState scooterState = scooterFeignClient.getScooterById(request.scooterId()).getState();
 
         if (scooterState.equals(ScooterState.ACTIVE)) {
@@ -33,13 +38,9 @@ public class TripService {
         }
 
         scooterFeignClient.updateScooterStatus(request.scooterId(),
-                new Scooter(request.scooterId(), ScooterState.ACTIVE));
+                new Scooter(request.scooterId(), ScooterState.ACTIVE, null));
 
-
-        if (user == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id " + request.userId() + " not found");
-        }
-
+        //remove this check if it is not necessary.
         if (request.startDate().after(request.endDate())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Start date cannot be after end date");
         }
@@ -49,13 +50,14 @@ public class TripService {
         return TripResponseDTO.toDTO(trip);
     }
 
+    //check if is necessary delete update method and then change to patch method named end trip
     public TripResponseDTO update(String tripId, TripRequestDTO request) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Trip not found"));
 
         trip.setUserId(request.userId());
         trip.setScooterId(request.scooterId());
-        trip.setStopStartId(request.stopSartId());
+        trip.setStopStartId(request.stopStartId());
         trip.setStopEndId(request.stopEndId());
         trip.setDate(request.date());
         trip.setStartDate(request.startDate());
