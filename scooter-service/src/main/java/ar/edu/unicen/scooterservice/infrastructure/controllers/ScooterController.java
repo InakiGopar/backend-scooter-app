@@ -32,10 +32,10 @@ public class ScooterController {
     }
 
     @PatchMapping("/{scooterId}/status")
-    public ResponseEntity<ScooterResponseDTO> updateStatus(
+    public ResponseEntity<ScooterResponseDTO> updateStatusAndStop(
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestDTO request) {
-        return ResponseEntity.ok(scooterService.updateScooterStatus(scooterId, request));
+        return ResponseEntity.ok(scooterService.updateScooterStatusAndStop(scooterId, request));
     }
 
     @DeleteMapping("/{scooterId}")

@@ -16,8 +16,8 @@ public interface ScooterFeignClient {
     Scooter getScooterById(@PathVariable Long scooterId);
 
     @PatchMapping("/{scooterId}/stop")
-    void updateScooterStop(@PathVariable Long scooterId, @RequestBody Scooter scooter);
+    void updateScooter(@PathVariable Long scooterId, @RequestBody Scooter scooter);
 
     @PatchMapping("/{scooterId}/status")
-    void updateScooterStatus(@PathVariable Long scooterId, @RequestBody Scooter scooter);
+    void updateScooterStatusAndStop(@PathVariable Long scooterId, @RequestBody Scooter scooter);
 }

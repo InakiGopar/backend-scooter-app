@@ -38,6 +38,7 @@ public class ScooterService {
         scooter.setLatitude(request.latitude());
         scooter.setLongitude(request.longitude());
         scooter.setState(request.state());
+        scooter.setCurrentStop(request.currentStop());
 
         scooterRepository.save(scooter);
 
@@ -46,22 +47,11 @@ public class ScooterService {
 
 
     @Transactional
-    public ScooterResponseDTO updateScooterStatus(Long scooterId, ScooterRequestDTO request) {
+    public ScooterResponseDTO updateScooterStatusAndStop(Long scooterId, ScooterRequestDTO request) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
         scooter.setState(request.state());
-
-        scooterRepository.save(scooter);
-
-        return ScooterResponseDTO.toDTO(scooter);
-    }
-
-    @Transactional
-    public ScooterResponseDTO updateScooterStop( Long scooterId, ScooterRequestDTO request ) {
-        Scooter scooter = scooterRepository.findById(scooterId)
-                .orElseThrow(()-> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
-
         scooter.setCurrentStop(request.currentStop());
 
         scooterRepository.save(scooter);

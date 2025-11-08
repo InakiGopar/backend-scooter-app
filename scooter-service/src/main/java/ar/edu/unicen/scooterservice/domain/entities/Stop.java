@@ -18,13 +18,13 @@ public class Stop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_stop")
     private Long stopId;
-    @OneToMany(mappedBy = "")
+    @OneToMany(mappedBy = "currentStop")
     private List<Scooter> scooterId;
-    private int latitude;
-    private int longitude;
+    private float latitude;
+    private float longitude;
     //Cambiar a private String street para simplificar logica?
 
-    public Stop(int latitude, int longitude) {
+    public Stop(float latitude, float longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }

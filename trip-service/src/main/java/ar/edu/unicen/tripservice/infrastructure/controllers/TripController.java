@@ -16,13 +16,13 @@ public class TripController {
     private final TripService tripService;
 
     @PostMapping
-    public ResponseEntity<TripResponseDTO> create(@RequestBody TripRequestDTO dto) {
+    public ResponseEntity<TripResponseDTO> startTrip(@RequestBody TripRequestDTO dto) {
         return ResponseEntity.status(201).body(tripService.startTrip(dto));
     }
 
     @PutMapping("/{tripId}")
-    public ResponseEntity<TripResponseDTO> update(@PathVariable String tripId, @RequestBody TripRequestDTO dto) {
-        return ResponseEntity.ok(tripService.update(tripId, dto));
+    public ResponseEntity<TripResponseDTO> endTrip(@PathVariable String tripId, @RequestBody TripRequestDTO dto) {
+        return ResponseEntity.ok(tripService.endTrip(tripId, dto));
     }
 
     @GetMapping("/{tripId}")

@@ -9,4 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Stop {
     private Long stopId;
+    private float latitude;
+    private float longitude;
 }
