@@ -3,6 +3,7 @@ package ar.edu.unicen.tripservice.application.services;
 import ar.edu.unicen.tripservice.application.repositories.FeeRepository;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Fee;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
@@ -27,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TripService {
     private final TripRepository tripRepository;
-    private final FeeRepository feeRepository;
+    private final FeeService feeService;
     private final UserFeignClient userFeignClient;
     private final ScooterFeignClient scooterFeignClient;
     private final StopFeignClient stopFeignClient;
@@ -135,16 +136,14 @@ public class TripService {
 
 
     private float calculateTotalPrice(Instant startTime,Instant endTime, Instant startPause, Instant endPause, int limitPauseMinutes,String feeId) {
-        Fee fee = feeRepository.findById(feeId)
-                .orElseThrow(() -> new EntityNotFoundException("Fee: " + feeId + " not found"));
-
-        float pricePerHr = fee.getPricePerHour();
+        FeeResponseDTO fee = feeService.getFeeById(feeId);
+        float pricePerHr = fee.pricePerHour();
 
         int hours = Duration.between(startTime, endTime).toHoursPart();
         int pause = Duration.between(startPause, endPause).toMinutesPart();
 
         if(pause >= limitPauseMinutes){
-            float extraPrice = fee.getExtraHourFee();
+            float extraPrice = fee.extraHourFee();
             int extraHours = Duration.between(endPause, endTime).toHoursPart();
             return (hours * pricePerHr) + (extraHours * extraPrice);
         }

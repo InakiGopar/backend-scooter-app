@@ -2,15 +2,16 @@ package ar.edu.unicen.tripservice.domain.dtos.request.fee;
 
 import ar.edu.unicen.tripservice.domain.entities.Fee;
 
-import java.util.Date;
+import java.time.Instant;
 
 public record FeeRequestDTO(
-        Date startDate,
-        Date endDate,
-        float pricePerHour
+        Instant startDate,
+        Instant endDate,
+        float pricePerHour,
+        float extraHourFee
 ) {
 
     public Fee toEntity() {
-        return new Fee(startDate, endDate, pricePerHour);
+        return new Fee(startDate, endDate, pricePerHour, extraHourFee);
     }
 }

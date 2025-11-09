@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
 
 @Document(collection = "fees")
 @Getter
@@ -18,20 +18,21 @@ public class Fee {
     @Id
     private String feeId; // would be "fee_YYYYMM"
 
-    private Date startDate;
-    private Date endDate;
+    private Instant startDate;
+    private Instant endDate;
     private float pricePerHour;
     private float extraHourFee;
 
-    public Fee(Date startDate, Date endDate, float pricePerHour) {
+    public Fee(Instant startDate, Instant endDate, float pricePerHour, float extraHourFee) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.pricePerHour = pricePerHour;
         this.feeId = generateFeeId(startDate);
+        this.extraHourFee = extraHourFee;
     }
 
-    private String generateFeeId(Date date) {
+    private String generateFeeId(Instant startDate) {
         SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM");
-        return "fee_" + formatter.format(date);
+        return "fee_" + formatter.format(startDate);
     }
 }
