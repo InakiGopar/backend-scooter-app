@@ -2,7 +2,7 @@ package ar.edu.unicen.accountservice.application.services;
 
 import ar.edu.unicen.accountservice.application.repositories.AccountUserRepository;
 import ar.edu.unicen.accountservice.domain.dtos.request.accountUser.AccountUserRequestDTO;
-import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountUserResponseDTO;
+import ar.edu.unicen.accountservice.domain.dtos.response.accountUser.AccountUserResponseDTO;
 import ar.edu.unicen.accountservice.domain.entities.AccountUser;
 import ar.edu.unicen.accountservice.domain.entities.AccountUserID;
 import lombok.RequiredArgsConstructor;

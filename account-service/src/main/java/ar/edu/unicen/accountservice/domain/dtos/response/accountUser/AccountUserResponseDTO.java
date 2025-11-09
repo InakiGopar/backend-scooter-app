@@ -1,4 +1,4 @@
-package ar.edu.unicen.accountservice.domain.dtos.response.account;
+package ar.edu.unicen.accountservice.domain.dtos.response.accountUser;
 
 import ar.edu.unicen.accountservice.domain.entities.AccountUser;
 
