@@ -21,6 +21,7 @@ public class Fee {
     private Date startDate;
     private Date endDate;
     private float pricePerHour;
+    private float extraHourFee;
 
     public Fee(Date startDate, Date endDate, float pricePerHour) {
         this.startDate = startDate;

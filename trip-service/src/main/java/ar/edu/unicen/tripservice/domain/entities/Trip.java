@@ -6,6 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
@@ -25,25 +26,31 @@ public class Trip {
     private Long stopEndId;
     //In Java, for date data on MongoDB use java.util.Date.
     private Date date;
-    private int tripHours;
+    private Instant startTime;
+    private Instant endTime;
     private Long kmTraveled;
-    private int pause;
+    private Instant startPause;
+    private Instant endPause;
+    private int limitPauseMinutes;
     private float totalPrice;
     private String feeId;
 
 
     public Trip(Long userId, Long scooterId,
                 Long stopStartId, Long stopEndId, Date date,
-                 int tripHours, Long kmTraveled,
-                int pause, float totalPrice, String feeId) {
+                Instant startTime, Instant endTime,Long kmTraveled,
+                Instant startPause,Instant endPause, int limitPauseMinutes,float totalPrice, String feeId) {
         this.userId = userId;
         this.scooterId = scooterId;
         this.stopStartId = stopStartId;
         this.stopEndId = stopEndId;
         this.date = date;
-        this.tripHours = tripHours;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.kmTraveled = kmTraveled;
-        this.pause = pause;
+        this.startPause = startPause;
+        this.endPause = endPause;
+        this.limitPauseMinutes = limitPauseMinutes;
         this.totalPrice = totalPrice;
         this.feeId = feeId;
     }
