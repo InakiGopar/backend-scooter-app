@@ -19,12 +19,12 @@ public class FeeController {
     private final FeeService feeService;
 
     @PostMapping
-    public ResponseEntity<FeeResponseDTO> createFee(@RequestBody FeeRequestDTO request) {
+    public ResponseEntity<FeeResponseDTO> create(@RequestBody FeeRequestDTO request) {
         return ResponseEntity.status(201).body(feeService.createFee(request));
     }
 
     @PutMapping("/{feeId}")
-    public ResponseEntity<FeeResponseDTO> updateFee(@PathVariable String feeId, @RequestBody FeeRequestDTO request) {
+    public ResponseEntity<FeeResponseDTO> update(@PathVariable String feeId, @RequestBody FeeRequestDTO request) {
         return ResponseEntity.ok(feeService.updateFee(feeId, request));
     }
 
@@ -34,12 +34,12 @@ public class FeeController {
     }
 
     @GetMapping
-    public ResponseEntity<FeeResponseDTO> getFeeById(@RequestParam String feeId) {
+    public ResponseEntity<FeeResponseDTO> getById(@RequestParam String feeId) {
         return ResponseEntity.ok(feeService.getFeeById(feeId));
     }
 
     @DeleteMapping
-    public ResponseEntity<Void> deleteFee(@RequestParam String feeId) {
+    public ResponseEntity<Void> delete(@RequestParam String feeId) {
         feeService.deleteFee(feeId);
         return ResponseEntity.noContent().build();
     }
