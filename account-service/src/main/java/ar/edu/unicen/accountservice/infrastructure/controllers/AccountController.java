@@ -20,11 +20,19 @@ public class AccountController {
         AccountResponseDTO response = accountService.save(account);
         return ResponseEntity.ok(response);
     }
+
     @PutMapping("/{accountId}]")
     public ResponseEntity<AccountResponseDTO>  updateAccount(@PathVariable Long accountId,@RequestBody AccountRequestDTO request){
         AccountResponseDTO response = accountService.update(accountId,request);
         return ResponseEntity.ok(response);
     }
+
+    @PatchMapping("/toggleState/{accountId}")
+    public ResponseEntity<AccountResponseDTO> toggleAccountState(@PathVariable Long accountId){
+        AccountResponseDTO response = accountService.toggleAccountState(accountId);
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountResponseDTO>getAccountById(@PathVariable Long accountId){
         AccountResponseDTO response = accountService.getById(accountId);

@@ -2,6 +2,7 @@ package ar.edu.unicen.tripservice.domain.dtos.response.trip;
 
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
@@ -12,10 +13,11 @@ public record TripResponseDTO(
         Long stopSartId,
         Long stopEndId,
         Date date,
-        Date startDate,
-        Date endDate,
+        Instant startTime,
+        Instant endTime,
         Long kmTraveled,
-        int pause,
+        Instant startPause,
+        Instant endPause,
         float totalPrice,
         String feeId
 ) {
@@ -28,10 +30,11 @@ public record TripResponseDTO(
                 trip.getStopStartId(),
                 trip.getStopEndId(),
                 trip.getDate(),
-                trip.getStartDate(),
-                trip.getEndDate(),
+                trip.getStartTime(),
+                trip.getEndTime(),
                 trip.getKmTraveled(),
-                trip.getPause(),
+                trip.getStartPause(),
+                trip.getEndPause(),
                 trip.getTotalPrice(),
                 trip.getFeeId()
         );
