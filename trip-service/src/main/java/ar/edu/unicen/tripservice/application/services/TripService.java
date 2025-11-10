@@ -4,6 +4,7 @@ import ar.edu.unicen.tripservice.application.repositories.FeeRepository;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Fee;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
@@ -32,6 +33,14 @@ public class TripService {
     private final UserFeignClient userFeignClient;
     private final ScooterFeignClient scooterFeignClient;
     private final StopFeignClient stopFeignClient;
+
+    public List<ScooterUsageResponseDTO> findAllByPause(String filter) {
+        if(!filter.equals("true")) {
+            return tripRepository.findAllByKilometers();
+        }
+        return tripRepository.findAllByPause();
+    }
+
 
     public TripResponseDTO startTrip(TripRequestDTO request) {
         User user = userFeignClient.getUserById(request.userId());
@@ -72,7 +81,7 @@ public class TripService {
 
         scooterFeignClient.updateScooter(request.scooterId(),
                 new Scooter(request.scooterId(),endStop.getLatitude(),
-                        endStop.getLongitude(),ScooterState.INACTIVE, endStop));
+                        endStop.getLongitude(),ScooterState.INACTIVE, endStop, request.kmTraveled()));
 
         trip.setStopEndId(endStop.getStopId());
         trip.setEndTime(request.endTime());
@@ -135,6 +144,7 @@ public class TripService {
 
 
 
+    //CAMBIAR ESTA LOGICA
     private float calculateTotalPrice(Instant startTime,Instant endTime, Instant startPause, Instant endPause, int limitPauseMinutes,String feeId) {
         FeeResponseDTO fee = feeService.getFeeById(feeId);
         float pricePerHr = fee.pricePerHour();
@@ -151,5 +161,6 @@ public class TripService {
         return (hours * pricePerHr);
 
     }
+
 
 }

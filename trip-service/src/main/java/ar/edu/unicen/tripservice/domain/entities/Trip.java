@@ -33,13 +33,14 @@ public class Trip {
     private Instant endPause;
     private int limitPauseMinutes;
     private float totalPrice;
+    private int pauseCount;
     private String feeId;
 
 
     public Trip(Long userId, Long scooterId,
                 Long stopStartId, Long stopEndId, Date date,
                 Instant startTime, Instant endTime,Long kmTraveled,
-                Instant startPause,Instant endPause, int limitPauseMinutes,float totalPrice, String feeId) {
+                Instant startPause,Instant endPause, int limitPauseMinutes,float totalPrice,int pauseCount, String feeId) {
         this.userId = userId;
         this.scooterId = scooterId;
         this.stopStartId = stopStartId;
@@ -52,6 +53,7 @@ public class Trip {
         this.endPause = endPause;
         this.limitPauseMinutes = limitPauseMinutes;
         this.totalPrice = totalPrice;
+        this.pauseCount = pauseCount;
         this.feeId = feeId;
     }
 }

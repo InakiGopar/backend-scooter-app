@@ -7,14 +7,16 @@ public record ScooterResponseDTO(
         Long scooterId,
         float latitude,
         float longitude,
-        ScooterState state
+        ScooterState state,
+        float kilometers
 ) {
     public static ScooterResponseDTO toDTO(Scooter scooter) {
         return new ScooterResponseDTO(
                 scooter.getScooterId(),
                 scooter.getLatitude(),
                 scooter.getLongitude(),
-                scooter.getState()
+                scooter.getState(),
+                scooter.getKilometers()
         );
     }
 }

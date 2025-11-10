@@ -4,15 +4,20 @@ import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
+import ar.edu.unicen.userservice.domain.model.trip.Trip;
+import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final TripFeignClient tripFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
@@ -39,6 +44,9 @@ public class UserService {
         return UserResponseDTO.toDTO(user);
     }
 
+    public List<Trip> getScootersReportByKilometers(String filter){
+        return tripFeignClient.getTripsWithPause(filter);
+    }
     public UserResponseDTO getUserById(Long userId){
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
