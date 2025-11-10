@@ -22,6 +22,7 @@ public class Scooter {
     @ManyToOne
     @JoinColumn(name = "id_stop")
     private Stop currentStop;
+    private float kilometers;
 
     public Scooter(float latitude, float longitude, ScooterState state) {
         this.latitude = latitude;

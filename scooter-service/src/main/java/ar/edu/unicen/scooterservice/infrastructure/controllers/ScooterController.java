@@ -3,10 +3,14 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
+import ar.edu.unicen.scooterservice.domain.entities.Scooter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/scooter")

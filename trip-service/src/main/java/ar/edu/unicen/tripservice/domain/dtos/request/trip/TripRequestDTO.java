@@ -18,6 +18,7 @@ public record TripRequestDTO(
         Instant endPause,
         int limitPauseMinutes,
         float totalPrice,
+        int pauseCount,
         String feeId
 ) {
     public Trip toEntity() {
@@ -34,6 +35,7 @@ public record TripRequestDTO(
                 endPause,
                 limitPauseMinutes,
                 totalPrice,
+                pauseCount,
                 feeId
         );
     }

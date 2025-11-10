@@ -3,10 +3,13 @@ package ar.edu.unicen.userservice.infrastructure.controllers;
 import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
+import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/user")
@@ -33,6 +36,11 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/trips")
+    public ResponseEntity<List<Trip>>getScootersReportByKilometers(@RequestParam String filter){
+        List<Trip> trips = userService.getScootersReportByKilometers(filter);
+        return ResponseEntity.ok(trips);
     }
 
 }

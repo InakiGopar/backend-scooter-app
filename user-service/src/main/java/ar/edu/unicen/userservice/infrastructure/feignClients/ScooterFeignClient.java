@@ -8,5 +8,5 @@ import java.util.List;
 @FeignClient(name="scooter-service", url="http://localhost:8081/scooter")
 public interface ScooterFeignClient {
     // should we pass the latitude and longitude or the userId?
-    List<Scooter> getNearScooters(float latitude, float longitude);
+    List<Scooter> getNearScooters(float latitude, float longitude);;
 }

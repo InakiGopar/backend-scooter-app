@@ -2,6 +2,7 @@ package ar.edu.unicen.tripservice.infrastructure.controllers;
 
 import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +40,10 @@ public class TripController {
     public ResponseEntity<Void> delete(@PathVariable String tripId) {
         tripService.delete(tripId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/kilometers")
+    public ResponseEntity<List<ScooterUsageResponseDTO>> getTripsWithPause(@RequestParam String kilometers) {
+        return ResponseEntity.ok(tripService.findAllByPause(kilometers));
     }
 
 }
