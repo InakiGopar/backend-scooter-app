@@ -9,7 +9,6 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
-import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -29,12 +28,13 @@ public interface TripRepository extends MongoRepository<Trip, String> {
 
     @Query("{ 'date': { $gte: ?0, $lte: ?1 } }")
     List<Trip> findByDateBetween(Date startDate, Date endDate);
+
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' } } }",
             "{ $match: { year: ?0 } }",
-            "{ $group: { _id: '$scooterId', totalTrips: { $sum: '$cantTrips' } } }",
+            "{ $group: { _id: { scooterId: '$scooterId', year: '$year' }, totalTrips: { $sum: '$cantTrips' } } }",
             "{ $match: { totalTrips: { $gt: ?1 } } }",
-            "{ $project: { _id: 0, scooterId: '$_id', year: '$year', totalTrips: 1 } }"
+            "{ $project: { _id: 0, scooterId: '$_id.scooterId', year: '$_id.year', totalTrips: 1 } }"
     })
     List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);
 }
