@@ -7,7 +7,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.UUID;
 
@@ -31,7 +30,7 @@ public class Trip {
     private Long kmTraveled;
     private Instant startPause;
     private Instant endPause;
-    private int limitPauseMinutes;
+    //private int limitPauseMinutes;
     private float totalPrice;
     private int pauseCount;
     private String feeId;
@@ -40,7 +39,7 @@ public class Trip {
     public Trip(Long userId, Long scooterId,
                 Long stopStartId, Long stopEndId, Date date,
                 Instant startTime, Instant endTime,Long kmTraveled,
-                Instant startPause,Instant endPause, int limitPauseMinutes,float totalPrice,int pauseCount, String feeId) {
+                Instant startPause,Instant endPause, float totalPrice,int pauseCount, String feeId) {
         this.userId = userId;
         this.scooterId = scooterId;
         this.stopStartId = stopStartId;
@@ -51,7 +50,6 @@ public class Trip {
         this.kmTraveled = kmTraveled;
         this.startPause = startPause;
         this.endPause = endPause;
-        this.limitPauseMinutes = limitPauseMinutes;
         this.totalPrice = totalPrice;
         this.pauseCount = pauseCount;
         this.feeId = feeId;

@@ -22,7 +22,7 @@ public class SupportService {
     private final ScooterFeignClient scooterFeignClient;
 
     @Transactional
-    public SupportResponseDTO create(SupportRequestDTO request) {
+    public SupportResponseDTO createSupport(SupportRequestDTO request) {
 
         // check number 1
         Scooter scooter = Objects.requireNonNull(scooterFeignClient.getScooterById(request.scooterId()),
@@ -49,7 +49,7 @@ public class SupportService {
     }
 
     @Transactional
-    public SupportResponseDTO update( Long supportId, SupportRequestDTO request ) {
+    public SupportResponseDTO updateSupport ( Long supportId, SupportRequestDTO request ) {
         Scooter scooter = scooterFeignClient.getScooterById(request.scooterId());
 
         // check number 1
@@ -75,7 +75,7 @@ public class SupportService {
         return SupportResponseDTO.toDTO(support);
     }
 
-    public void delete(Long supportId) {
+    public void deleteSupport(Long supportId) {
         //check 1
         Support support = supportRepository.findById(supportId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found")
@@ -88,7 +88,7 @@ public class SupportService {
     }
 
 
-    public SupportResponseDTO findById(Long supportId) {
+    public SupportResponseDTO findSupportById(Long supportId) {
         Support support = supportRepository.findById(supportId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Support Not Found")
         );

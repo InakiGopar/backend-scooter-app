@@ -49,11 +49,10 @@ public class FeeService {
         return FeeResponseDTO.toDTO(fee);
     }
 
-    public FeeResponseDTO deleteFee(String feeId) {
+    public void deleteFee(String feeId) {
         Fee fee = feeRepository.findById(feeId).orElseThrow(
                 ()-> new EntityNotFoundException("Fee not found with id " + feeId)
         );
         feeRepository.delete(fee);
-        return FeeResponseDTO.toDTO(fee);
     }
 }

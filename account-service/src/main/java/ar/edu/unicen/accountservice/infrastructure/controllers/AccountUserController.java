@@ -21,7 +21,7 @@ public class AccountUserController {
     @GetMapping("/{accountId}")
     public  ResponseEntity<List<AccountUserResponseDTO>> getAccountUser(@PathVariable Long accountId )
     {
-        return ResponseEntity.ok(accountUserService.getByAccount(accountId));
+        return ResponseEntity.ok(accountUserService.getAccountUserByAccount(accountId));
     }
     @PostMapping
     public ResponseEntity<AccountUserResponseDTO> createAccountUser(@RequestBody AccountUserRequestDTO request) {

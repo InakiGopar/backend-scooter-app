@@ -15,23 +15,23 @@ public class StopController {
     private final StopService stopService;
 
     @PostMapping
-    public ResponseEntity<StopResponseDTO> create(@RequestBody StopRequestDTO request) {
+    public ResponseEntity<StopResponseDTO> createStop(@RequestBody StopRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(stopService.createStop(request));
     }
 
     @PutMapping("/{stopId}")
-    public ResponseEntity<StopResponseDTO> update( @PathVariable Long stopId, @RequestBody StopRequestDTO request) {
+    public ResponseEntity<StopResponseDTO> updateStop( @PathVariable Long stopId, @RequestBody StopRequestDTO request) {
         return ResponseEntity.ok(stopService.updateStop( stopId, request ));
     }
 
     @DeleteMapping("/{stopId}")
-    public ResponseEntity<Void> delete(@PathVariable Long stopId) {
+    public ResponseEntity<Void> deleteStop(@PathVariable Long stopId) {
         stopService.deleteStop(stopId);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{stopId}")
-    public ResponseEntity<StopResponseDTO> get(@PathVariable Long stopId) {
-        return ResponseEntity.ok(stopService.getStop(stopId));
+    public ResponseEntity<StopResponseDTO> findStopById(@PathVariable Long stopId) {
+        return ResponseEntity.ok(stopService.findStopById(stopId));
     }
 }

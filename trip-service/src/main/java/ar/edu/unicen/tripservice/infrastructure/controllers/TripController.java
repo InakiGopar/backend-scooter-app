@@ -27,22 +27,22 @@ public class TripController {
     }
 
     @GetMapping("/{tripId}")
-    public ResponseEntity<TripResponseDTO> findById(@PathVariable String tripId) {
-        return ResponseEntity.ok(tripService.findById(tripId));
+    public ResponseEntity<TripResponseDTO> findTripById(@PathVariable String tripId) {
+        return ResponseEntity.ok(tripService.findTripById(tripId));
     }
 
     @GetMapping
-    public ResponseEntity<List<TripResponseDTO>> findAll() {
-        return ResponseEntity.ok(tripService.findAll());
+    public ResponseEntity<List<TripResponseDTO>> findAllTrips() {
+        return ResponseEntity.ok(tripService.findAllTrips());
     }
 
     @DeleteMapping("/{tripId}")
-    public ResponseEntity<Void> delete(@PathVariable String tripId) {
-        tripService.delete(tripId);
+    public ResponseEntity<Void> deleteTrip(@PathVariable String tripId) {
+        tripService.deleteTrip(tripId);
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/kilometers")
-    public ResponseEntity<List<ScooterUsageResponseDTO>> getTripsWithPause(@RequestParam String kilometers) {
+    public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(@RequestParam String kilometers) {
         return ResponseEntity.ok(tripService.findAllByPause(kilometers));
     }
 

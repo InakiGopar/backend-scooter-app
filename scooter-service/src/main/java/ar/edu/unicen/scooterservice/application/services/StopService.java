@@ -43,7 +43,7 @@ public class StopService {
         stopRepository.delete(stop);
     }
 
-    public StopResponseDTO getStop(Long stopId) {
+    public StopResponseDTO findStopById(Long stopId) {
         Stop stop = stopRepository.findById(stopId).orElseThrow(
                 ()-> new EntityNotFoundException("Stop not found with id " + stopId)
         );
