@@ -3,10 +3,13 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/scooter")
@@ -42,5 +45,15 @@ public class ScooterController {
     public ResponseEntity<ScooterResponseDTO> deleteScooter(@PathVariable Long scooterId) {
         scooterService.deleteScooter(scooterId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("by-kilometers")
+    public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause) {
+        return ResponseEntity.ok(scooterService.getScootersReportByKilometers(withPause));
+    }
+
+    @GetMapping("/by-travels")
+    public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
+        return ResponseEntity.ok(scooterService.getScootersReportByTravels(year, countTrips));
     }
 }

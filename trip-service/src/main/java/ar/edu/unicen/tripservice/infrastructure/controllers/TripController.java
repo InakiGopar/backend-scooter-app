@@ -4,10 +4,12 @@ import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -41,10 +43,15 @@ public class TripController {
         tripService.deleteTrip(tripId);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/kilometers")
+    @GetMapping("/by-kilometers")
     public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(
             @RequestParam(required = false, defaultValue = "false") boolean withPause) {
         return ResponseEntity.ok(tripService.findAllByKilometers(withPause));
+    }
+
+    @GetMapping("/scooter-by-trips")
+    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels(int year, int cantTrips){
+        return ResponseEntity.ok(tripService.getScooterByTravels(year,cantTrips));
     }
 
 }

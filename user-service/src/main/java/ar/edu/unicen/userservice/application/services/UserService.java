@@ -4,20 +4,23 @@ import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
+import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.Trip;
+import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
-    private final TripFeignClient tripFeignClient;
+    private final ScooterFeignClient scooterFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
@@ -44,8 +47,8 @@ public class UserService {
         return UserResponseDTO.toDTO(user);
     }
 
-    public List<Trip> getScootersReportByKilometers(boolean withPause){
-        return tripFeignClient.findAllByKilometers(withPause);
+    public List<Scooter> getScootersReportByKilometers(boolean withPause){
+        return scooterFeignClient.findAllByKilometers(withPause);
     }
 
     public UserResponseDTO getUserById(Long userId){
@@ -61,5 +64,8 @@ public class UserService {
         userRepository.delete(user);
     }
 
+    public List<Scooter> getScootersReportByTravels(int year, int countTrips) {
+        return scooterFeignClient.getScootersByTravels(year, countTrips);
+    }
 
 }
