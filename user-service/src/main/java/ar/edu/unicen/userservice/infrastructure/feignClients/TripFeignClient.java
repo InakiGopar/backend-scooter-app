@@ -12,5 +12,5 @@ import java.util.List;
 @FeignClient(name="trip-service",url="http://localhost:8085/api/trip")
 public interface TripFeignClient {
 @GetMapping("/kilometers")
-List<Trip> getTripsWithPause(@RequestParam String kilometers);
+List<Trip> findAllByKilometers(@RequestParam(required = false) Boolean withPause);
 }

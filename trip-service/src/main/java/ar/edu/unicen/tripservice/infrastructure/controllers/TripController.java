@@ -42,8 +42,9 @@ public class TripController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/kilometers")
-    public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(@RequestParam String kilometers) {
-        return ResponseEntity.ok(tripService.findAllByPause(kilometers));
+    public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(
+            @RequestParam(required = false, defaultValue = "false") boolean withPause) {
+        return ResponseEntity.ok(tripService.findAllByKilometers(withPause));
     }
 
 }

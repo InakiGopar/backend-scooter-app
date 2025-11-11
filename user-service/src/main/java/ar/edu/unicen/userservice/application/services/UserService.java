@@ -44,9 +44,10 @@ public class UserService {
         return UserResponseDTO.toDTO(user);
     }
 
-    public List<Trip> getScootersReportByKilometers(String filter){
-        return tripFeignClient.getTripsWithPause(filter);
+    public List<Trip> getScootersReportByKilometers(boolean withPause){
+        return tripFeignClient.findAllByKilometers(withPause);
     }
+
     public UserResponseDTO getUserById(Long userId){
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));

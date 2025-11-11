@@ -15,7 +15,7 @@ public interface TripRepository extends MongoRepository<Trip, String> {
             "{ $group: { _id: '$scooterId', totalKm: { $sum: '$kmTraveled' }, totalPauses: { $sum: '$pauseCount' }, totalTrips: { $sum: 1 } } }",
             "{ $sort: { totalKm: -1 } }"
     })
-    List<ScooterUsageResponseDTO> findAllByPause();
+    List<ScooterUsageResponseDTO> findAllByKilometersAndPause();
 
     @Aggregation(pipeline = {
             "{ $group: { _id: '$scooterId', totalKm: { $sum: '$kmTraveled' }, totalTrips: { $sum: 1 } } }",

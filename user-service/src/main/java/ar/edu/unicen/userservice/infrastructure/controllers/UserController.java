@@ -38,8 +38,8 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
     @GetMapping("/trips")
-    public ResponseEntity<List<Trip>>getScootersReportByKilometers(@RequestParam String filter){
-        List<Trip> trips = userService.getScootersReportByKilometers(filter);
+    public ResponseEntity<List<Trip>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
+        List<Trip> trips = userService.getScootersReportByKilometers(withPause);
         return ResponseEntity.ok(trips);
     }
 

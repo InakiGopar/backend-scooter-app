@@ -30,11 +30,11 @@ public class TripService {
     private final ScooterFeignClient scooterFeignClient;
     private final StopFeignClient stopFeignClient;
 
-    public List<ScooterUsageResponseDTO> findAllByPause(String filter) {
-        if(!filter.equals("true")) {
+    public List<ScooterUsageResponseDTO> findAllByKilometers(boolean withPause) {
+        if(!withPause) {
             return tripRepository.findAllByKilometers();
         }
-        return tripRepository.findAllByPause();
+        return tripRepository.findAllByKilometersAndPause();
     }
 
 
