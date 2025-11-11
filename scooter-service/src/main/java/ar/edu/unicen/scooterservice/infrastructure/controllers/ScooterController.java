@@ -3,14 +3,10 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
-import ar.edu.unicen.scooterservice.domain.entities.Scooter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/scooter")
@@ -19,31 +15,31 @@ public class ScooterController {
     private final ScooterService scooterService;
 
     @PostMapping
-    public ResponseEntity<ScooterResponseDTO> create(@RequestBody ScooterRequestDTO request){
+    public ResponseEntity<ScooterResponseDTO> createScooter(@RequestBody ScooterRequestDTO request){
         return ResponseEntity.status(HttpStatus.CREATED).body(scooterService.createScooter(request));
     }
 
     @GetMapping("/{scooterId}")
-    public ResponseEntity<ScooterResponseDTO> getById(@PathVariable Long scooterId){
-        return ResponseEntity.ok(scooterService.getScooterById(scooterId));
+    public ResponseEntity<ScooterResponseDTO> findScooterById(@PathVariable Long scooterId){
+        return ResponseEntity.ok(scooterService.findScooterById(scooterId));
     }
 
     @PutMapping("/{scooterId}")
-    public ResponseEntity<ScooterResponseDTO> update(
+    public ResponseEntity<ScooterResponseDTO> updateScooter(
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestDTO request) {
         return ResponseEntity.ok(scooterService.updateScooter(scooterId, request));
     }
 
     @PatchMapping("/{scooterId}/status")
-    public ResponseEntity<ScooterResponseDTO> updateStatusAndStop(
+    public ResponseEntity<ScooterResponseDTO> updateScooterStatusAndStop(
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestDTO request) {
         return ResponseEntity.ok(scooterService.updateScooterStatusAndStop(scooterId, request));
     }
 
     @DeleteMapping("/{scooterId}")
-    public ResponseEntity<ScooterResponseDTO> delete(@PathVariable Long scooterId) {
+    public ResponseEntity<ScooterResponseDTO> deleteScooter(@PathVariable Long scooterId) {
         scooterService.deleteScooter(scooterId);
         return ResponseEntity.noContent().build();
     }

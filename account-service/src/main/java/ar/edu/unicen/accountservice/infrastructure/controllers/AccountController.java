@@ -17,13 +17,13 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<AccountResponseDTO> saveAccount(@RequestBody AccountRequestDTO account){
-        AccountResponseDTO response = accountService.save(account);
+        AccountResponseDTO response = accountService.saveAccount(account);
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/{accountId}]")
     public ResponseEntity<AccountResponseDTO>  updateAccount(@PathVariable Long accountId,@RequestBody AccountRequestDTO request){
-        AccountResponseDTO response = accountService.update(accountId,request);
+        AccountResponseDTO response = accountService.updateAccount(accountId,request);
         return ResponseEntity.ok(response);
     }
 
@@ -34,13 +34,14 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<AccountResponseDTO>getAccountById(@PathVariable Long accountId){
-        AccountResponseDTO response = accountService.getById(accountId);
+    public ResponseEntity<AccountResponseDTO>findAccountById(@PathVariable Long accountId){
+        AccountResponseDTO response = accountService.findAccountById(accountId);
         return ResponseEntity.ok(response);
     }
+
     @DeleteMapping("/{accountId}")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId){
-        accountService.delete(accountId);
+        accountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
     }
 }

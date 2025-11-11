@@ -1,12 +1,11 @@
 package ar.edu.unicen.tripservice.application.services;
 
-import ar.edu.unicen.tripservice.application.repositories.FeeRepository;
+import ar.edu.unicen.tripservice.application.helper.TripCostCalculator;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
-import ar.edu.unicen.tripservice.domain.entities.Fee;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
@@ -20,9 +19,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -87,8 +83,14 @@ public class TripService {
         trip.setEndTime(request.endTime());
         trip.setKmTraveled(request.kmTraveled());
 
-        float totalPrice = this.calculateTotalPrice(request.startTime(), request.endTime(),
-                request.startPause(), request.endPause(), request.limitPauseMinutes(), request.feeId());
+        FeeResponseDTO fee = feeService.getFeeById(request.feeId());
+
+        if (fee == null) {
+            throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
+        }
+
+        float totalPrice = TripCostCalculator.calculateTotalPrice(request.startTime(), request.endTime(),
+                request.startPause(), request.endPause(), fee.pricePerHour(), fee.extraHourFee());
 
         trip.setTotalPrice(totalPrice);
 
@@ -123,44 +125,25 @@ public class TripService {
         return TripResponseDTO.toDTO(trip);
     }
 
-    public void delete(String tripId) {
+    public void deleteTrip(String tripId) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip not found"));
         tripRepository.delete(trip);
     }
 
-    public TripResponseDTO findById(String tripId) {
+    public TripResponseDTO findTripById(String tripId) {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException( "Trip not found"));
         return TripResponseDTO.toDTO(trip);
     }
 
-    public List<TripResponseDTO> findAll() {
+    public List<TripResponseDTO> findAllTrips() {
         return tripRepository.findAll()
                 .stream()
                 .map(TripResponseDTO::toDTO)
                 .toList();
     }
 
-
-
-    //CAMBIAR ESTA LOGICA
-    private float calculateTotalPrice(Instant startTime,Instant endTime, Instant startPause, Instant endPause, int limitPauseMinutes,String feeId) {
-        FeeResponseDTO fee = feeService.getFeeById(feeId);
-        float pricePerHr = fee.pricePerHour();
-
-        int hours = Duration.between(startTime, endTime).toHoursPart();
-        int pause = Duration.between(startPause, endPause).toMinutesPart();
-
-        if(pause >= limitPauseMinutes){
-            float extraPrice = fee.extraHourFee();
-            int extraHours = Duration.between(endPause, endTime).toHoursPart();
-            return (hours * pricePerHr) + (extraHours * extraPrice);
-        }
-
-        return (hours * pricePerHr);
-
-    }
 
 
 }

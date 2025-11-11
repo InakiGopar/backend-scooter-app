@@ -16,6 +16,7 @@ public record TripRequestDTO(
         Long kmTraveled,
         Instant startPause,
         Instant endPause,
+        // limitPauseMinutes no va aca
         int limitPauseMinutes,
         float totalPrice,
         int pauseCount,
@@ -33,7 +34,6 @@ public record TripRequestDTO(
                 kmTraveled,
                 startPause,
                 endPause,
-                limitPauseMinutes,
                 totalPrice,
                 pauseCount,
                 feeId

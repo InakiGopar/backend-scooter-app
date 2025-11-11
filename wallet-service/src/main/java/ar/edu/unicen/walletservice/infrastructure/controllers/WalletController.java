@@ -26,7 +26,7 @@ public class WalletController {
     }
 
     @PatchMapping("/userId/{userId}/accountId/{accountId}")
-    public ResponseEntity<WalletResponseDTO> patchAmount(
+    public ResponseEntity<WalletResponseDTO> updateAmount(
             @PathVariable Long userId,
             @PathVariable Long accountId,
             @RequestBody WalletRequestDTO request ) {
@@ -35,8 +35,8 @@ public class WalletController {
     }
 
     @DeleteMapping("/{walletId}")
-    public ResponseEntity<Void> deleteWallet(@PathVariable Long id){
-        walletService.deleteWallet(id);
+    public ResponseEntity<Void> deleteWallet(@PathVariable Long walletId){
+        walletService.deleteWallet(walletId);
         return ResponseEntity.noContent().build();
     }
 }

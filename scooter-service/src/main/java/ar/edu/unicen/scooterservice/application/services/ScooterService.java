@@ -3,17 +3,13 @@ package ar.edu.unicen.scooterservice.application.services;
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
-import ar.edu.unicen.scooterservice.domain.model.Trip;
-import ar.edu.unicen.scooterservice.infrastructure.feingClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ScooterService {
@@ -28,7 +24,7 @@ public class ScooterService {
         return ScooterResponseDTO.toDTO(scooter);
     }
 
-    public ScooterResponseDTO getScooterById(Long scooterId) {
+    public ScooterResponseDTO findScooterById(Long scooterId) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
