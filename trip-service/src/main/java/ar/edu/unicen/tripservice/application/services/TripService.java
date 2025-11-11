@@ -7,6 +7,7 @@ import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
@@ -23,6 +24,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -34,13 +39,16 @@ public class TripService {
     private final ScooterFeignClient scooterFeignClient;
     private final StopFeignClient stopFeignClient;
 
-    public List<ScooterUsageResponseDTO> findAllByPause(String filter) {
-        if(!filter.equals("true")) {
+    public List<ScooterUsageResponseDTO> findAllByKilometers(boolean withPause) {
+        if(!withPause) {
             return tripRepository.findAllByKilometers();
         }
-        return tripRepository.findAllByPause();
+        return tripRepository.findAllByKilometersAndPause();
     }
 
+    public List<TripScooterByYearResponseDTO> getScooterByTravels(int year, int cantTrips){
+        return tripRepository.getScooterByTripInAYear(year, cantTrips);
+    }
 
     public TripResponseDTO startTrip(TripRequestDTO request) {
         User user = userFeignClient.getUserById(request.userId());
@@ -92,9 +100,12 @@ public class TripService {
         if (fee == null) {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
+        int pauseDuration = Duration.between(request.startPause(), request.endPause()).toMinutesPart();
+        int totalPause = trip.getPauseCount() + pauseDuration;
+        trip.setPauseCount(totalPause);
 
         float totalPrice = TripCostCalculator.calculateTotalPrice(request.startTime(), request.endTime(),
-                request.startPause(), request.endPause(), fee.pricePerHour(), fee.extraHourFee());
+                pauseDuration, request.endPause(),fee.pricePerHour(), fee.extraHourFee());
 
         trip.setTotalPrice(totalPrice);
 

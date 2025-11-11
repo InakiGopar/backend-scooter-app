@@ -17,18 +17,16 @@ public class TripCostCalculator {
      *
      * @param startTime    the timestamp when the trip started
      * @param endTime      the timestamp when the trip ended
-     * @param startPause   the timestamp when the pause began
-     * @param endPause     the timestamp when the pause ended
+     * @param pauseDuration the total pause duration in minutes during the trip
      * @param pricePerHr   the base hourly price for the trip
      * @param extraPrice   the extra hourly price applied if the pause exceeds the allowed limit
      * @return the total calculated trip cost as a float
      */
-    public static float calculateTotalPrice(Instant startTime, Instant endTime, Instant startPause, Instant endPause, float pricePerHr,  float extraPrice) {
+    public static float calculateTotalPrice(Instant startTime, Instant endTime, int pauseDuration, Instant endPause,float pricePerHr,  float extraPrice) {
 
         int hours = Duration.between(startTime, endTime).toHoursPart();
-        int pause = Duration.between(startPause, endPause).toMinutesPart();
 
-        if(pause >= limitPauseMinutes){
+        if(pauseDuration >= limitPauseMinutes){
             int extraHours = Duration.between(endPause, endTime).toHoursPart();
             return (hours * pricePerHr) + (extraHours * extraPrice);
         }
