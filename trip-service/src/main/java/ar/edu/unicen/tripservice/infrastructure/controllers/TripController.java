@@ -50,8 +50,8 @@ public class TripController {
     }
 
     @GetMapping("/scooter-by-trips")
-    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTripInAYear(Instant year, int cantTrips){
-        return ResponseEntity.ok(tripService.getScooterByTripInAYear(year,cantTrips));
+    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels(int year, int cantTrips){
+        return ResponseEntity.ok(tripService.getScooterByTravels(year,cantTrips));
     }
 
 }

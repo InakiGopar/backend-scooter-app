@@ -23,6 +23,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -41,8 +43,8 @@ public class TripService {
         return tripRepository.findAllByKilometersAndPause();
     }
 
-    public List<TripScooterByYearResponseDTO> getScooterByTripInAYear(Instant year, int cantTrips){
-        return tripRepository.getScooterByTripInAYear(year,cantTrips);
+    public List<TripScooterByYearResponseDTO> getScooterByTravels(int year, int cantTrips){
+        return tripRepository.getScooterByTripInAYear(year, cantTrips);
     }
 
     public TripResponseDTO startTrip(TripRequestDTO request) {

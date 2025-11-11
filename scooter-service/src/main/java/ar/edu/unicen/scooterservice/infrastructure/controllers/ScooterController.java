@@ -51,4 +51,9 @@ public class ScooterController {
     public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause) {
         return ResponseEntity.ok(scooterService.getScootersReportByKilometers(withPause));
     }
+
+    @GetMapping("/by-travels")
+    public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
+        return ResponseEntity.ok(scooterService.getScootersReportByTravels(year, countTrips));
+    }
 }

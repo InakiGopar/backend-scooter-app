@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.Instant;
 import java.util.List;
 
 @Component
@@ -16,4 +17,7 @@ public interface ScooterFeignClient {
 
     @GetMapping("/by-kilometers")
     List<Scooter> findAllByKilometers(@RequestParam(required = false) Boolean withPause);
+
+    @GetMapping("/by-travels")
+    List<Scooter> getScootersByTravels(@RequestParam int year, @RequestParam int countTrips);
 }

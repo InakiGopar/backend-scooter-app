@@ -83,4 +83,16 @@ public class ScooterService {
                 })
                 .toList();
     }
+
+    public List<ScooterTripKMResponseDTO> getScootersReportByTravels(int year, int countTrips){
+        List<Trip> trips = tripFeignClient.findAllByTravels(year, countTrips);
+
+        return trips.stream()
+                .map(trip -> {
+                    Scooter scooter = scooterRepository.findById(trip.getScooterId())
+                            .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
+                    return ScooterTripKMResponseDTO.toDTO(scooter, trip);
+                })
+                .toList();
+    }
 }

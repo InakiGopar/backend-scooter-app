@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -41,6 +42,13 @@ public class UserController {
     @GetMapping("/scooters")
     public ResponseEntity<List<Scooter>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
         return ResponseEntity.ok(userService.getScootersReportByKilometers(withPause));
+    }
+
+    @GetMapping("scooters/usage")
+    public ResponseEntity<List<Scooter>> getScootersReportByTravels(
+            @RequestParam int year,
+            @RequestParam int countTrips) {
+        return ResponseEntity.ok(userService.getScootersReportByTravels(year, countTrips));
     }
 
 }

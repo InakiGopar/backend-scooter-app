@@ -11,6 +11,10 @@ import java.util.List;
 @Component
 @FeignClient(name="trip-service",url="http://localhost:8085/api/trip")
 public interface TripFeignClient {
+
     @GetMapping("/by-kilometers")
     List<Trip> findAllByKilometers(@RequestParam(required = false) Boolean withPause);
+
+    @GetMapping("/scooter-by-trips")
+    List<Trip> findAllByTravels(@RequestParam int year, @RequestParam int countTrips);
 }

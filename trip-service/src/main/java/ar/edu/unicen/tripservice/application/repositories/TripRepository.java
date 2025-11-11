@@ -25,6 +25,12 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     })
     List<ScooterUsageResponseDTO> findAllByKilometers();
 
-    @Aggregation
-    List<TripScooterByYearResponseDTO> getScooterByTripInAYear(Instant year, int cantTrips);
+    @Aggregation(pipeline = {
+            "{ $addFields: { year: { $year: '$startTime' } } }",
+            "{ $match: { year: ?0 } }",
+            "{ $group: { _id: '$scooterId', totalTrips: { $sum: '$cantTrips' } } }",
+            "{ $match: { totalTrips: { $gt: ?1 } } }",
+            "{ $project: { _id: 0, scooterId: '$_id', year: '$year', totalTrips: 1 } }"
+    })
+    List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);
 }
