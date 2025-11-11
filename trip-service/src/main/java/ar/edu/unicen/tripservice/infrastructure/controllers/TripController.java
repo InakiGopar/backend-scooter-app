@@ -2,12 +2,15 @@ package ar.edu.unicen.tripservice.infrastructure.controllers;
 
 import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -44,6 +47,17 @@ public class TripController {
     @GetMapping("/kilometers")
     public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(@RequestParam String kilometers) {
         return ResponseEntity.ok(tripService.findAllByPause(kilometers));
+    }
+
+    //Reporte D
+    @GetMapping("/total-invoice")
+    public ResponseEntity<InvoiceReportResponseDTO> getTotalInvoice(
+            @RequestParam int year,
+            @RequestParam int startMonth,
+            @RequestParam int endMonth) {
+
+
+        return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
 
 }

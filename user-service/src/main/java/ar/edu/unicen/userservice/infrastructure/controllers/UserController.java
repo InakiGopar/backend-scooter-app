@@ -4,6 +4,7 @@ import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.model.trip.Trip;
+import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,15 @@ public class UserController {
     public ResponseEntity<List<Trip>>getScootersReportByKilometers(@RequestParam String filter){
         List<Trip> trips = userService.getScootersReportByKilometers(filter);
         return ResponseEntity.ok(trips);
+    }
+
+    @GetMapping("/total-invoice")
+    public ResponseEntity<InvoiceReport> getTotalInvoice(
+            @RequestParam int year,
+            @RequestParam int startMonth,
+            @RequestParam int endMonth) {
+
+        return ResponseEntity.ok(  userService.getTotalInvoiceReport(year, startMonth, endMonth) );
     }
 
 }

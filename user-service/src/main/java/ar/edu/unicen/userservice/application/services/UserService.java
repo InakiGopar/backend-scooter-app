@@ -5,6 +5,7 @@ import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.trip.Trip;
+import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -58,6 +59,11 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
         userRepository.delete(user);
+    }
+
+    //Reporte D
+    public InvoiceReport getTotalInvoiceReport(int year, int startMonth, int endMonth) {
+        return tripFeignClient.getTotalInvoice(year, startMonth, endMonth);
     }
 
 

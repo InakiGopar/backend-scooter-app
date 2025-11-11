@@ -5,6 +5,7 @@ import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
@@ -19,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -142,6 +146,24 @@ public class TripService {
                 .stream()
                 .map(TripResponseDTO::toDTO)
                 .toList();
+    }
+
+    public InvoiceReportResponseDTO getTotalInvoice(int year, int startMonth, int endMonth) {
+
+        Calendar cal = Calendar.getInstance();
+
+        cal.set(year, startMonth - 1, 1, 0, 0, 0);
+        Date startDate = cal.getTime();
+
+        cal.set(year, endMonth, 1, 0, 0, 0);
+        cal.add(Calendar.DAY_OF_MONTH, -1);
+        Date endDate = cal.getTime();
+
+        List<Trip> trips = tripRepository.findByDateBetween(startDate, endDate);
+        float totalInvoice = (float) trips.stream()
+                .mapToDouble(Trip::getTotalPrice)
+                .sum();
+        return new InvoiceReportResponseDTO( startDate, endDate, totalInvoice, trips.size() );
     }
 
 
