@@ -5,8 +5,10 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResp
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.time.Instant;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     })
     List<ScooterUsageResponseDTO> findAllByKilometers();
 
+    @Query("{ 'date': { $gte: ?0, $lte: ?1 } }")
+    List<Trip> findByDateBetween(Date startDate, Date endDate);
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' } } }",
             "{ $match: { year: ?0 } }",

@@ -2,6 +2,7 @@ package ar.edu.unicen.tripservice.infrastructure.controllers;
 
 import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.time.Instant;
 import java.util.List;
 
@@ -52,6 +55,17 @@ public class TripController {
     @GetMapping("/scooter-by-trips")
     public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels(int year, int cantTrips){
         return ResponseEntity.ok(tripService.getScooterByTravels(year,cantTrips));
+    }
+
+    //Reporte D
+    @GetMapping("/total-invoice")
+    public ResponseEntity<InvoiceReportResponseDTO> getTotalInvoice(
+            @RequestParam int year,
+            @RequestParam int startMonth,
+            @RequestParam int endMonth) {
+
+
+        return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
 
 }
