@@ -22,6 +22,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final ScooterFeignClient scooterFeignClient;
+    private final TripFeignClient tripFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
