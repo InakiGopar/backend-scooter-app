@@ -1,11 +1,13 @@
 package ar.edu.unicen.tripservice.application.repositories;
 
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.List;
 
 @Repository
@@ -22,4 +24,7 @@ public interface TripRepository extends MongoRepository<Trip, String> {
             "{ $sort: { totalKm: -1 } }"
     })
     List<ScooterUsageResponseDTO> findAllByKilometers();
+
+    @Aggregation
+    List<TripScooterByYearResponseDTO> getScooterByTripInAYear(Instant year, int cantTrips);
 }

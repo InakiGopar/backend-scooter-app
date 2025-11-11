@@ -6,6 +6,7 @@ import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
@@ -19,6 +20,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -37,6 +41,9 @@ public class TripService {
         return tripRepository.findAllByKilometersAndPause();
     }
 
+    public List<TripScooterByYearResponseDTO> getScooterByTripInAYear(Instant year, int cantTrips){
+        return tripRepository.getScooterByTripInAYear(year,cantTrips);
+    }
 
     public TripResponseDTO startTrip(TripRequestDTO request) {
         User user = userFeignClient.getUserById(request.userId());
@@ -88,9 +95,12 @@ public class TripService {
         if (fee == null) {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
+        int pauseDuration = Duration.between(request.startPause(), request.endPause()).toMinutesPart();
+        int totalPause = trip.getPauseCount() + pauseDuration;
+        trip.setPauseCount(totalPause);
 
         float totalPrice = TripCostCalculator.calculateTotalPrice(request.startTime(), request.endTime(),
-                request.startPause(), request.endPause(), fee.pricePerHour(), fee.extraHourFee());
+                pauseDuration, request.endPause(),fee.pricePerHour(), fee.extraHourFee());
 
         trip.setTotalPrice(totalPrice);
 

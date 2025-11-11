@@ -3,6 +3,7 @@ package ar.edu.unicen.userservice.infrastructure.controllers;
 import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
+import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,10 +38,9 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/trips")
-    public ResponseEntity<List<Trip>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
-        List<Trip> trips = userService.getScootersReportByKilometers(withPause);
-        return ResponseEntity.ok(trips);
+    @GetMapping("/scooters")
+    public ResponseEntity<List<Scooter>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
+        return ResponseEntity.ok(userService.getScootersReportByKilometers(withPause));
     }
 
 }

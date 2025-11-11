@@ -3,17 +3,23 @@ package ar.edu.unicen.scooterservice.application.services;
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
+import ar.edu.unicen.scooterservice.domain.model.Trip;
+import ar.edu.unicen.scooterservice.infrastructure.feingClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
 @RequiredArgsConstructor
 public class ScooterService {
     private final ScooterRepository scooterRepository;
+    private final TripFeignClient tripFeignClient;
 
     @Transactional
     public ScooterResponseDTO createScooter(ScooterRequestDTO request){
@@ -64,5 +70,17 @@ public class ScooterService {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
         scooterRepository.delete(scooter);
+    }
+
+    public List<ScooterTripKMResponseDTO> getScootersReportByKilometers(Boolean withPause){
+        List<Trip> trips = tripFeignClient.findAllByKilometers(withPause);
+
+        return trips.stream()
+                .map(trip -> {
+                    Scooter scooter = scooterRepository.findById(trip.getScooterId())
+                            .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
+                    return ScooterTripKMResponseDTO.toDTO(scooter, trip);
+                })
+                .toList();
     }
 }
