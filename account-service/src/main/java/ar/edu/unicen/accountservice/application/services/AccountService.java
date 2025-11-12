@@ -5,14 +5,22 @@ import ar.edu.unicen.accountservice.domain.dtos.request.account.AccountRequestDT
 import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountResponseDTO;
 import ar.edu.unicen.accountservice.domain.entities.Account;
 import ar.edu.unicen.accountservice.domain.entities.AccountState;
+import ar.edu.unicen.accountservice.domain.entities.AccountType;
+import ar.edu.unicen.accountservice.domain.model.trip.Trip;
+import ar.edu.unicen.accountservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final TripFeignClient tripFeignClient;
+
 
     @Transactional
     public AccountResponseDTO saveAccount(AccountRequestDTO request){
@@ -61,5 +69,13 @@ public class AccountService {
                 .orElseThrow(()-> new RuntimeException("Wallet not found with id: " + accountId));
         accountRepository.delete(account);
     }
+    public List<Trip> getScooterUserUsage(int monthStart, int monthEnd, AccountType userType){
+
+        return tripFeignClient.getScooterUserUsage(monthStart,monthEnd,userType).stream()
+                .filter(trip -> trip.getUserType().equals(userType)) // 🔥 filtra por tipo
+                .map(dto -> new Trip(dto.getUserID(),dto.getCountScooterUsage(), dto.getMonthStart(), dto.getMonthEnd(),dto.getUserType())) // o el mapeo que uses
+                .toList();
+    }
+
 
 }

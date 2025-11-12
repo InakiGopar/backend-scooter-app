@@ -3,10 +3,13 @@ package ar.edu.unicen.userservice.application.services;
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
+import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
+import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final ScooterFeignClient scooterFeignClient;
     private final TripFeignClient tripFeignClient;
+    private final AccountFeignClient accountFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
@@ -73,6 +77,9 @@ public class UserService {
 
     public List<Scooter> getScootersReportByTravels(int year, int countTrips) {
         return scooterFeignClient.getScootersByTravels(year, countTrips);
+    }
+    public List<UserScooterUsageResponseDTO> getScooterUserUsage(int monthStart, int monthEnd, AccountType userType){
+        return accountFeignClient.getScooterUserUsage(monthStart,monthEnd,userType);
     }
 
 }

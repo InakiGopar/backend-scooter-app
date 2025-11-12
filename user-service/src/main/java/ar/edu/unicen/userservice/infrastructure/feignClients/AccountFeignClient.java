@@ -1,12 +1,21 @@
 package ar.edu.unicen.userservice.infrastructure.feignClients;
 
+import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
+import ar.edu.unicen.userservice.domain.model.account.AccountType;
+import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
+@Component
 @FeignClient(name="account-service", url="http://localhost:8084/account")
 public interface AccountFeignClient {
     @PatchMapping("/toggleState/{userId}")
     void toggleAccountState(@PathVariable Long userId);
+
+    @GetMapping("/scooter-user-usage")
+    List<UserScooterUsageResponseDTO>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType);
+
 }

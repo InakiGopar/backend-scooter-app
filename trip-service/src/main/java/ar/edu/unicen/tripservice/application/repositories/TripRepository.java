@@ -2,6 +2,7 @@ package ar.edu.unicen.tripservice.application.repositories;
 
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -37,4 +38,22 @@ public interface TripRepository extends MongoRepository<Trip, String> {
             "{ $project: { _id: 0, scooterId: '$_id.scooterId', year: '$_id.year', totalTrips: 1 } }"
     })
     List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);
+
+    @Aggregation(pipeline = {
+            // 1️⃣ Agrega campos derivados: año y mes desde el Instant
+            "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
+
+            // 2️⃣ Filtra los viajes entre los meses dados (mismo año)
+            "{ $match: { month: { $gte: ?0, $lte: ?1 } } }",
+
+            // 3️⃣ Agrupa por usuario y calcula totales
+            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
+
+            // 4️⃣ Ordena por cantidad de viajes
+            "{ $sort: { totalTrips: -1 } }",
+
+            // 5️⃣ Devuelve el resultado formateado
+            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1 } }"
+    })
+    List<TripScooterUserUsageDTO> getScooterUserUsage(int startMonth, int endMonth);
 }

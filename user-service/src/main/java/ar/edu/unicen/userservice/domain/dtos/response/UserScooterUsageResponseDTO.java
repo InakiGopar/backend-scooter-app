@@ -1,8 +1,12 @@
 package ar.edu.unicen.userservice.domain.dtos.response;
 
+import ar.edu.unicen.userservice.domain.model.account.AccountType;
+
 public record UserScooterUsageResponseDTO(
-        String name,
-        String lastName,
-        int totalUsages
+        Long userId,
+        int countScooterUsage,
+        int monthStart,
+        int monthEnd,
+        AccountType userType
 ) {
 }

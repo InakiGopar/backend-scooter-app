@@ -177,6 +177,9 @@ public class TripService {
         return new InvoiceReportResponseDTO( startDate, endDate, totalInvoice, trips.size() );
     }
 
+    public List<TripScooterUserUsageDTO> getScooterUserUsage(int monthStart, int monthEnd){
+        return tripRepository.getScooterUserUsage(monthStart,monthEnd);
+    }
 
 
 }

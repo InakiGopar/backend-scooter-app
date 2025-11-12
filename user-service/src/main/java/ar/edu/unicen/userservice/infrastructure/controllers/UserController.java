@@ -4,6 +4,7 @@ import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
+import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import lombok.RequiredArgsConstructor;
@@ -59,5 +60,10 @@ public class UserController {
 
         return ResponseEntity.ok(  userService.getTotalInvoiceReport(year, startMonth, endMonth) );
     }
+    @GetMapping("/scooter-user-usage")
+    public ResponseEntity<List<UserScooterUsageResponseDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
+        return ResponseEntity.ok(userService.getScooterUserUsage(monthStart,monthEnd,userType));
+    }
+
 
 }
