@@ -79,5 +79,4 @@ public class TripController {
 
         return ResponseEntity.ok(tripService.getUserUsagePeriod(userId, startInstant, endInstant, accountId));
     }
-
 }
