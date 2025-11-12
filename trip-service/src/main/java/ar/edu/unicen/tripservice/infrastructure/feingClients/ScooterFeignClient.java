@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@Component
+
 @FeignClient(name = "scooter-service", url = "http://localhost:8081/scooter")
 public interface ScooterFeignClient {
 

@@ -8,15 +8,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@Component
 @FeignClient(name="trip-service",url="http://localhost:8085/api/trip")
 public interface TripFeignClient {
 
     //Report A
     @GetMapping("/by-kilometers")
-    List<Trip> findAllByKilometers(@RequestParam(required = false) Boolean withPause);
+    List<Trip> findAllByKilometers(@RequestParam(value = "withPause", required = false) Boolean withPause);
 
     //Report C
     @GetMapping("/scooter-by-trips")
-    List<Trip> findAllByTravels(@RequestParam int year, @RequestParam int countTrips);
+    List<Trip> findAllByTravels(@RequestParam("year") int year, @RequestParam("countTrips") int countTrips);
 }

@@ -11,7 +11,7 @@ public record ScooterTripKMReportDTO(
     public static ScooterTripKMReportDTO toDTO(Scooter scooter, Trip trip){
         return new ScooterTripKMReportDTO(
                 scooter.getScooterId(),
-                scooter.getKilometers(),
+                trip.getKilometers(),
                 trip.getPause()
         );
     }

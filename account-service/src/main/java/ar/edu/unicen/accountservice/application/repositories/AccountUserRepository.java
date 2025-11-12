@@ -13,5 +13,5 @@ import java.util.Optional;
 public interface AccountUserRepository extends JpaRepository<AccountUser, AccountUserID> {
 
     @Query ("SELECT au FROM AccountUser au WHERE au.id.accountId = :accountID")
-    public List<AccountUser> findByIdAccountId(Long id);
+     List<AccountUser> findByIdAccountId(Long accountID);
 }

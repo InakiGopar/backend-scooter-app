@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Component
 @FeignClient(name="account-service", url="http://localhost:8084/account")
 public interface AccountFeignClient {
     @PatchMapping("/toggleState/{userId}")

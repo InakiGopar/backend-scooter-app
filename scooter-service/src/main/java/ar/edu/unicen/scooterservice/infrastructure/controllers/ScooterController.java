@@ -49,7 +49,7 @@ public class ScooterController {
     }
 
     //Report A
-    @GetMapping("by-kilometers")
+    @GetMapping("/by-kilometers")
     public ResponseEntity<List<ScooterTripKMReportDTO>> getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause) {
         return ResponseEntity.ok(scooterService.getScootersReportByKilometers(withPause));
     }

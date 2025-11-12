@@ -1,5 +1,16 @@
 server:
-port: 8083
+  port: 8083
 spring:
   application:
     name: account-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/accountdb?createDatabaseIfNotExist=true
+    username: root
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update   # crea/actualiza las tablas automáticamente
+    show-sql: true       #  muestra las queries en consola
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect

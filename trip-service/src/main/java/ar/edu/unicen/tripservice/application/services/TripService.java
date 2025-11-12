@@ -19,12 +19,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.List;
 
 @Service
@@ -111,7 +107,7 @@ public class TripService {
         return TripResponseDTO.toDTO(trip);
     }
 
-    public TripResponseDTO startPauseTrip(String tripId, TripRequestDTO request){
+    public TripResponseDTO startPauseTrip(String tripId){
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
 
@@ -120,17 +116,21 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is already paused.");
         }
 
-        trip.setStartPause(request.startPause());
+        trip.setStartPause(Instant.now());
         tripRepository.save(trip);
 
         return TripResponseDTO.toDTO(trip);
     }
 
-    public TripResponseDTO endPauseTrip(String tripId, TripRequestDTO request){
+    public TripResponseDTO endPauseTrip(String tripId){
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
 
-        trip.setEndPause(request.endPause());
+        Instant startPause = trip.getStartPause();
+        Instant endPause = Instant.now();
+        int duration = Duration.between(startPause, endPause).toMinutesPart();
+        trip.setEndPause(endPause);
+        trip.setPauseCount(duration +  trip.getPauseCount());
 
         tripRepository.save(trip);
 

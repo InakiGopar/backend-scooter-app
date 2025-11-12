@@ -5,4 +5,4 @@ spring:
     name: trip-service
     data:
       mongodb:
-        uri: mongodb://localhost:27017/tripdb
+        url: mongodb://localhost:27017/tripdb

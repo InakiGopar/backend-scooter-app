@@ -25,6 +25,16 @@ public class TripController {
         return ResponseEntity.ok(tripService.endTrip(tripId, dto));
     }
 
+    @PatchMapping("/startPauseTrip/{tripId}")
+    public ResponseEntity<TripResponseDTO> startPauseTrip(@PathVariable String tripId) {
+        return ResponseEntity.ok(tripService.startPauseTrip(tripId));
+    }
+
+    @PatchMapping("/endPauseTrip/{tripId}")
+    public ResponseEntity<TripResponseDTO> endPauseTrip(@PathVariable String tripId) {
+        return ResponseEntity.ok(tripService.endPauseTrip(tripId));
+    }
+
     @GetMapping("/{tripId}")
     public ResponseEntity<TripResponseDTO> findTripById(@PathVariable String tripId) {
         return ResponseEntity.ok(tripService.findTripById(tripId));

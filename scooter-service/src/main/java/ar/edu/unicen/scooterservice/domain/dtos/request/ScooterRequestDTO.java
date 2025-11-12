@@ -8,11 +8,11 @@ public record ScooterRequestDTO(
          float latitude,
          float longitude,
          ScooterState state,
-         Stop currentStop
+         Long currentStopId
 ) {
-    public Scooter toEntity() {
+    public Scooter toEntity(Stop stop) {
         return new Scooter(
-                latitude, longitude, state
+                latitude, longitude, state, stop
         );
     }
 }

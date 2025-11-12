@@ -1,30 +1,38 @@
 package ar.edu.unicen.scooterservice.application.services;
 
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
+import ar.edu.unicen.scooterservice.application.repositories.StopRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
+import ar.edu.unicen.scooterservice.domain.entities.Stop;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import ar.edu.unicen.scooterservice.infrastructure.feingClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ScooterService {
     private final ScooterRepository scooterRepository;
+    private final StopRepository stopRepository;
     private final TripFeignClient tripFeignClient;
 
     @Transactional
     public ScooterResponseDTO createScooter(ScooterRequestDTO request){
-        Scooter scooter = request.toEntity();
+        Stop currentStop = stopRepository.findById(request.currentStopId())
+                .orElseThrow(() -> new EntityNotFoundException("Stop not found with id " + request.currentStopId()));
+
+        Scooter scooter = request.toEntity(currentStop);
 
         scooterRepository.save(scooter);
 
@@ -43,10 +51,13 @@ public class ScooterService {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
+        Stop currentStop = stopRepository.findById(request.currentStopId())
+                .orElseThrow(() -> new EntityNotFoundException("Stop not found with id " + request.currentStopId()));
+
         scooter.setLatitude(request.latitude());
         scooter.setLongitude(request.longitude());
         scooter.setState(request.state());
-        scooter.setCurrentStop(request.currentStop());
+        scooter.setCurrentStop(currentStop);
 
         scooterRepository.save(scooter);
 
@@ -59,8 +70,11 @@ public class ScooterService {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
+        Stop currentStop = stopRepository.findById(request.currentStopId())
+                .orElseThrow(() -> new EntityNotFoundException("Stop not found with id " + request.currentStopId()));
+
         scooter.setState(request.state());
-        scooter.setCurrentStop(request.currentStop());
+        scooter.setCurrentStop(currentStop);
 
         scooterRepository.save(scooter);
 
