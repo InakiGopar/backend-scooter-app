@@ -1,5 +1,6 @@
 package ar.edu.unicen.tripservice.application.repositories;
 
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
@@ -26,8 +27,13 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     })
     List<ScooterUsageResponseDTO> findAllByKilometers();
 
-    @Query("{ 'date': { $gte: ?0, $lte: ?1 } }")
-    List<Trip> findByDateBetween(Date startDate, Date endDate);
+    @Aggregation(pipeline = {
+            "{ $addFields: { year: { $year: '$date' }, month: { $month: '$date' } } }",
+            "{ $match: { $and: [ { year: ?0 }, { month: { $gte: ?1, $lte: ?2 } } ] } }",
+            "{ $group: { _id: null, totalInvoiced: { $sum: '$totalPrice' }, totalTrips: { $sum: 1 } } }",
+            "{ $project: { _id: 0, totalInvoiced: 1, totalTrips: 1 } }"
+    })
+    InvoiceReportResponseDTO getInvoiceSummaryByYearAndMonthRange(int year, int startMonth, int endMonth);
 
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' } } }",
