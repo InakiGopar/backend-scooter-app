@@ -7,7 +7,6 @@ import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDT
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
@@ -17,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service

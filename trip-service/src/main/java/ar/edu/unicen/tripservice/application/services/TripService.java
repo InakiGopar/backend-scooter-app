@@ -157,21 +157,11 @@ public class TripService {
     }
 
     public InvoiceReportResponseDTO getTotalInvoice(int year, int startMonth, int endMonth) {
-
-        Calendar cal = Calendar.getInstance();
-
-        cal.set(year, startMonth - 1, 1, 0, 0, 0);
-        Date startDate = cal.getTime();
-
-        cal.set(year, endMonth, 1, 0, 0, 0);
-        cal.add(Calendar.DAY_OF_MONTH, -1);
-        Date endDate = cal.getTime();
-
-        List<Trip> trips = tripRepository.findByDateBetween(startDate, endDate);
-        float totalInvoice = (float) trips.stream()
-                .mapToDouble(Trip::getTotalPrice)
-                .sum();
-        return new InvoiceReportResponseDTO( startDate, endDate, totalInvoice, trips.size() );
+        InvoiceReportResponseDTO report = tripRepository.getInvoiceSummaryByYearAndMonthRange(year, startMonth, endMonth);
+        if (report == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Invoice not found");
+        }
+        return report;
     }
 
     public List<TripScooterUserUsageDTO> getScooterUserUsage(int monthStart, int monthEnd){
