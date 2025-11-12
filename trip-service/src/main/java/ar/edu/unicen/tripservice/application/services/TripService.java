@@ -13,6 +13,7 @@ import ar.edu.unicen.tripservice.domain.model.user.User;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.ScooterFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.StopFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.UserFeignClient;
+import ar.edu.unicen.tripservice.infrastructure.feingClients.AccountFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +37,7 @@ public class TripService {
     private final UserFeignClient userFeignClient;
     private final ScooterFeignClient scooterFeignClient;
     private final StopFeignClient stopFeignClient;
+    private final AccountFeignClient accountFeignClient;
 
     public List<ScooterUsageResponseDTO> findAllByKilometers(boolean withPause) {
         if(!withPause) {
@@ -166,6 +169,30 @@ public class TripService {
 
     public List<TripScooterUserUsageDTO> getScooterUserUsage(int monthStart, int monthEnd){
         return tripRepository.getScooterUserUsage(monthStart,monthEnd);
+    }
+
+    /**
+     * Obtiene el uso de monopatines para un usuario en un período; si accountId != null
+     * agrega también los usuarios relacionados a esa cuenta.
+     * @param userId usuario principal
+     * @param start inicio como Instant
+     * @param end fin como Instant
+     * @param accountId opcional: si se proporciona, incluye usuarios de esa cuenta
+     */
+    public List<UserPeriodUsageResponseDTO> getUserUsagePeriod(Long userId, Instant start, Instant end, Long accountId){
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(userId);
+
+        if(accountId != null){
+            List<AccountFeignClient.AccountUserResponseDTO> accountUsers = accountFeignClient.getAccountUsers(accountId);
+            if(accountUsers != null){
+                for(AccountFeignClient.AccountUserResponseDTO au : accountUsers){
+                    if(!userIds.contains(au.userId())) userIds.add(au.userId());
+                }
+            }
+        }
+
+        return tripRepository.getUsageByUsersAndPeriod(userIds, start, end);
     }
 
 

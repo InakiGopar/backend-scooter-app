@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.time.Instant;
 
 @RestController
 @RequestMapping("api/trip")
@@ -66,5 +67,17 @@ public class TripController {
         return ResponseEntity.ok(tripService.getScooterUserUsage(monthStart,monthEnd));
     }
 
-}
+    @GetMapping("/user-usage-period")
+    public ResponseEntity<List<UserPeriodUsageResponseDTO>> getUserUsagePeriod(
+            @RequestParam Long userId,
+            @RequestParam String start,
+            @RequestParam String end,
+            @RequestParam(required = false) Long accountId
+    ){
+        Instant startInstant = Instant.parse(start);
+        Instant endInstant = Instant.parse(end);
 
+        return ResponseEntity.ok(tripService.getUserUsagePeriod(userId, startInstant, endInstant, accountId));
+    }
+
+}

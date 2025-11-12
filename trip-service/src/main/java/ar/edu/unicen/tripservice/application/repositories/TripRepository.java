@@ -4,12 +4,14 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponse
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserPeriodUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -62,4 +64,11 @@ public interface TripRepository extends MongoRepository<Trip, String> {
             "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1 } }"
     })
     List<TripScooterUserUsageDTO> getScooterUserUsage(int startMonth, int endMonth);
+
+    @Aggregation(pipeline = {
+            "{ $match: { userId: { $in: ?0 }, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
+            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' }, totalDurationMinutes: { $sum: { $divide: [ { $subtract: ['$endTime', '$startTime'] }, 60000 ] } } } }",
+            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1, totalDurationMinutes: 1 } }"
+    })
+    List<UserPeriodUsageResponseDTO> getUsageByUsersAndPeriod(List<Long> userIds, Instant start, Instant end);
 }
