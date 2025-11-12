@@ -5,7 +5,6 @@ import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
@@ -14,7 +13,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -22,6 +20,7 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final ScooterFeignClient scooterFeignClient;
+    private final TripFeignClient tripFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
