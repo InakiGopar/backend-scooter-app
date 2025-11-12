@@ -1,13 +1,15 @@
 package ar.edu.unicen.userservice.application.services;
 
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
+import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
+import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
+import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
@@ -51,9 +53,6 @@ public class UserService {
         return UserResponseDTO.toDTO(user);
     }
 
-    public List<Scooter> getScootersReportByKilometers(boolean withPause){
-        return scooterFeignClient.findAllByKilometers(withPause);
-    }
 
     public UserResponseDTO getUserById(Long userId){
         User user = userRepository.findById(userId).orElseThrow(
@@ -68,16 +67,33 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    //Reporte D
-    public InvoiceReport getTotalInvoiceReport(int year, int startMonth, int endMonth) {
-        return tripFeignClient.getTotalInvoice(year, startMonth, endMonth);
+    //Report A
+    public List<Scooter> getScootersReportByKilometers(boolean withPause){
+        return scooterFeignClient.getScootersByKilometers(withPause);
+    }
+    //Report B
+    public CancelAccountDTO toggleAccountState(Long accountId) {
+        return accountFeignClient.toggleAccountState(accountId);
     }
 
+    //Report C
     public List<Scooter> getScootersReportByTravels(int year, int countTrips) {
         return scooterFeignClient.getScootersByTravels(year, countTrips);
     }
+
+    //Report D
+    public InvoiceReportDTO getTotalInvoiceReport(int year, int startMonth, int endMonth) {
+        return tripFeignClient.getTotalInvoice(year, startMonth, endMonth);
+    }
+
+    //Report E
     public List<UserScooterUsageResponseDTO> getScooterUserUsage(int monthStart, int monthEnd, AccountType userType){
         return accountFeignClient.getScooterUserUsage(monthStart,monthEnd,userType);
+    }
+
+    //Report G
+    public List<NearScooterReportDTO> getNearScooters(float latitude, float longitude) {
+        return scooterFeignClient.getNearScooters(latitude, longitude);
     }
 
 }

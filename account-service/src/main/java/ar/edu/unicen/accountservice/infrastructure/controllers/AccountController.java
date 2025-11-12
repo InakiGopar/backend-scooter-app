@@ -3,6 +3,7 @@ package ar.edu.unicen.accountservice.infrastructure.controllers;
 import ar.edu.unicen.accountservice.application.services.AccountService;
 import ar.edu.unicen.accountservice.domain.dtos.request.account.AccountRequestDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountResponseDTO;
+import ar.edu.unicen.accountservice.domain.dtos.response.account.CancelAccountDTO;
 import ar.edu.unicen.accountservice.domain.entities.Account;
 import ar.edu.unicen.accountservice.domain.entities.AccountType;
 import ar.edu.unicen.accountservice.domain.model.trip.Trip;
@@ -31,12 +32,6 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/toggleState/{accountId}")
-    public ResponseEntity<AccountResponseDTO> toggleAccountState(@PathVariable Long accountId){
-        AccountResponseDTO response = accountService.toggleAccountState(accountId);
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("/{accountId}")
     public ResponseEntity<AccountResponseDTO>findAccountById(@PathVariable Long accountId){
         AccountResponseDTO response = accountService.findAccountById(accountId);
@@ -48,6 +43,15 @@ public class AccountController {
         accountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
     }
+
+    //Report B
+    @PatchMapping("/toggleState/{accountId}")
+    public ResponseEntity<CancelAccountDTO> toggleAccountState(@PathVariable Long accountId){
+        CancelAccountDTO response = accountService.toggleAccountState(accountId);
+        return ResponseEntity.ok(response);
+    }
+
+    //Report E
     @GetMapping("/scooter-user-usage")
     public ResponseEntity<List<Trip>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
         return ResponseEntity.ok(accountService.getScooterUserUsage(monthStart,monthEnd,userType));

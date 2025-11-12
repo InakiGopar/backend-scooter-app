@@ -1,9 +1,10 @@
 package ar.edu.unicen.scooterservice.application.services;
 
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
+import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import ar.edu.unicen.scooterservice.infrastructure.feingClients.TripFeignClient;
@@ -72,27 +73,35 @@ public class ScooterService {
         scooterRepository.delete(scooter);
     }
 
-    public List<ScooterTripKMResponseDTO> getScootersReportByKilometers(Boolean withPause){
+    //Report A
+    public List<ScooterTripKMReportDTO> getScootersReportByKilometers(Boolean withPause){
         List<Trip> trips = tripFeignClient.findAllByKilometers(withPause);
 
         return trips.stream()
                 .map(trip -> {
                     Scooter scooter = scooterRepository.findById(trip.getScooterId())
                             .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
-                    return ScooterTripKMResponseDTO.toDTO(scooter, trip);
+                    return ScooterTripKMReportDTO.toDTO(scooter, trip);
                 })
                 .toList();
     }
 
-    public List<ScooterTripKMResponseDTO> getScootersReportByTravels(int year, int countTrips){
+    //Report C
+    public List<ScooterTripKMReportDTO> getScootersReportByTravels(int year, int countTrips){
         List<Trip> trips = tripFeignClient.findAllByTravels(year, countTrips);
 
         return trips.stream()
                 .map(trip -> {
                     Scooter scooter = scooterRepository.findById(trip.getScooterId())
                             .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
-                    return ScooterTripKMResponseDTO.toDTO(scooter, trip);
+                    return ScooterTripKMReportDTO.toDTO(scooter, trip);
                 })
                 .toList();
+    }
+
+
+    //Report G
+    public List<NearScooterReportDTO> getNearScooters(float latitude, float longitude) {
+        return scooterRepository.getByLatitudeAndLongitude(latitude, longitude);
     }
 }

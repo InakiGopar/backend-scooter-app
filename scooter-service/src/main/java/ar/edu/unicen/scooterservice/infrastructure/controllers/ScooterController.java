@@ -1,9 +1,10 @@
 package ar.edu.unicen.scooterservice.infrastructure.controllers;
 
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
+import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterTripKMResponseDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,13 +48,23 @@ public class ScooterController {
         return ResponseEntity.noContent().build();
     }
 
+    //Report A
     @GetMapping("by-kilometers")
-    public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause) {
+    public ResponseEntity<List<ScooterTripKMReportDTO>> getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause) {
         return ResponseEntity.ok(scooterService.getScootersReportByKilometers(withPause));
     }
 
+    //Report C
     @GetMapping("/by-travels")
-    public ResponseEntity<List<ScooterTripKMResponseDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
+    public ResponseEntity<List<ScooterTripKMReportDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
         return ResponseEntity.ok(scooterService.getScootersReportByTravels(year, countTrips));
+    }
+
+    // Report G
+    @GetMapping("/near-scooters")
+    public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
+            @RequestParam float latitude,
+            @RequestParam float longitude) {
+        return ResponseEntity.ok(scooterService.getNearScooters(latitude, longitude));
     }
 }

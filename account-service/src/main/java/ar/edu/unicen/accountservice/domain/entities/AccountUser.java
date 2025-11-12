@@ -12,12 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountUser {
-    /*
-        TO-DO:
-    * hay que hacer la clave primaria compuesta
-    * */
-    //@Id
-    //@GeneratedValue(strategy = GenerationType.IDENTITY)
+
     @EmbeddedId
     private AccountUserID id;
 
