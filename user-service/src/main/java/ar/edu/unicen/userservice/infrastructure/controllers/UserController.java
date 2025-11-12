@@ -3,15 +3,15 @@ package ar.edu.unicen.userservice.infrastructure.controllers;
 import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
+import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.model.trip.Trip;
 import ar.edu.unicen.userservice.domain.model.trip.report.InvoiceReport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -45,7 +45,7 @@ public class UserController {
         return ResponseEntity.ok(userService.getScootersReportByKilometers(withPause));
     }
 
-    @GetMapping("scooters/usage")
+    @GetMapping("/scooters/usage")
     public ResponseEntity<List<Scooter>> getScootersReportByTravels(
             @RequestParam int year,
             @RequestParam int countTrips) {
@@ -60,5 +60,10 @@ public class UserController {
 
         return ResponseEntity.ok(  userService.getTotalInvoiceReport(year, startMonth, endMonth) );
     }
+    @GetMapping("/scooter-user-usage")
+    public ResponseEntity<List<UserScooterUsageResponseDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
+        return ResponseEntity.ok(userService.getScooterUserUsage(monthStart,monthEnd,userType));
+    }
+
 
 }

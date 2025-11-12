@@ -4,10 +4,7 @@ import ar.edu.unicen.tripservice.application.helper.TripCostCalculator;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
@@ -167,6 +164,9 @@ public class TripService {
         return report;
     }
 
+    public List<TripScooterUserUsageDTO> getScooterUserUsage(int monthStart, int monthEnd){
+        return tripRepository.getScooterUserUsage(monthStart,monthEnd);
+    }
 
 
 }

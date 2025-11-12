@@ -4,10 +4,14 @@ import ar.edu.unicen.accountservice.application.services.AccountService;
 import ar.edu.unicen.accountservice.domain.dtos.request.account.AccountRequestDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountResponseDTO;
 import ar.edu.unicen.accountservice.domain.entities.Account;
+import ar.edu.unicen.accountservice.domain.entities.AccountType;
+import ar.edu.unicen.accountservice.domain.model.trip.Trip;
 import feign.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/account")
@@ -43,5 +47,9 @@ public class AccountController {
     public ResponseEntity<Void> deleteAccount(@PathVariable Long accountId){
         accountService.deleteAccount(accountId);
         return ResponseEntity.noContent().build();
+    }
+    @GetMapping("/scooter-user-usage")
+    public ResponseEntity<List<Trip>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
+        return ResponseEntity.ok(accountService.getScooterUserUsage(monthStart,monthEnd,userType));
     }
 }
