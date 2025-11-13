@@ -3,7 +3,6 @@ package ar.edu.unicen.tripservice.domain.dtos.response.trip;
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.UUID;
 
 public record TripResponseDTO(
@@ -12,7 +11,6 @@ public record TripResponseDTO(
         Long scooterId,
         Long stopSartId,
         Long stopEndId,
-        Date date,
         Instant startTime,
         Instant endTime,
         Long kmTraveled,
@@ -29,7 +27,6 @@ public record TripResponseDTO(
                 trip.getScooterId(),
                 trip.getStopStartId(),
                 trip.getStopEndId(),
-                trip.getDate(),
                 trip.getStartTime(),
                 trip.getEndTime(),
                 trip.getKmTraveled(),

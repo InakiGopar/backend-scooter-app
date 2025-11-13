@@ -8,11 +8,9 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserPeriodUsageRespon
 import ar.edu.unicen.tripservice.domain.entities.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -31,7 +29,7 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     List<ScooterUsageResponseDTO> findAllByKilometers();
 
     @Aggregation(pipeline = {
-            "{ $addFields: { year: { $year: '$date' }, month: { $month: '$date' } } }",
+            "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
             "{ $match: { $and: [ { year: ?0 }, { month: { $gte: ?1, $lte: ?2 } } ] } }",
             "{ $group: { _id: null, totalInvoiced: { $sum: '$totalPrice' }, totalTrips: { $sum: 1 } } }",
             "{ $project: { _id: 0, totalInvoiced: 1, totalTrips: 1 } }"

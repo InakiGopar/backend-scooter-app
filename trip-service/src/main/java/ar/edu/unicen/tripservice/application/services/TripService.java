@@ -69,6 +69,7 @@ public class TripService {
                 new Scooter(scooter.getScooterId(), ScooterState.ACTIVE, null));
 
         Trip trip = request.toEntity();
+        trip.setStartTime(Instant.now());
         tripRepository.save(trip);
         return TripResponseDTO.toDTO(trip);
     }
@@ -83,12 +84,15 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stop with id " + request.stopEndId() + " not found");
         }
 
+        if(trip.getStartTime() == null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip has not been started.");
+        }
         scooterFeignClient.updateScooter(request.scooterId(),
                 new Scooter(request.scooterId(),endStop.getLatitude(),
                         endStop.getLongitude(),ScooterState.INACTIVE, endStop, request.kmTraveled()));
 
         trip.setStopEndId(endStop.getStopId());
-        trip.setEndTime(request.endTime());
+        trip.setEndTime(Instant.now());
         trip.setKmTraveled(request.kmTraveled());
 
         FeeResponseDTO fee = feeService.getFeeById(request.feeId());
@@ -96,12 +100,12 @@ public class TripService {
         if (fee == null) {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
-        int pauseDuration = Duration.between(request.startPause(), request.endPause()).toMinutesPart();
+        int pauseDuration = Duration.between(trip.getStartPause(), trip.getEndPause()).toMinutesPart();
         int totalPause = trip.getPauseCount() + pauseDuration;
         trip.setPauseCount(totalPause);
 
-        float totalPrice = TripCostCalculator.calculateTotalPrice(request.startTime(), request.endTime(),
-                pauseDuration, request.endPause(),fee.pricePerHour(), fee.extraHourFee());
+        float totalPrice = TripCostCalculator.calculateTotalPrice(trip.getStartTime(), trip.getEndTime(),
+                pauseDuration, trip.getEndPause() ,fee.pricePerHour(), fee.extraHourFee());
 
         trip.setTotalPrice(totalPrice);
 
@@ -128,6 +132,10 @@ public class TripService {
     public TripResponseDTO endPauseTrip(String tripId){
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
+
+        if(trip.getStartPause() == null){
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is not paused.");
+        }
 
         Instant startPause = trip.getStartPause();
         Instant endPause = Instant.now();
