@@ -9,6 +9,7 @@ import ar.edu.unicen.accountservice.domain.entities.AccountType;
 import ar.edu.unicen.accountservice.domain.model.trip.Trip;
 import feign.Response;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class AccountController {
     @PostMapping
     public ResponseEntity<AccountResponseDTO> saveAccount(@RequestBody AccountRequestDTO account){
         AccountResponseDTO response = accountService.saveAccount(account);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{accountId}]")

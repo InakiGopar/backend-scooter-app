@@ -24,12 +24,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO request){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.createUser(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(request));
     }
 
     @PutMapping("/{userId}")
     public ResponseEntity<UserResponseDTO> update(@PathVariable Long userId, @RequestBody UserRequestDTO request){
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.updateUser(userId, request));
+        return ResponseEntity.ok(userService.updateUser(userId, request));
     }
 
     @GetMapping("/{userId}")
