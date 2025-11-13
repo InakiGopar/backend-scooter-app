@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name="scooter-service", url="http://localhost:8081/scooter")
+@FeignClient(name="scooter-service", url="http://localhost:8081/api/scooter")
 public interface ScooterFeignClient {
 
     //Report A

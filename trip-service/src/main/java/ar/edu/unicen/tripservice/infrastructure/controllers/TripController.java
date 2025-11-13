@@ -4,6 +4,7 @@ import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +19,7 @@ public class TripController {
 
     @PostMapping
     public ResponseEntity<TripResponseDTO> startTrip(@RequestBody TripRequestDTO dto) {
-        return ResponseEntity.status(201).body(tripService.startTrip(dto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(tripService.startTrip(dto));
     }
 
     @PutMapping("/{tripId}")
@@ -68,8 +69,6 @@ public class TripController {
             @RequestParam int year,
             @RequestParam int startMonth,
             @RequestParam int endMonth) {
-
-
         return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
     @GetMapping("/scooter-user-usage")

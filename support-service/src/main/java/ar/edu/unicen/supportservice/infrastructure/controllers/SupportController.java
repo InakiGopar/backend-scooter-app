@@ -4,6 +4,7 @@ import ar.edu.unicen.supportservice.application.services.SupportService;
 import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestDTO;
 import ar.edu.unicen.supportservice.domain.dtos.response.SupportResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,14 +16,12 @@ public class SupportController {
 
     @PostMapping
     public ResponseEntity<SupportResponseDTO> createSupport (@RequestBody SupportRequestDTO request) {
-        SupportResponseDTO response = supportService.createSupport(request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(supportService.createSupport(request));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SupportResponseDTO> updateSupport (@PathVariable Long id, @RequestBody SupportRequestDTO request) {
-        SupportResponseDTO response = supportService.updateSupport(id, request);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(supportService.updateSupport(id, request));
     }
 
     @DeleteMapping("/{id}")
@@ -33,8 +32,7 @@ public class SupportController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SupportResponseDTO> findSupportById(@PathVariable Long id) {
-        SupportResponseDTO response = supportService.findSupportById(id);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(supportService.findSupportById(id));
     }
 
 }
