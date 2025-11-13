@@ -3,11 +3,13 @@ package ar.edu.unicen.scooterservice.application.services;
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.application.repositories.StopRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
+import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 import ar.edu.unicen.scooterservice.domain.entities.Stop;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import ar.edu.unicen.scooterservice.infrastructure.feingClients.TripFeignClient;
@@ -73,6 +75,26 @@ public class ScooterService {
 
 
         scooter.setState(request.state());
+
+        scooterRepository.save(scooter);
+
+        return ScooterResponseDTO.toDTO(scooter);
+    }
+
+    @Transactional
+    public ScooterResponseDTO updateScooterWhenTripEnd(Long scooterId, ScooterFinishedTripRequestDTO request) {
+        Scooter scooter = scooterRepository.findById(scooterId)
+                .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
+
+        scooter.setLatitude(request.latitude());
+        scooter.setLongitude(request.longitude());
+        // this would be improved
+        scooter.setState(ScooterState.INACTIVE);
+
+        Stop currentStop = stopRepository.findById(request.endStopId())
+                .orElseThrow(() -> new EntityNotFoundException("Stop not found with id " + request.endStopId()));
+
+        scooter.setCurrentStop(currentStop);
 
         scooterRepository.save(scooter);
 

@@ -2,7 +2,8 @@ package ar.edu.unicen.tripservice.application.services;
 
 import ar.edu.unicen.tripservice.application.helper.TripCostCalculator;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
-import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterRequest;
+import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterEndTripRequest;
+import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchRequest;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
@@ -66,7 +67,7 @@ public class TripService {
 
         scooterFeignClient.updateScooterStatus(
                 scooter.getScooterId(),
-                new FeignScooterRequest(scooter.getScooterId(), ScooterState.ACTIVE)
+                new FeignScooterPatchRequest(scooter.getScooterId(), ScooterState.ACTIVE)
         );
 
         Trip trip = request.toEntity();
@@ -85,12 +86,14 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stop with id " + request.stopEndId() + " not found");
         }
 
-        if(trip.getStartTime() == null){
+        if (trip.getStartTime() == null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip has not been started.");
         }
-        scooterFeignClient.updateScooter(request.scooterId(),
-                new Scooter(request.scooterId(),endStop.getLatitude(),
-                        endStop.getLongitude(),ScooterState.INACTIVE, endStop, request.kmTraveled()));
+        scooterFeignClient.updateScooterWhenTripEnd(
+                request.scooterId(),
+                new FeignScooterEndTripRequest(request.scooterId(),endStop.getLatitude(),
+                        endStop.getLongitude(),ScooterState.INACTIVE, endStop.getStopId(), request.kmTraveled())
+        );
 
         trip.setStopEndId(endStop.getStopId());
         trip.setEndTime(Instant.now());
@@ -101,6 +104,8 @@ public class TripService {
         if (fee == null) {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
+
+        //CHECK THIS, throws NullPointerException
         int pauseDuration = Duration.between(trip.getStartPause(), trip.getEndPause()).toMinutesPart();
         int totalPause = trip.getPauseCount() + pauseDuration;
         trip.setPauseCount(totalPause);

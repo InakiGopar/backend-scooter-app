@@ -2,6 +2,7 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
@@ -41,6 +42,14 @@ public class ScooterController {
             @PathVariable Long scooterId,
             @RequestBody ScooterRequestPatchDTO request) {
         return ResponseEntity.ok(scooterService.updateScooterStatus(scooterId, request));
+    }
+
+    @PatchMapping("/{scooterId}/finishedTrip")
+    public ResponseEntity<ScooterResponseDTO> updateScooterWhenTripEnd(
+            @PathVariable Long scooterId,
+            @RequestBody ScooterFinishedTripRequestDTO request
+    ) {
+        return ResponseEntity.ok(scooterService.updateScooterWhenTripEnd(scooterId, request));
     }
 
     @DeleteMapping("/{scooterId}")
