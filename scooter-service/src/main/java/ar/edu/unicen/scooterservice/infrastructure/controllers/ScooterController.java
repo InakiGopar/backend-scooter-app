@@ -3,6 +3,7 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,10 @@ public class ScooterController {
     }
 
     @PatchMapping("/{scooterId}/status")
-    public ResponseEntity<ScooterResponseDTO> updateScooterStatusAndStop(
+    public ResponseEntity<ScooterResponseDTO> updateScooterStatus(
             @PathVariable Long scooterId,
-            @RequestBody ScooterRequestDTO request) {
-        return ResponseEntity.ok(scooterService.updateScooterStatusAndStop(scooterId, request));
+            @RequestBody ScooterRequestPatchDTO request) {
+        return ResponseEntity.ok(scooterService.updateScooterStatus(scooterId, request));
     }
 
     @DeleteMapping("/{scooterId}")

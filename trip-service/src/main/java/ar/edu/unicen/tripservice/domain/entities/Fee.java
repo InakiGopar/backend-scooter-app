@@ -5,8 +5,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 @Document(collection = "fees")
 @Getter
@@ -27,12 +28,13 @@ public class Fee {
         this.startDate = startDate;
         this.endDate = endDate;
         this.pricePerHour = pricePerHour;
-        this.feeId = generateFeeId(startDate);
+        this.feeId = generateFeeCode(startDate);
         this.extraHourFee = extraHourFee;
     }
 
-    private String generateFeeId(Instant startDate) {
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMM");
-        return "fee_" + formatter.format(startDate);
+    private String generateFeeCode(Instant startDate) {
+        return "fee_" + startDate
+                .atZone(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyMM"));
     }
 }

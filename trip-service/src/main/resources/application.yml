@@ -1,8 +1,16 @@
 server:
   port: 8085
+
 spring:
   application:
     name: trip-service
-    data:
-      mongodb:
-        url: mongodb://localhost:27017/tripdb
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/tripdb
+
+feign:
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true

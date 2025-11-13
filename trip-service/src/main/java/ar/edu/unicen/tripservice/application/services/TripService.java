@@ -2,6 +2,7 @@ package ar.edu.unicen.tripservice.application.services;
 
 import ar.edu.unicen.tripservice.application.helper.TripCostCalculator;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
+import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterRequest;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
@@ -11,7 +12,6 @@ import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
 import ar.edu.unicen.tripservice.domain.model.scooter.Stop;
 import ar.edu.unicen.tripservice.domain.model.user.User;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.ScooterFeignClient;
-import ar.edu.unicen.tripservice.infrastructure.feingClients.StopFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.UserFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.AccountFeignClient;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,7 +32,6 @@ public class TripService {
     private final FeeService feeService;
     private final UserFeignClient userFeignClient;
     private final ScooterFeignClient scooterFeignClient;
-    private final StopFeignClient stopFeignClient;
     private final AccountFeignClient accountFeignClient;
 
     public List<ScooterUsageResponseDTO> findAllByKilometers(boolean withPause) {
@@ -65,8 +64,10 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot start trip. Scooter is not available.");
         }
 
-        scooterFeignClient.updateScooterStatusAndStop(scooter.getScooterId(),
-                new Scooter(scooter.getScooterId(), ScooterState.ACTIVE, null));
+        scooterFeignClient.updateScooterStatus(
+                scooter.getScooterId(),
+                new FeignScooterRequest(scooter.getScooterId(), ScooterState.ACTIVE)
+        );
 
         Trip trip = request.toEntity();
         trip.setStartTime(Instant.now());
@@ -78,7 +79,7 @@ public class TripService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
 
-        Stop endStop = stopFeignClient.getStopById(request.stopEndId());
+        Stop endStop = scooterFeignClient.getStopById(request.stopEndId());
 
         if (endStop == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Stop with id " + request.stopEndId() + " not found");

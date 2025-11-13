@@ -33,13 +33,13 @@ public class FeeController {
         return ResponseEntity.ok(feeService.updateFeeExtraHour(feeId, request));
     }
 
-    @GetMapping
-    public ResponseEntity<FeeResponseDTO> getFeeById(@RequestParam String feeId) {
+    @GetMapping("/{feeId}")
+    public ResponseEntity<FeeResponseDTO> getFeeById(@PathVariable String feeId) {
         return ResponseEntity.ok(feeService.getFeeById(feeId));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> deleteFee(@RequestParam String feeId) {
+    @DeleteMapping("/{feeId}")
+    public ResponseEntity<Void> deleteFee(@PathVariable String feeId) {
         feeService.deleteFee(feeId);
         return ResponseEntity.noContent().build();
     }

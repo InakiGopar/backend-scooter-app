@@ -4,6 +4,7 @@ import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.application.repositories.StopRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import ar.edu.unicen.scooterservice.domain.entities.Scooter;
@@ -66,15 +67,12 @@ public class ScooterService {
 
 
     @Transactional
-    public ScooterResponseDTO updateScooterStatusAndStop(Long scooterId, ScooterRequestDTO request) {
+    public ScooterResponseDTO updateScooterStatus(Long scooterId, ScooterRequestPatchDTO request) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
-        Stop currentStop = stopRepository.findById(request.currentStopId())
-                .orElseThrow(() -> new EntityNotFoundException("Stop not found with id " + request.currentStopId()));
 
         scooter.setState(request.state());
-        scooter.setCurrentStop(currentStop);
 
         scooterRepository.save(scooter);
 

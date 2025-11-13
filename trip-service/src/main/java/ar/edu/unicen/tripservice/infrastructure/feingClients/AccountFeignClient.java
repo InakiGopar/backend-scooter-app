@@ -1,7 +1,6 @@
-// ...existing code...
+
 package ar.edu.unicen.tripservice.infrastructure.feingClients;
 
-import ar.edu.unicen.tripservice.infrastructure.feingClients.AccountFeignClient.AccountUserResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
