@@ -1,6 +1,5 @@
 package ar.edu.unicen.accountservice.infrastructure.controllers;
 
-import ar.edu.unicen.accountservice.application.services.AccountService;
 import ar.edu.unicen.accountservice.application.services.AccountUserService;
 import ar.edu.unicen.accountservice.domain.dtos.request.accountUser.AccountUserRequestDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.accountUser.AccountUserResponseDTO;
@@ -16,7 +15,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountUserController {
     private final AccountUserService accountUserService;
-    private final AccountService accountService;
 
     @GetMapping("/{accountId}")
     public  ResponseEntity<List<AccountUserResponseDTO>> getAccountUser(@PathVariable Long accountId )

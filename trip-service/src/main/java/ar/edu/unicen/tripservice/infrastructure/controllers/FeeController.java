@@ -1,16 +1,12 @@
 package ar.edu.unicen.tripservice.infrastructure.controllers;
 
 import ar.edu.unicen.tripservice.application.services.FeeService;
-import ar.edu.unicen.tripservice.application.services.TripService;
 import ar.edu.unicen.tripservice.domain.dtos.request.fee.FeeRequestDTO;
-import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripResponseDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/fee")
@@ -20,7 +16,7 @@ public class FeeController {
 
     @PostMapping
     public ResponseEntity<FeeResponseDTO> createFee(@RequestBody FeeRequestDTO request) {
-        return ResponseEntity.status(201).body(feeService.createFee(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(feeService.createFee(request));
     }
 
     @PutMapping("/{feeId}")
