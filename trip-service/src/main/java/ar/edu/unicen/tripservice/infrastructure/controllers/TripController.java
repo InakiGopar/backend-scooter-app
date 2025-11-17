@@ -18,13 +18,13 @@ public class TripController {
     private final TripService tripService;
 
     @PostMapping
-    public ResponseEntity<TripResponseDTO> startTrip(@RequestBody TripRequestDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(tripService.startTrip(dto));
+    public ResponseEntity<TripResponseDTO> startTrip(@RequestBody TripRequestDTO request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(tripService.startTrip(request));
     }
 
     @PutMapping("/{tripId}")
-    public ResponseEntity<TripResponseDTO> endTrip(@PathVariable String tripId, @RequestBody TripRequestDTO dto) {
-        return ResponseEntity.ok(tripService.endTrip(tripId, dto));
+    public ResponseEntity<TripResponseDTO> endTrip(@PathVariable String tripId, @RequestBody TripRequestDTO request) {
+        return ResponseEntity.ok(tripService.endTrip(tripId, request));
     }
 
     @PatchMapping("/startPauseTrip/{tripId}")
@@ -54,7 +54,7 @@ public class TripController {
     }
     @GetMapping("/by-kilometers")
     public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(
-            @RequestParam(required = false, defaultValue = "false") boolean withPause) {
+            @RequestParam(required = false, defaultValue = "false") Boolean withPause) {
         return ResponseEntity.ok(tripService.findAllByKilometers(withPause));
     }
 

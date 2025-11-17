@@ -20,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 @Slf4j
@@ -109,14 +110,13 @@ public class ScooterService {
 
     //Report A
     public List<ScooterTripKMReportDTO> getScootersReportByKilometers(Boolean withPause){
+
         List<Trip> trips = tripFeignClient.findAllByKilometers(withPause);
 
+        System.out.println(trips);
+
         return trips.stream()
-                .map(trip -> {
-                    Scooter scooter = scooterRepository.findById(trip.getScooterId())
-                            .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
-                    return ScooterTripKMReportDTO.toDTO(scooter, trip);
-                })
+                .map(ScooterTripKMReportDTO::toDTO)
                 .toList();
     }
 
@@ -125,11 +125,7 @@ public class ScooterService {
         List<Trip> trips = tripFeignClient.findAllByTravels(year, countTrips);
 
         return trips.stream()
-                .map(trip -> {
-                    Scooter scooter = scooterRepository.findById(trip.getScooterId())
-                            .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + trip.getScooterId() + " not found"));
-                    return ScooterTripKMReportDTO.toDTO(scooter, trip);
-                })
+                .map(ScooterTripKMReportDTO::toDTO)
                 .toList();
     }
 

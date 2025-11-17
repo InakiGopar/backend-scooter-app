@@ -2,6 +2,7 @@ package ar.edu.unicen.userservice.application.services;
 
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
@@ -68,7 +69,7 @@ public class UserService {
     }
 
     //Report A
-    public List<Scooter> getScootersReportByKilometers(boolean withPause){
+    public List<ReportADTO> getScootersReportByKilometers(Boolean withPause){
         return scooterFeignClient.getScootersByKilometers(withPause);
     }
     //Report B

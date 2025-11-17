@@ -24,14 +24,15 @@ public class TripCostCalculator {
      */
     public static float calculateTotalPrice(Instant startTime, Instant endTime, int pauseDuration, Instant endPause,float pricePerHr,  float extraPrice) {
 
-        int hours = Duration.between(startTime, endTime).toHoursPart();
+        long totalMinutes = Duration.between(startTime, endTime).toMinutes();
+        float totalHours = totalMinutes / 60f;
 
         if(pauseDuration >= limitPauseMinutes){
-            int extraHours = Duration.between(endPause, endTime).toHoursPart();
-            return (hours * pricePerHr) + (extraHours * extraPrice);
+            float extraHours = (pauseDuration - limitPauseMinutes) / 60f;
+            return (totalHours * pricePerHr) + (extraHours * extraPrice);
         }
 
-        return (hours * pricePerHr);
+        return totalHours * pricePerHr;
 
     }
 }

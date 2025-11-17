@@ -7,8 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 public class Trip {
     private Long scooterId;
-    private Long tripId;
-    private float kilometers;
-    private int pause;
+    private Long totalKilometers;
+    private Integer totalPausesMinutes;
 
 }

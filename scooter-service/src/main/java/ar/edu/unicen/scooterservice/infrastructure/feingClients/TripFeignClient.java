@@ -1,5 +1,6 @@
 package ar.edu.unicen.scooterservice.infrastructure.feingClients;
 
+import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;

@@ -3,6 +3,7 @@ package ar.edu.unicen.userservice.infrastructure.controllers;
 import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
@@ -45,7 +46,7 @@ public class UserController {
 
     //Report A
     @GetMapping("/scooters")
-    public ResponseEntity<List<Scooter>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
+    public ResponseEntity<List<ReportADTO>>getScootersReportByKilometers(@RequestParam(required = false) Boolean withPause){
         return ResponseEntity.ok(userService.getScootersReportByKilometers(withPause));
     }
 

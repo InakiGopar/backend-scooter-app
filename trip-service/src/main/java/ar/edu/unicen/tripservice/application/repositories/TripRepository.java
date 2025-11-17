@@ -23,8 +23,17 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     List<ScooterUsageResponseDTO> findAllByKilometersAndPause();
 
     @Aggregation(pipeline = {
-            "{ $group: { _id: '$scooterId', totalKm: { $sum: '$kmTraveled' }, totalTrips: { $sum: 1 } } }",
-            "{ $sort: { totalKm: -1 } }"
+            "{ $group: { " +
+                    "_id: '$scooterId', " +
+                    "totalKilometers: { $sum: '$kmTraveled' }, " +
+                    "totalTrips: { $sum: 1 } " +
+                    "} }",
+            "{ $project: { " +
+                    "scooterId: '$_id', " +
+                    "totalKilometers: 1, " +
+                    "totalTrips: 1, " +
+                    "} }",
+            "{ $sort: { totalKilometers: -1 } }"
     })
     List<ScooterUsageResponseDTO> findAllByKilometers();
 

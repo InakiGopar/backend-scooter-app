@@ -35,10 +35,11 @@ public class TripService {
     private final ScooterFeignClient scooterFeignClient;
     private final AccountFeignClient accountFeignClient;
 
-    public List<ScooterUsageResponseDTO> findAllByKilometers(boolean withPause) {
+    public List<ScooterUsageResponseDTO> findAllByKilometers(Boolean withPause) {
         if(!withPause) {
             return tripRepository.findAllByKilometers();
         }
+        System.out.println(tripRepository.findAllByKilometersAndPause());
         return tripRepository.findAllByKilometersAndPause();
     }
 
@@ -80,6 +81,12 @@ public class TripService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
 
+        Scooter scooter = scooterFeignClient.getScooterById(request.scooterId());
+
+        if (scooter == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Scooter with id " + request.scooterId() + " not found");
+        }
+
         Stop endStop = scooterFeignClient.getStopById(request.stopEndId());
 
         if (endStop == null) {
@@ -89,9 +96,10 @@ public class TripService {
         if (trip.getStartTime() == null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip has not been started.");
         }
+
         scooterFeignClient.updateScooterWhenTripEnd(
                 request.scooterId(),
-                new FeignScooterEndTripRequest(request.scooterId(),endStop.getLatitude(),
+                new FeignScooterEndTripRequest(scooter.getScooterId(),endStop.getLatitude(),
                         endStop.getLongitude(),ScooterState.INACTIVE, endStop.getStopId(), request.kmTraveled())
         );
 
@@ -105,8 +113,13 @@ public class TripService {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
 
-        //CHECK THIS, throws NullPointerException
-        int pauseDuration = Duration.between(trip.getStartPause(), trip.getEndPause()).toMinutesPart();
+        int pauseDuration = 0;
+
+        //check if travel have a pause
+        if (trip.getStartPause() != null && trip.getEndPause() != null) {
+            pauseDuration = Duration.between(trip.getStartPause(), trip.getEndPause()).toMinutesPart();
+        }
+
         int totalPause = trip.getPauseCount() + pauseDuration;
         trip.setPauseCount(totalPause);
 

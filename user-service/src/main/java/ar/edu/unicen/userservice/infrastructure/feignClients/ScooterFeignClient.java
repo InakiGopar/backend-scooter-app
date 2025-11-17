@@ -1,6 +1,7 @@
 package ar.edu.unicen.userservice.infrastructure.feignClients;
 
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,7 @@ public interface ScooterFeignClient {
     //Report A
     //Should we change Scooter to a new DTO response?
     @GetMapping("/by-kilometers")
-    List<Scooter> getScootersByKilometers(@RequestParam(required = false) Boolean withPause);
+    List<ReportADTO> getScootersByKilometers(@RequestParam(required = false) Boolean withPause);
 
     //Report C
     //Should we change Scooter to a new DTO response?

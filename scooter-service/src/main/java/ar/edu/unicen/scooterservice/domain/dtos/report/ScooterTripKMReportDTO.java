@@ -5,14 +5,14 @@ import ar.edu.unicen.scooterservice.domain.model.Trip;
 
 public record ScooterTripKMReportDTO(
         Long scooterId,
-        float kilometers,
-        int pause
+        Long kilometers,
+        Integer pause
 ) {
-    public static ScooterTripKMReportDTO toDTO(Scooter scooter, Trip trip){
+    public static ScooterTripKMReportDTO toDTO(Trip trip){
         return new ScooterTripKMReportDTO(
-                scooter.getScooterId(),
-                trip.getKilometers(),
-                trip.getPause()
+                trip.getScooterId(),
+                trip.getTotalKilometers(),
+                trip.getTotalPausesMinutes()
         );
     }
 
