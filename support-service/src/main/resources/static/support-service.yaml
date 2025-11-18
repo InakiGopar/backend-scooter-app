@@ -9,6 +9,7 @@ servers:
     description: Servidor local de desarrollo de Support Service
 
 paths:
+
     /support:
         post:
           summary: Crear un ticket de soporte
@@ -94,7 +95,7 @@ components:
       type: object
       properties:
         scooterId:
-          type: string
+          type: integer
           description: ID del scooter asociado al ticket de soporte
         startDate:
           type: string
@@ -105,7 +106,7 @@ components:
           format: date
           description: EndDate del ticket de soporte
       required:
-        - userId
+        - scooterId
         - startDate
         - endDate
 
