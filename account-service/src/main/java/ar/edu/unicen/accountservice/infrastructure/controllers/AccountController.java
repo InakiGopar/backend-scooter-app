@@ -48,8 +48,7 @@ public class AccountController {
     //Report B
     @PatchMapping("/toggleState/{accountId}")
     public ResponseEntity<CancelAccountDTO> toggleAccountState(@PathVariable Long accountId){
-        CancelAccountDTO response = accountService.toggleAccountState(accountId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(accountService.toggleAccountState(accountId));
     }
 
     //Report E

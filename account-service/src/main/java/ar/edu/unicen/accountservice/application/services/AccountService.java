@@ -70,7 +70,7 @@ public class AccountService {
 
         accountRepository.save(account);
 
-        return new CancelAccountDTO(account.getAccountId(), account.getAccountName());
+        return new CancelAccountDTO(account.getAccountId(), account.getAccountName(), account.getState());
     }
 
     //Report E
