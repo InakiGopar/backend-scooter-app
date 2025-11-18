@@ -40,7 +40,7 @@ public interface TripRepository extends MongoRepository<Trip, String> {
 
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
-            "{ $match: { $and: [ { year: ?0 }, { month: { $gte: ?1, $lte: ?2 } } ] } }",
+            "{ $match: { year: ?0, month: { $gte: ?1, $lte: ?2 } } }",
             "{ $group: { _id: null, totalInvoiced: { $sum: '$totalPrice' }, totalTrips: { $sum: 1 } } }",
             "{ $project: { _id: 0, totalInvoiced: 1, totalTrips: 1 } }"
     })
@@ -56,20 +56,17 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);
 
     @Aggregation(pipeline = {
-            // 1️⃣ Agrega campos derivados: año y mes desde el Instant
             "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
-
-            // 2️⃣ Filtra los viajes entre los meses dados (mismo año)
             "{ $match: { month: { $gte: ?0, $lte: ?1 } } }",
-
-            // 3️⃣ Agrupa por usuario y calcula totales
-            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
-
-            // 4️⃣ Ordena por cantidad de viajes
-            "{ $sort: { totalTrips: -1 } }",
-
-            // 5️⃣ Devuelve el resultado formateado
-            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1 } }"
+            "{ $group: { _id: '$userId', totalScooterUsage: { $sum: 1 } } }",
+            "{ $sort: { totalScooterUsage: -1 } }",
+            "{ $project: { " +
+                    "_id: 0, " +
+                    "userId: '$_id', " +
+                    "totalScooterUsage: 1, " +
+                    "monthStart: { $literal: ?0 }, " +
+                    "monthEnd: { $literal: ?1 } " +
+                    "} }"
     })
     List<TripScooterUserUsageDTO> getScooterUserUsage(int startMonth, int endMonth);
 

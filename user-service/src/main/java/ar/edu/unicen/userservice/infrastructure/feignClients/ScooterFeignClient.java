@@ -14,12 +14,10 @@ import java.util.List;
 public interface ScooterFeignClient {
 
     //Report A
-    //Should we change Scooter to a new DTO response?
     @GetMapping("/by-kilometers")
     List<ReportADTO> getScootersByKilometers(@RequestParam(required = false) Boolean withPause);
 
     //Report C
-    //Should we change Scooter to a new DTO response?
     @GetMapping("/by-travels")
     List<ReportScooterByYearDTO> getScootersByTravels(@RequestParam int year, @RequestParam int countTrips);
 

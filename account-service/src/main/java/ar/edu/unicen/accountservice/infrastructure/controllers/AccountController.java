@@ -1,6 +1,7 @@
 package ar.edu.unicen.accountservice.infrastructure.controllers;
 
 import ar.edu.unicen.accountservice.application.services.AccountService;
+import ar.edu.unicen.accountservice.domain.dtos.report.UserUsageScooterDTO;
 import ar.edu.unicen.accountservice.domain.dtos.request.account.AccountRequestDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountResponseDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.CancelAccountDTO;
@@ -53,7 +54,7 @@ public class AccountController {
 
     //Report E
     @GetMapping("/scooter-user-usage")
-    public ResponseEntity<List<Trip>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
+    public ResponseEntity<List<UserUsageScooterDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
         return ResponseEntity.ok(accountService.getScooterUserUsage(monthStart,monthEnd,userType));
     }
 }

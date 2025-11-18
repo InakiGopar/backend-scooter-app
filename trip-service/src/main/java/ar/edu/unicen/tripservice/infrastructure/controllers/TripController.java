@@ -77,6 +77,7 @@ public class TripController {
         return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
 
+    //Report E
     @GetMapping("/scooter-user-usage")
     public ResponseEntity<List<TripScooterUserUsageDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd){
         return ResponseEntity.ok(tripService.getScooterUserUsage(monthStart,monthEnd));

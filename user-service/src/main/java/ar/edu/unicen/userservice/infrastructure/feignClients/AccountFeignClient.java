@@ -10,6 +10,7 @@ import java.util.List;
 
 @FeignClient(name="account-service", url="http://localhost:8083/api/account")
 public interface AccountFeignClient {
+
     @PatchMapping("/toggleState/{accountId}")
     CancelAccountDTO toggleAccountState(@PathVariable Long accountId);
 

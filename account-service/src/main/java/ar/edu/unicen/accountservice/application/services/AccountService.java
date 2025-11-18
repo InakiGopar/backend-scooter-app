@@ -1,25 +1,30 @@
 package ar.edu.unicen.accountservice.application.services;
 
 import ar.edu.unicen.accountservice.application.repositories.AccountRepository;
+import ar.edu.unicen.accountservice.application.repositories.AccountUserRepository;
+import ar.edu.unicen.accountservice.domain.dtos.report.UserUsageScooterDTO;
 import ar.edu.unicen.accountservice.domain.dtos.request.account.AccountRequestDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.AccountResponseDTO;
 import ar.edu.unicen.accountservice.domain.dtos.response.account.CancelAccountDTO;
 import ar.edu.unicen.accountservice.domain.entities.Account;
 import ar.edu.unicen.accountservice.domain.entities.AccountState;
 import ar.edu.unicen.accountservice.domain.entities.AccountType;
+import ar.edu.unicen.accountservice.domain.entities.AccountUser;
 import ar.edu.unicen.accountservice.domain.model.trip.Trip;
 import ar.edu.unicen.accountservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
+    private final AccountUserRepository accountUserRepository;
     private final TripFeignClient tripFeignClient;
 
 
@@ -74,11 +79,30 @@ public class AccountService {
     }
 
     //Report E
-    public List<Trip> getScooterUserUsage(int monthStart, int monthEnd, AccountType userType){
+    public List<UserUsageScooterDTO> getScooterUserUsage(int monthStart, int monthEnd, AccountType userType) {
 
-        return tripFeignClient.getScooterUserUsage(monthStart,monthEnd,userType).stream()
-                .filter(trip -> trip.getUserType().equals(userType))
-                .map(dto -> new Trip(dto.getUserID(),dto.getCountScooterUsage(), dto.getMonthStart(), dto.getMonthEnd(),dto.getUserType()))
+        List<Trip> trips = tripFeignClient.getScooterUserUsage(monthStart, monthEnd);
+        List<Account> accounts = accountRepository.findAll();
+        List<AccountUser> accountUsers = accountUserRepository.findAll();
+
+        // accountId → AccountType
+        Map<Long, AccountType> typeByAccountId = accounts.stream()
+                .collect(Collectors.toMap(
+                        Account::getAccountId,
+                        Account::getType
+                ));
+
+        // userId → AccountType (obtenido desde AccountUserID)
+        Map<Long, AccountType> typeByUserId = accountUsers.stream()
+                .collect(Collectors.toMap(
+                        au -> au.getId().getUserId(),
+                        au -> typeByAccountId.get(au.getId().getAccountId())
+                ));
+
+        // Filtrar por el tipo solicitado
+        return trips.stream()
+                .filter(t -> typeByUserId.get(t.getUserId()) == userType)
+                .map( t -> UserUsageScooterDTO.toDTO(t, userType))
                 .toList();
     }
 

@@ -74,7 +74,7 @@ public class UserController {
             @RequestParam int startMonth,
             @RequestParam int endMonth) {
 
-        return ResponseEntity.ok(  userService.getTotalInvoiceReport(year, startMonth, endMonth) );
+        return ResponseEntity.ok(userService.getTotalInvoiceReport(year, startMonth, endMonth));
     }
 
 

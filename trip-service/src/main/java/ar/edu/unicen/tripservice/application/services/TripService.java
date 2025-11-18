@@ -191,6 +191,7 @@ public class TripService {
         return report;
     }
 
+    //Report E
     public List<TripScooterUserUsageDTO> getScooterUserUsage(int monthStart, int monthEnd){
         return tripRepository.getScooterUserUsage(monthStart,monthEnd);
     }
