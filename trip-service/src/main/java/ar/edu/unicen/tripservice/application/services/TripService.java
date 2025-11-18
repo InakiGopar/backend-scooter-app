@@ -137,6 +137,9 @@ public class TripService {
         Trip trip = tripRepository.findById(tripId)
                 .orElseThrow(() -> new EntityNotFoundException("Trip: " + tripId + " not found"));
 
+        if (trip.getEndTime() != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is already finished.");
+        }
 
         if(trip.getStartPause() != null){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Trip is already paused.");

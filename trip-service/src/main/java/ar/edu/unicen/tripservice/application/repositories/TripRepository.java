@@ -16,9 +16,10 @@ import java.util.List;
 @Repository
 public interface TripRepository extends MongoRepository<Trip, String> {
     @Aggregation(pipeline = {
-            "{ $match: { pauseMinutes: { $exists: true } } }",
-            "{ $group: { _id: '$scooterId', totalKm: { $sum: '$kmTraveled' }, totalPauses: { $sum: '$pauseCount' }, totalTrips: { $sum: 1 } } }",
-            "{ $sort: { totalKm: -1 } }"
+            "{ $match: { pauseCount: { $exists: true } } }",
+            "{ $group: { _id: '$scooterId', totalKilometers: { $sum: '$kmTraveled' }, totalPausesMinutes: { $sum: '$pauseCount' }, totalTrips: { $sum: 1 } } }",
+            "{ $project: { scooterId: '$_id', totalKilometers: 1, totalPausesMinutes: 1, _id: 0 } }",
+            "{ $sort: { totalKilometers: -1 } }"
     })
     List<ScooterUsageResponseDTO> findAllByKilometersAndPause();
 
