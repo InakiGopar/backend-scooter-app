@@ -22,7 +22,12 @@ public class TripCostCalculator {
      * @param extraPrice   the extra hourly price applied if the pause exceeds the allowed limit
      * @return the total calculated trip cost as a float
      */
-    public static float calculateTotalPrice(Instant startTime, Instant endTime, int pauseDuration, Instant endPause,float pricePerHr,  float extraPrice) {
+    public static float calculateTotalPrice(
+            Instant startTime,
+            Instant endTime,
+            int pauseDuration,
+            float pricePerHr,
+            float extraPrice) {
 
         long totalMinutes = Duration.between(startTime, endTime).toMinutes();
         float totalHours = totalMinutes / 60f;

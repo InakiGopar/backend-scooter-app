@@ -115,18 +115,10 @@ public class TripService {
             throw  new EntityNotFoundException("Fee with id " + request.feeId() + " not found");
         }
 
-        int pauseDuration = 0;
-
-        //check if travel have a pause
-        if (trip.getStartPause() != null && trip.getEndPause() != null) {
-            pauseDuration = Duration.between(trip.getStartPause(), trip.getEndPause()).toMinutesPart();
-        }
-
-        int totalPause = trip.getPauseCount() + pauseDuration;
-        trip.setPauseCount(totalPause);
+        int pauseDuration = trip.getPauseCount();
 
         float totalPrice = TripCostCalculator.calculateTotalPrice(trip.getStartTime(), trip.getEndTime(),
-                pauseDuration, trip.getEndPause() ,fee.pricePerHour(), fee.extraHourFee());
+                pauseDuration, fee.pricePerHour(), fee.extraHourFee());
 
         trip.setTotalPrice(totalPrice);
 
@@ -163,7 +155,7 @@ public class TripService {
 
         Instant startPause = trip.getStartPause();
         Instant endPause = Instant.now();
-        int duration = Duration.between(startPause, endPause).toMinutesPart();
+        int duration = (int) Duration.between(startPause, endPause).toMinutes();
         trip.setEndPause(endPause);
         trip.setPauseCount(duration +  trip.getPauseCount());
 
