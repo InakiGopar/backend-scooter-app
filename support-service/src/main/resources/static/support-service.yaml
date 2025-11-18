@@ -1,0 +1,154 @@
+openapi: 3.0.3
+info:
+  title: Account Service API
+  version: 1.0.0
+  description: API del microservicio de cuentas del sistema de scooters.
+
+servers:
+  - url: http://localhost:8086/api
+    description: Servidor local de desarrollo de Support Service
+
+paths:
+    /support:
+        post:
+          summary: Crear un ticket de soporte
+          tags: [Support]
+          requestBody:
+            required: true
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/SupportRequestDTO'
+          responses:
+              '201':
+                description: Ticket de soporte creado correctamente
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/SupportResponseDTO'
+
+    /support/{id}:
+      get:
+        summary: Obtener un Ticket por ID
+        tags: [Support]
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: string
+            description: ID del ticket de soporte
+        responses:
+          '200':
+            description: Ticket de soporte obtenido correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/SupportResponseDTO'
+          '404':
+            description: Ticket de soporte no encontrado
+      put:
+        summary: Actualizar el estado de un Ticket de soporte
+        tags: [Support]
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: string
+            description: ID del ticket de soporte
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SupportResponseDTO'
+        responses:
+          '200':
+            description: Ticket de soporte actualizado correctamente
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/SupportResponseDTO'
+          '404':
+            description: Ticket de soporte no encontrado
+      delete:
+        summary: Eliminar un Ticket de soporte
+        tags: [Support]
+        parameters:
+          - in: path
+            name: id
+            required: true
+            schema:
+              type: string
+            description: ID del ticket de soporte
+        responses:
+          '204':
+            description: Ticket de soporte eliminado correctamente
+          '404':
+            description: Ticket de soporte no encontrado
+
+components:
+  schemas:
+    SupportRequestDTO:
+      type: object
+      properties:
+        scooterId:
+          type: string
+          description: ID del scooter asociado al ticket de soporte
+        startDate:
+          type: string
+          format: date
+          description: StartDate del ticket de soporte
+        endDate:
+          type: string
+          format: date
+          description: EndDate del ticket de soporte
+      required:
+        - userId
+        - startDate
+        - endDate
+
+
+    SupportResponseDTO:
+        type: object
+        properties:
+          supportId:
+            type: integer
+            description: ID del ticket de soporte
+          scooterId:
+            type: integer
+            description: ID del scooter asociado al ticket de soporte
+          startDate:
+            type: string
+            format: date
+            description: StartDate del ticket de soporte
+          endDate:
+            type: string
+            format: date
+            description: EndDate del ticket de soporte
+        required:
+          - supportId
+          - scooterId
+          - startDate
+          - endDate
+
+    #-------------------- MODELOS ------------------------
+    Scooter:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          description: ID del scooter
+        ScooterState:
+          $ref: '#/components/schemas/ScooterState'
+
+      required:
+        - scooterId
+        - ScooterState
+
+    # -------------------- ENUMERACIONES --------------------
+    ScooterState:
+      type: string
+      description: Estado del scooter
+      enum: [ACTIVE, INACTIVE, MAINTENANCE]

@@ -1,0 +1,131 @@
+openapi: 3.0.3
+info:
+  title: Account Service API
+  version: 1.0.0
+  description: API del microservicio de cuentas del sistema de scooters.
+
+servers:
+  - url: http://localhost:8084/api
+    description: Servidor local de desarrollo de Wallet Service
+
+paths:
+    /wallet:
+        post:
+          summary: Crear una wallet
+          tags: [Wallet]
+          requestBody:
+            required: true
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/WalletRequestDTO'
+          responses:
+              '201':
+                description: Wallet creada correctamente
+                content:
+                  application/json:
+                    schema:
+                      $ref: '#/components/schemas/WalletResponseDTO'
+
+    /wallet/{walletId}:
+        put:
+          summary: Actualizar una wallet
+          tags: [Wallet]
+          parameters:
+            - in: path
+              name: walletId
+              required: true
+              schema:
+                type: integer
+          responses:
+            '201':
+              description: Wallet Actualizada correctamente
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/WalletResponseDTO'
+        delete:
+          summary: Eliminar una Wallet
+          tags: [Wallet]
+          parameters:
+            - in: path
+              name: walletId
+              required: true
+              schema:
+                type: integer
+          responses:
+            '201':
+              description: Wallet eliminada correctamente
+    /userId/{userId}/accountId/{accountId}:
+        patch:
+            summary: Asociar una cuenta a una wallet
+            tags: [Wallet]
+            parameters:
+                - in: path
+                  name: userId
+                  required: true
+                  schema:
+                    type: integer
+                - in: path
+                  name: accountId
+                  required: true
+                  schema:
+                    type: integer
+            responses:
+                '201':
+                  description: Cuenta asociada correctamente a la wallet
+                  content:
+                      application/json:
+                        schema:
+                         $ref: '#/components/schemas/WalletResponseDTO'
+components:
+  schemas:
+    WalletRequestDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          example: 1
+        balance:
+          type: number
+          format: double
+          example: 100.50
+
+    WalletResponseDTO:
+      type: object
+      properties:
+        walletId:
+          type: integer
+          example: 1
+        accountId:
+          type: integer
+          example: 2
+        userId:
+          type: integer
+          example: 1
+        balance:
+          type: number
+          format: float
+          example: 100.50
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        role:
+          $ref: '#/components/schemas/Role'
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: integer
+
+    # -------------------- ENUMS --------------------
+
+    Role:
+      type: string
+      enum: [USER, ADMIN, SUPPORT]
