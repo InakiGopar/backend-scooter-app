@@ -32,12 +32,15 @@ public class TripCostCalculator {
         long totalMinutes = Duration.between(startTime, endTime).toMinutes();
         float totalHours = totalMinutes / 60f;
 
+        float baseCost = totalHours * pricePerHr;
+
         if(pauseDuration >= limitPauseMinutes){
             float extraHours = (pauseDuration - limitPauseMinutes) / 60f;
-            return (totalHours * pricePerHr) + (extraHours * extraPrice);
+            float extraCost = extraHours * extraPrice;
+            return baseCost + extraCost;
         }
 
-        return totalHours * pricePerHr;
+        return baseCost;
 
     }
 }
