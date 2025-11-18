@@ -2,6 +2,7 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
@@ -66,7 +67,7 @@ public class ScooterController {
 
     //Report C
     @GetMapping("/by-travels")
-    public ResponseEntity<List<ScooterTripKMReportDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
+    public ResponseEntity<List<ReportScooterByYearDTO>> getScootersReportByTravels(@RequestParam int year, @RequestParam int countTrips) {
         return ResponseEntity.ok(scooterService.getScootersReportByTravels(year, countTrips));
     }
 

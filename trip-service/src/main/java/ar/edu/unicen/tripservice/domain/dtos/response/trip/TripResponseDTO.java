@@ -1,6 +1,6 @@
 package ar.edu.unicen.tripservice.domain.dtos.response.trip;
 
-import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.documents.Trip;
 
 import java.time.Instant;
 import java.util.UUID;

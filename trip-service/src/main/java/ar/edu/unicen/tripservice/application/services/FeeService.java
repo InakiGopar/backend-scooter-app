@@ -3,7 +3,7 @@ package ar.edu.unicen.tripservice.application.services;
 import ar.edu.unicen.tripservice.application.repositories.FeeRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.fee.FeeRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
-import ar.edu.unicen.tripservice.domain.entities.Fee;
+import ar.edu.unicen.tripservice.domain.documents.Fee;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

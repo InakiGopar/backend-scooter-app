@@ -5,7 +5,7 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseD
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserPeriodUsageResponseDTO;
-import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.documents.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -49,8 +49,8 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' } } }",
             "{ $match: { year: ?0 } }",
-            "{ $group: { _id: { scooterId: '$scooterId', year: '$year' }, totalTrips: { $sum: '$cantTrips' } } }",
-            "{ $match: { totalTrips: { $gt: ?1 } } }",
+            "{ $group: { _id: { scooterId: '$scooterId', year: '$year' }, totalTrips: { $sum: 1 } } }",
+            "{ $match: { totalTrips: { $gte: ?1 } } }",
             "{ $project: { _id: 0, scooterId: '$_id.scooterId', year: '$_id.year', totalTrips: 1 } }"
     })
     List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);

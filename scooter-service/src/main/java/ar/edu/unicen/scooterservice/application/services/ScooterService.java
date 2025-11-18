@@ -3,6 +3,7 @@ package ar.edu.unicen.scooterservice.application.services;
 import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.application.repositories.StopRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
@@ -120,15 +121,11 @@ public class ScooterService {
                 .toList();
     }
 
+
     //Report C
-    public List<ScooterTripKMReportDTO> getScootersReportByTravels(int year, int countTrips){
-        List<Trip> trips = tripFeignClient.findAllByTravels(year, countTrips);
-
-        return trips.stream()
-                .map(ScooterTripKMReportDTO::toDTO)
-                .toList();
+    public List<ReportScooterByYearDTO> getScootersReportByTravels(int year, int countTrips){
+        return tripFeignClient.findAllByTravels(year, countTrips);
     }
-
 
     //Report G
     public List<NearScooterReportDTO> getNearScooters(float latitude, float longitude) {

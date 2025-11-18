@@ -2,6 +2,7 @@ package ar.edu.unicen.userservice.infrastructure.feignClients;
 
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
+import ar.edu.unicen.userservice.domain.dtos.report.ReportScooterByYearDTO;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +21,7 @@ public interface ScooterFeignClient {
     //Report C
     //Should we change Scooter to a new DTO response?
     @GetMapping("/by-travels")
-    List<Scooter> getScootersByTravels(@RequestParam int year, @RequestParam int countTrips);
+    List<ReportScooterByYearDTO> getScootersByTravels(@RequestParam int year, @RequestParam int countTrips);
 
     // Report G
     @GetMapping("/near-scooters")

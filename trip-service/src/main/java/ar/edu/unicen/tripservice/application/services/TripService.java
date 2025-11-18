@@ -7,7 +7,7 @@ import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchRe
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
-import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.documents.Trip;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
 import ar.edu.unicen.tripservice.domain.model.scooter.Stop;
@@ -35,6 +35,7 @@ public class TripService {
     private final ScooterFeignClient scooterFeignClient;
     private final AccountFeignClient accountFeignClient;
 
+    //Report A
     public List<ScooterUsageResponseDTO> findAllByKilometers(Boolean withPause) {
         if(!withPause) {
             return tripRepository.findAllByKilometers();
@@ -43,6 +44,7 @@ public class TripService {
         return tripRepository.findAllByKilometersAndPause();
     }
 
+    //Report C
     public List<TripScooterByYearResponseDTO> getScooterByTravels(int year, int cantTrips){
         return tripRepository.getScooterByTripInAYear(year, cantTrips);
     }

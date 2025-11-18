@@ -52,18 +52,23 @@ public class TripController {
         tripService.deleteTrip(tripId);
         return ResponseEntity.noContent().build();
     }
+
+    //Report A
     @GetMapping("/by-kilometers")
     public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(
             @RequestParam(required = false, defaultValue = "false") Boolean withPause) {
         return ResponseEntity.ok(tripService.findAllByKilometers(withPause));
     }
 
+    //Report C
     @GetMapping("/scooter-by-trips")
-    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels(int year, int cantTrips){
-        return ResponseEntity.ok(tripService.getScooterByTravels(year,cantTrips));
+    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels( @RequestParam int year,
+                                                                                   @RequestParam int countTrips)
+    {
+        return ResponseEntity.ok(tripService.getScooterByTravels(year, countTrips));
     }
 
-    //Reporte D
+    //Report D
     @GetMapping("/total-invoice")
     public ResponseEntity<InvoiceReportResponseDTO> getTotalInvoice(
             @RequestParam int year,
@@ -71,6 +76,7 @@ public class TripController {
             @RequestParam int endMonth) {
         return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
+
     @GetMapping("/scooter-user-usage")
     public ResponseEntity<List<TripScooterUserUsageDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd){
         return ResponseEntity.ok(tripService.getScooterUserUsage(monthStart,monthEnd));

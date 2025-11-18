@@ -1,6 +1,6 @@
 package ar.edu.unicen.tripservice.domain.dtos.request.trip;
 
-import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.documents.Trip;
 
 
 public record TripRequestDTO(

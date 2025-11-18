@@ -1,4 +1,4 @@
-package ar.edu.unicen.tripservice.domain.entities;
+package ar.edu.unicen.tripservice.domain.documents;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

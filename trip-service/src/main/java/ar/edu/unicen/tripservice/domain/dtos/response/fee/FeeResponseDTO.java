@@ -1,6 +1,6 @@
 package ar.edu.unicen.tripservice.domain.dtos.response.fee;
 
-import ar.edu.unicen.tripservice.domain.entities.Fee;
+import ar.edu.unicen.tripservice.domain.documents.Fee;
 import java.time.Instant;
 
 public record FeeResponseDTO(
