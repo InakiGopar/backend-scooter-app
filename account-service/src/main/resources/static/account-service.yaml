@@ -1,0 +1,300 @@
+openapi: 3.0.3
+info:
+  title: Account Service API
+  version: 1.0.0
+  description: API del microservicio de cuentas del sistema de scooters.
+
+servers:
+  - url: http://localhost:8083/api
+    description: Servidor local de desarrollo
+
+paths:
+
+  /account:
+    post:
+      summary: Crear una cuenta
+      tags: [Account]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequestDTO'
+      responses:
+        '201':
+          description: Cuenta creada correctamenteEEEEEEEE
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponseDTO'
+
+
+  /account/{accountId}:
+    get:
+      summary: Obtener una cuenta por ID
+      tags: [Account]
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cuenta encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponseDTO'
+
+
+    put:
+      summary: Actualizar una cuenta
+      tags: [Account]
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequestDTO'
+      responses:
+        '200':
+          description: Cuenta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponseDTO'
+
+    delete:
+      summary: Eliminar una cuenta
+      tags: [Account]
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Cuenta eliminada
+
+  /account/toggleState/{accountId}:
+    patch:
+      summary: Alternar estado de una cuenta
+      tags: [Account]
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Cuenta actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelAccountDTO'
+
+  /account/scooter-user-usage:
+    get:
+      summary: Reporte E - Uso de scooters por usuario
+      tags: [Account Reports]
+      parameters:
+        - in: query
+          name: monthStart
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: monthEnd
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: userType
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountType'
+      responses:
+        '200':
+          description: Lista de uso de scooters por usuarios
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
+
+  /AccountUser/{accountId}:
+    get:
+      summary: Obtener usuarios asignados a una cuenta
+      tags: [Account User]
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuarios asociados a la cuenta
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccountUserResponseDTO'
+
+  /AccountUser:
+    post:
+      summary: Asociar usuario a una cuenta
+      tags: [Account User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountUserRequestDTO'
+      responses:
+        '201':
+          description: Relación creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountUserResponseDTO'
+
+    delete:
+      summary: Eliminar relación usuario-cuenta
+      tags: [Account User]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountUserRequestDTO'
+      responses:
+        '204':
+          description: Relación eliminada
+
+components:
+  schemas:
+
+    # -------------------- ACCOUNT --------------------
+
+    AccountRequestDTO:
+      type: object
+      properties:
+        accountName:
+          type: string
+        amount:
+          type: number
+          format: float
+        createdAt:
+          type: string
+          format: date
+        accountState:
+          $ref: '#/components/schemas/AccountState'
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+      required:
+        - accountName
+        - amount
+        - createdAt
+        - accountState
+        - accountType
+
+    AccountResponseDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        accountName:
+          type: string
+        createdAt:
+          type: string
+          format: date
+        amount:
+          type: number
+        accountState:
+          $ref: '#/components/schemas/AccountState'
+        accountType:
+          $ref: '#/components/schemas/AccountType'
+
+    CancelAccountDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        accountName:
+          type: string
+
+    # -------------------- ACCOUNT USER --------------------
+
+    AccountUserRequestDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        userId:
+          type: integer
+
+    AccountUserResponseDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        userId:
+          type: integer
+
+    # -------------------- MODELOS --------------------
+
+    Trip:
+      type: object
+      properties:
+        userID:
+          type: integer
+        countScooterUsage:
+          type: integer
+        monthStart:
+          type: integer
+        monthEnd:
+          type: integer
+        userType:
+          $ref: '#/components/schemas/AccountType'
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        role:
+          $ref: '#/components/schemas/Role'
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: integer
+
+    # -------------------- ENUMS --------------------
+
+    Role:
+      type: string
+      enum: [USER, ADMIN, SUPPORT]
+
+    AccountType:
+      type: string
+      enum: [BASIC, PREMIUM]
+
+    AccountState:
+      type: string
+      enum: [ENABLED, DISABLED]
