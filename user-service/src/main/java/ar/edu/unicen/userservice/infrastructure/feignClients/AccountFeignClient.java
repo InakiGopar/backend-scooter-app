@@ -16,6 +16,13 @@ public interface AccountFeignClient {
 
     //Report E
     @GetMapping("/scooter-user-usage")
-    List<UserScooterUsageResponseDTO>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType);
+    List<UserScooterUsageResponseDTO>getScooterUserUsage(
+            @RequestParam int monthStart,
+            @RequestParam int monthEnd,
+            @RequestParam AccountType userType);
 
+
+    //Report H
+    @GetMapping("/users-related-to-account/{userId}")
+    List<Long> getUsersRelatedToMyAccount(@PathVariable Long userId);
 }

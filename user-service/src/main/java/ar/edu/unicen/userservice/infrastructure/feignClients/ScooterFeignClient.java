@@ -3,9 +3,10 @@ package ar.edu.unicen.userservice.infrastructure.feignClients;
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
 import ar.edu.unicen.userservice.domain.dtos.report.ReportScooterByYearDTO;
-import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
+import ar.edu.unicen.userservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -24,4 +25,5 @@ public interface ScooterFeignClient {
     // Report G
     @GetMapping("/near-scooters")
     List<NearScooterReportDTO> getNearScooters(@RequestParam double latitude, @RequestParam double longitude, @RequestParam double radius);
+
 }

@@ -4,6 +4,7 @@ import ar.edu.unicen.scooterservice.application.repositories.ScooterRepository;
 import ar.edu.unicen.scooterservice.application.repositories.StopRepository;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
@@ -21,7 +22,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 
 @Slf4j
@@ -131,4 +131,5 @@ public class ScooterService {
     public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude, double radius) {
         return scooterRepository.getByLatitudeAndLongitude(latitude, longitude, radius);
     }
+
 }

@@ -7,7 +7,6 @@ import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
-import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -93,8 +92,22 @@ public class UserController {
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
             @RequestParam double latitude, @RequestParam double longitude, @RequestParam double radius
-    ) {
+    )
+    {
         return ResponseEntity.ok( userService.getNearScooters(latitude, longitude, radius) );
+    }
+
+    //Report H
+    @GetMapping("/scooter-usages-by-period/{userId}")
+    public ResponseEntity<List<UserScooterPeriodUsageDTO>> getScooterUsesByPeriod(
+            @PathVariable Long userId,
+            @RequestParam int year,
+            @RequestParam int monthStart,
+            @RequestParam int monthEnd,
+            @RequestParam(required = false) Boolean withRelatedToMyAccount
+    )
+    {
+        return ResponseEntity.ok( userService.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd, withRelatedToMyAccount ) );
     }
 
 }

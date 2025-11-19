@@ -12,6 +12,7 @@ import ar.edu.unicen.accountservice.domain.entities.AccountType;
 import ar.edu.unicen.accountservice.domain.entities.AccountUser;
 import ar.edu.unicen.accountservice.domain.model.trip.Trip;
 import ar.edu.unicen.accountservice.infrastructure.feignClients.TripFeignClient;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -92,18 +93,33 @@ public class AccountService {
                         Account::getType
                 ));
 
-        // userId → AccountType (obtenido desde AccountUserID)
+        // userId → AccountType (get from AccountUserID)
         Map<Long, AccountType> typeByUserId = accountUsers.stream()
                 .collect(Collectors.toMap(
                         au -> au.getId().getUserId(),
                         au -> typeByAccountId.get(au.getId().getAccountId())
                 ));
 
-        // Filtrar por el tipo solicitado
+        // Filter for type
         return trips.stream()
                 .filter(t -> typeByUserId.get(t.getUserId()) == userType)
                 .map( t -> UserUsageScooterDTO.toDTO(t, userType))
                 .toList();
+    }
+
+
+    //Report H
+    public List<Long> getUsersRelatedToMyAccount(Long userId) {
+
+        AccountUser userAccount = accountUserRepository.findByUserId(userId).orElseThrow(
+                ()-> new EntityNotFoundException("User does not have account" + userId)
+        );
+
+        return accountUserRepository.findAllByAccountId(userAccount.getId().getAccountId())
+                .stream()
+                .map( ua -> ua.getId().getUserId())
+                .toList();
+
     }
 
 

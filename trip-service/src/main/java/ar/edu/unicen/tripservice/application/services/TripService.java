@@ -14,17 +14,14 @@ import ar.edu.unicen.tripservice.domain.model.scooter.Stop;
 import ar.edu.unicen.tripservice.domain.model.user.User;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.ScooterFeignClient;
 import ar.edu.unicen.tripservice.infrastructure.feingClients.UserFeignClient;
-import ar.edu.unicen.tripservice.infrastructure.feingClients.AccountFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Duration;
-import java.time.Instant;
+import java.time.*;
 import java.util.List;
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +30,6 @@ public class TripService {
     private final FeeService feeService;
     private final UserFeignClient userFeignClient;
     private final ScooterFeignClient scooterFeignClient;
-    private final AccountFeignClient accountFeignClient;
 
     //Report A
     public List<ScooterUsageResponseDTO> findAllByKilometers(Boolean withPause) {
@@ -196,29 +192,39 @@ public class TripService {
         return tripRepository.getScooterUserUsage(monthStart,monthEnd);
     }
 
-    /**
-     * Obtiene el uso de monopatines para un usuario en un período; si accountId != null
-     * agrega también los usuarios relacionados a esa cuenta.
-     * @param userId usuario principal
-     * @param start inicio como Instant
-     * @param end fin como Instant
-     * @param accountId opcional: si se proporciona, incluye usuarios de esa cuenta
-     */
-    public List<UserPeriodUsageResponseDTO> getUserUsagePeriod(Long userId, Instant start, Instant end, Long accountId){
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(userId);
+    //Report H (two methods)
+    public List<UserScooterPeriodUsageDTO> getUserUsagePeriod(Long userId, int year ,int monthStart, int monthEnd) {
 
-        if(accountId != null){
-            List<AccountFeignClient.AccountUserResponseDTO> accountUsers = accountFeignClient.getAccountUsers(accountId);
-            if(accountUsers != null){
-                for(AccountFeignClient.AccountUserResponseDTO au : accountUsers){
-                    if(!userIds.contains(au.userId())) userIds.add(au.userId());
-                }
-            }
-        }
+        Instant start = LocalDate.of(year, monthStart, 1)
+                .atStartOfDay(ZoneOffset.UTC)
+                .toInstant();
 
-        return tripRepository.getUsageByUsersAndPeriod(userIds, start, end);
+        Instant end = LocalDate.of(year, monthEnd, YearMonth.of(year, monthEnd).lengthOfMonth())
+                .atTime(23, 59, 59)
+                .atZone(ZoneOffset.UTC)
+                .toInstant();
+
+        return tripRepository.getUsageByUsersAndPeriod(userId, start, end);
     }
+
+    public List<UserScooterPeriodUsageDTO> getUsagePeriodForUsersByAccount(
+            List<Long> userIds,
+            int year,
+            int monthStart,
+            int monthEnd
+    ) {
+        Instant start = LocalDate.of(year, monthStart, 1)
+                .atStartOfDay(ZoneOffset.UTC)
+                .toInstant();
+
+        Instant end = LocalDate.of(year, monthEnd, YearMonth.of(year, monthEnd).lengthOfMonth())
+                .atTime(23, 59, 59)
+                .atZone(ZoneOffset.UTC)
+                .toInstant();
+
+        return tripRepository.getUsagePeriodForUsersByAccount(userIds, start, end);
+    }
+
 
 
 }

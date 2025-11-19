@@ -57,4 +57,10 @@ public class AccountController {
     public ResponseEntity<List<UserUsageScooterDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd, @RequestParam AccountType userType){
         return ResponseEntity.ok(accountService.getScooterUserUsage(monthStart,monthEnd,userType));
     }
+
+    //Report H
+    @GetMapping("/users-related-to-account/{userId}")
+    public ResponseEntity<List<Long>> getUsersRelatedToMyAccount(@PathVariable Long userId) {
+        return ResponseEntity.ok(accountService.getUsersRelatedToMyAccount(userId));
+    }
 }

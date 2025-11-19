@@ -4,7 +4,7 @@ import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponse
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserPeriodUsageResponseDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserScooterPeriodUsageDTO;
 import ar.edu.unicen.tripservice.domain.documents.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -71,9 +71,19 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     List<TripScooterUserUsageDTO> getScooterUserUsage(int startMonth, int endMonth);
 
     @Aggregation(pipeline = {
-            "{ $match: { userId: { $in: ?0 }, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
-            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' }, totalDurationMinutes: { $sum: { $divide: [ { $subtract: ['$endTime', '$startTime'] }, 60000 ] } } } }",
-            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1, totalDurationMinutes: 1 } }"
+            "{ $match: { userId: ?0, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
+            "{ $group: { _id: { userId: '$userId', scooterId: '$scooterId' }, uses: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
+            "{ $project: { _id: 0, userId: '$_id.userId', scooterId: '$_id.scooterId', uses: 1, totalKm: 1 } }"
     })
-    List<UserPeriodUsageResponseDTO> getUsageByUsersAndPeriod(List<Long> userIds, Instant start, Instant end);
+    List<UserScooterPeriodUsageDTO> getUsageByUsersAndPeriod(Long userId, Instant monthStart, Instant monthEnd);
+
+
+    @Aggregation(pipeline = {
+            "{ $match: { userId: { $in: ?0 }, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
+            "{ $group: { _id: { userId: '$userId', scooterId: '$scooterId' }, uses: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
+            "{ $project: { _id: 0, userId: '$_id.userId', scooterId: '$_id.scooterId', uses: 1, totalKm: 1 } }"
+    })
+    List<UserScooterPeriodUsageDTO> getUsagePeriodForUsersByAccount(List<Long> userIds, Instant monthStart, Instant monthEnd);
 }
+
+

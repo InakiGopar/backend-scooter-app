@@ -36,7 +36,7 @@ public class AccountUserService {
         accountUserRepository.deleteById(accountUserID);
     }
     public List<AccountUserResponseDTO> getAccountUserByAccount(Long accountId) {
-        return accountUserRepository.findByIdAccountId(accountId)
+        return accountUserRepository.findAllByAccountId(accountId)
                 .stream()
                 .map(a -> new AccountUserResponseDTO(a.getId().getAccountId(), a.getId().getUserId()))
                 .toList();

@@ -8,7 +8,6 @@ import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
-import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
@@ -100,6 +99,27 @@ public class UserService {
     //Report F
     public FeeResponseDTO createFee(@RequestBody Fee requestFee) {
         return tripFeignClient.createFee(requestFee);
+    }
+
+    //Report H
+    public List<UserScooterPeriodUsageDTO> getScooterUsesByPeriod(
+            Long userId,
+            int year,
+            int monthStart,
+            int monthEnd,
+            Boolean withRelatedToMyAccount )
+    {
+
+        if (withRelatedToMyAccount == null) {
+            //return all uses of my scooters by a specific period
+            return tripFeignClient.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd );
+        }
+
+        //Get all usersId related to the userId account
+        List<Long> relatedUsers = accountFeignClient.getUsersRelatedToMyAccount(userId);
+
+        //Return all scooter usages by user related to the userId account
+        return tripFeignClient.getUsagePeriodForUsersByAccount(relatedUsers, year ,monthStart, monthEnd);
     }
 
 }
