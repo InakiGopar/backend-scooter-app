@@ -11,9 +11,15 @@ import java.util.List;
 @Repository
 public interface ScooterRepository extends JpaRepository<Scooter, Long> {
     //Report G
-    @Query("SELECT new ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO(s.scooterId, s.latitude, s.longitude) " +
-            "FROM Scooter s " +
-            "WHERE s.latitude = :latitude AND s.longitude = :longitude"
-    )
-    List<NearScooterReportDTO> getByLatitudeAndLongitude(double latitude, double longitude);
+    @Query("""
+            SELECT new ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO(
+                s.scooterId, s.latitude, s.longitude)
+            FROM Scooter s
+            WHERE (6371 * acos(
+                cos(radians(:latitude)) * cos(radians(s.latitude)) *
+                cos(radians(s.longitude) - radians(:longitude)) +
+                sin(radians(:latitude)) * sin(radians(s.latitude))
+            )) < :radius
+    """)
+    List<NearScooterReportDTO> getByLatitudeAndLongitude(double latitude, double longitude, double radius);
 }

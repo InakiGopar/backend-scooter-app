@@ -75,7 +75,8 @@ public class ScooterController {
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
             @RequestParam double latitude,
-            @RequestParam double longitude) {
-        return ResponseEntity.ok(scooterService.getNearScooters(latitude, longitude));
+            @RequestParam double longitude,
+            @RequestParam double radius) {
+        return ResponseEntity.ok(scooterService.getNearScooters(latitude, longitude, radius));
     }
 }

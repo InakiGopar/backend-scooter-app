@@ -92,9 +92,9 @@ public class UserController {
     //Report G
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
-            @RequestParam double latitude, @RequestParam double longitude
+            @RequestParam double latitude, @RequestParam double longitude, @RequestParam double radius
     ) {
-        return ResponseEntity.ok( userService.getNearScooters(latitude, longitude) );
+        return ResponseEntity.ok( userService.getNearScooters(latitude, longitude, radius) );
     }
 
 }

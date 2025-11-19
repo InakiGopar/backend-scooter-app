@@ -128,7 +128,7 @@ public class ScooterService {
     }
 
     //Report G
-    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude) {
-        return scooterRepository.getByLatitudeAndLongitude(latitude, longitude);
+    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude, double radius) {
+        return scooterRepository.getByLatitudeAndLongitude(latitude, longitude, radius);
     }
 }

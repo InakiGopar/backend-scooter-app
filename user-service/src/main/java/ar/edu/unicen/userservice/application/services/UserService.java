@@ -93,8 +93,8 @@ public class UserService {
     }
 
     //Report G
-    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude) {
-        return scooterFeignClient.getNearScooters(latitude, longitude);
+    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude, double radius) {
+        return scooterFeignClient.getNearScooters(latitude, longitude, radius);
     }
 
     //Report F
