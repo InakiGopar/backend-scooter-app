@@ -5,8 +5,8 @@ import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 import ar.edu.unicen.scooterservice.domain.entities.Stop;
 
 public record ScooterRequestDTO(
-         float latitude,
-         float longitude,
+         double latitude,
+         double longitude,
          ScooterState state,
          Long currentStopId
 ) {

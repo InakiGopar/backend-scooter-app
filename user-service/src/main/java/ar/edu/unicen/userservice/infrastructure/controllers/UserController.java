@@ -1,16 +1,14 @@
 package ar.edu.unicen.userservice.infrastructure.controllers;
 
 import ar.edu.unicen.userservice.application.services.UserService;
-import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportScooterByYearDTO;
+import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
+import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,10 +83,16 @@ public class UserController {
     }
 
 
+    //Report F
+    @PostMapping("/fee")
+    public ResponseEntity<FeeResponseDTO> createFee(@RequestBody Fee requestFee) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createFee(requestFee));
+    }
+
     //Report G
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
-            @RequestParam float latitude, @RequestParam float longitude
+            @RequestParam double latitude, @RequestParam double longitude
     ) {
         return ResponseEntity.ok( userService.getNearScooters(latitude, longitude) );
     }

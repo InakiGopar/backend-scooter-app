@@ -74,8 +74,8 @@ public class ScooterController {
     // Report G
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
-            @RequestParam float latitude,
-            @RequestParam float longitude) {
+            @RequestParam double latitude,
+            @RequestParam double longitude) {
         return ResponseEntity.ok(scooterService.getNearScooters(latitude, longitude));
     }
 }

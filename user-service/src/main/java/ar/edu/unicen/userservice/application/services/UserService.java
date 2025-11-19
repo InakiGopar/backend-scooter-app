@@ -1,9 +1,7 @@
 package ar.edu.unicen.userservice.application.services;
 
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
-import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportScooterByYearDTO;
+import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
@@ -11,7 +9,7 @@ import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDT
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
+import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
@@ -19,6 +17,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -94,8 +93,13 @@ public class UserService {
     }
 
     //Report G
-    public List<NearScooterReportDTO> getNearScooters(float latitude, float longitude) {
+    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude) {
         return scooterFeignClient.getNearScooters(latitude, longitude);
+    }
+
+    //Report F
+    public FeeResponseDTO createFee(@RequestBody Fee requestFee) {
+        return tripFeignClient.createFee(requestFee);
     }
 
 }

@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Scooter {
     private Long scooterId;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private ScooterState state;
     private Stop currentStop;
     private float kilometers;

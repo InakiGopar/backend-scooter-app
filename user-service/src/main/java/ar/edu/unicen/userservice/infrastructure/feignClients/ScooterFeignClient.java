@@ -23,5 +23,5 @@ public interface ScooterFeignClient {
 
     // Report G
     @GetMapping("/near-scooters")
-    List<NearScooterReportDTO> getNearScooters(@RequestParam float latitude, @RequestParam float longitude);
+    List<NearScooterReportDTO> getNearScooters(@RequestParam double latitude, @RequestParam double longitude);
 }
