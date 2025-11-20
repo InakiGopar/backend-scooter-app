@@ -14,3 +14,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    url: /scooter-service.yaml   # Archivo YAML estático dentro de /static
+    disable-swagger-default-url: true
+  paths-to-match: /**
