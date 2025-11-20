@@ -110,7 +110,7 @@ public class UserService {
             Boolean withRelatedToMyAccount )
     {
 
-        if (withRelatedToMyAccount == null) {
+        if (withRelatedToMyAccount == null || !withRelatedToMyAccount) {
             //return all uses of my scooters by a specific period
             return tripFeignClient.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd );
         }
