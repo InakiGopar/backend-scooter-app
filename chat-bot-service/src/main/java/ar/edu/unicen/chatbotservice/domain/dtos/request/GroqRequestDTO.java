@@ -33,6 +33,7 @@ public record GroqRequestDTO(
         Double temperature
 ) {
     public static GroqRequestDTO fromUserPrompt(
+            String context,
             String prompt,
             String model,
             Double temperature
@@ -43,7 +44,7 @@ public record GroqRequestDTO(
                 List.of(
                         Map.of(
                         "role", "system",
-                        "content", getSystemPrompt()
+                        "content", context + " " +  getSystemPrompt()
                         ),
                         Map.of(
                         "role", "user",

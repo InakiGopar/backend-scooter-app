@@ -4,12 +4,14 @@ import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
+import ar.edu.unicen.userservice.infrastructure.feignClients.ChatBotFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +29,7 @@ public class UserService {
     private final ScooterFeignClient scooterFeignClient;
     private final TripFeignClient tripFeignClient;
     private final AccountFeignClient accountFeignClient;
+    private final ChatBotFeignClient  chatBotFeignClient;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
@@ -121,5 +124,11 @@ public class UserService {
         //Return all scooter usages by user related to the userId account
         return tripFeignClient.getUsagePeriodForUsersByAccount(relatedUsers, year ,monthStart, monthEnd);
     }
+
+    //Chatbot
+    public LLMResponseDTO chat(PromptRequestDTO request) {
+        return chatBotFeignClient.chat(request);
+    }
+
 
 }
