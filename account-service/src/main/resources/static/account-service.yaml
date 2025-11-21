@@ -9,7 +9,6 @@ servers:
     description: Servidor local de desarrollo
 
 paths:
-
   /account:
     post:
       summary: Crear una cuenta
