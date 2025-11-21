@@ -37,6 +37,7 @@
 
     <modules>
         <module>account-service</module>
+        <module>chat-bot-service</module>
         <module>scooter-service</module>
         <module>support-service</module>
         <module>trip-service</module>

@@ -2,8 +2,10 @@ package ar.edu.unicen.userservice.infrastructure.controllers;
 
 import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.report.*;
+import ar.edu.unicen.userservice.domain.dtos.request.PromptRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
@@ -108,6 +110,13 @@ public class UserController {
     )
     {
         return ResponseEntity.ok( userService.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd, withRelatedToMyAccount ) );
+    }
+
+
+    //Chatbot
+    @PostMapping("/chat")
+    public ResponseEntity<LLMResponseDTO>chat(@RequestBody PromptRequestDTO request) {
+        return ResponseEntity.ok(userService.chat(request));
     }
 
 }
