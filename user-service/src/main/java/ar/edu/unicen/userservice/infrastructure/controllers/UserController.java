@@ -119,4 +119,12 @@ public class UserController {
         return ResponseEntity.ok(userService.chat(request));
     }
 
+    @PostMapping("/historical-data/{userId}")
+    public ResponseEntity<LLMResponseDTO> historicalTripData(
+            @PathVariable Long userId,
+            @RequestBody PromptRequestDTO request)
+    {
+        return ResponseEntity.ok(userService.historicalTripData(userId, request));
+    }
+
 }

@@ -104,4 +104,9 @@ public class TripController {
                 tripService.getUsagePeriodForUsersByAccount(userIds, year, monthStart, monthEnd)
         );
     }
+
+    @GetMapping("/stats/{userId}")
+    public ResponseEntity<TripStatsDTO> getTripStats(@PathVariable Long userId) {
+        return ResponseEntity.ok(tripService.getTripsStats(userId));
+    }
 }

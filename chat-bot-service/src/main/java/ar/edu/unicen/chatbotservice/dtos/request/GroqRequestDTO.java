@@ -1,4 +1,4 @@
-package ar.edu.unicen.chatbotservice.domain.dtos.request;
+package ar.edu.unicen.chatbotservice.dtos.request;
 
 import java.util.List;
 import java.util.Map;
@@ -44,7 +44,7 @@ public record GroqRequestDTO(
                 List.of(
                         Map.of(
                         "role", "system",
-                        "content", context + " " +  getSystemPrompt()
+                        "content", getSystemPrompt() + " " +  context
                         ),
                         Map.of(
                         "role", "user",

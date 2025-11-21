@@ -1,4 +1,4 @@
-package ar.edu.unicen.chatbotservice.domain.dtos.response;
+package ar.edu.unicen.chatbotservice.dtos.response.trip;
 
 import java.time.Instant;
 import java.util.UUID;

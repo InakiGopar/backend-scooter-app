@@ -1,10 +1,6 @@
 package ar.edu.unicen.tripservice.application.repositories;
 
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserScooterPeriodUsageDTO;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
 import ar.edu.unicen.tripservice.domain.documents.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -84,6 +80,51 @@ public interface TripRepository extends MongoRepository<Trip, String> {
             "{ $project: { _id: 0, userId: '$_id.userId', scooterId: '$_id.scooterId', uses: 1, totalKm: 1 } }"
     })
     List<UserScooterPeriodUsageDTO> getUsagePeriodForUsersByAccount(List<Long> userIds, Instant monthStart, Instant monthEnd);
+
+    @Aggregation(pipeline = {
+            "{ $match: { userId: ?0 } }",
+
+            "{ $group: { " +
+                    "_id: '$userId', " +
+                    "totalSpent: { $sum: '$totalPrice' }, " +
+                    "totalKm: { $sum: '$kmTraveled' }, " +
+                    "scooterArray: { $addToSet: '$scooterId' }, " +
+                    "trips: { $push: '$$ROOT' }" +
+                    "} }",
+
+            // Find the travel most expensive
+            "{ $unwind: '$trips' }",
+            "{ $sort: { 'trips.totalPrice': -1 } }",
+            "{ $group: { " +
+                    "_id: '$_id', " +
+                    "totalSpent: { $first: '$totalSpent' }, " +
+                    "totalKm: { $first: '$totalKm' }, " +
+                    "scooterArray: { $first: '$scooterArray' }, " +
+                    "trips: { $push: '$trips' }, " +
+                    "mostExpensiveTrip: { $first: '$trips' }" +
+                    "} }",
+
+            // Find the longer travel
+            "{ $unwind: '$trips' }",
+            "{ $sort: { 'trips.kmTraveled': -1 } }",
+            "{ $group: { " +
+                    "_id: '$_id', " +
+                    "totalSpent: { $first: '$totalSpent' }, " +
+                    "totalKm: { $first: '$totalKm' }, " +
+                    "scooterArray: { $first: '$scooterArray' }, " +
+                    "mostExpensiveTrip: { $first: '$mostExpensiveTrip' }, " +
+                    "longestTrip: { $first: '$trips' }" +
+                    "} }",
+
+            "{ $project: { " +
+                    "totalSpent: 1, " +
+                    "totalKm: 1, " +
+                    "scooterUsed: { $size: '$scooterArray' }, " +
+                    "mostExpensiveTrip: 1, " +
+                    "longestTrip: 1 " +
+                    "} }"
+    })
+    TripStatsDTO getTripsStatsByUserId(Long userId);
 }
 
 
