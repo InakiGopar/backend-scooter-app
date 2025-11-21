@@ -1,5 +1,6 @@
 server:
   port: 8083
+
 spring:
   application:
     name: account-service
@@ -9,8 +10,16 @@ spring:
     password:
   jpa:
     hibernate:
-      ddl-auto: update   # crea/actualiza las tablas automáticamente
-    show-sql: true       #  muestra las queries en consola
+      ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+springdoc:
+  api-docs:
+    enabled: true      # No generar docs automáticas
+  swagger-ui:
+    url: /account-service.yaml   # Archivo YAML estático dentro de /static
+    disable-swagger-default-url: true
+  paths-to-match: /**   # <--- NECESARIO para que Swagger funcione con YAML estático
