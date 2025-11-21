@@ -4,6 +4,7 @@ package ar.edu.unicen.userservice.infrastructure.feignClients;
 import ar.edu.unicen.userservice.domain.dtos.request.PromptRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -12,4 +13,9 @@ public interface ChatBotFeignClient {
 
     @PostMapping("/chat")
     LLMResponseDTO chat(@RequestBody PromptRequestDTO request);
+
+    @PostMapping("/historical-data/{userId}")
+    LLMResponseDTO historicalTripData(
+            @PathVariable Long userId,
+            @RequestBody PromptRequestDTO request);
 }

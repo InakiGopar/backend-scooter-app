@@ -225,6 +225,25 @@ public class TripService {
         return tripRepository.getUsagePeriodForUsersByAccount(userIds, start, end);
     }
 
+    public TripStatsDTO getTripsStats(Long userId) {
+        User user = userFeignClient.getUserById(userId);
+
+        if (user == null) {
+            throw new EntityNotFoundException("the user with the id " + userId + "not exist");
+        }
+
+        TripStatsDTO stats = tripRepository.getTripsStatsByUserId(userId);
+
+        return new TripStatsDTO(
+                user.getName(),
+                stats.totalSpent(),
+                stats.totalKm(),
+                stats.scooterUsed(),
+                stats.longestTrip(),
+                stats.mostExpensiveTrip()
+        );
+    }
+
 
 
 }

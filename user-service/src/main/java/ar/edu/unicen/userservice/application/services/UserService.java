@@ -130,5 +130,9 @@ public class UserService {
         return chatBotFeignClient.chat(request);
     }
 
+    public LLMResponseDTO historicalTripData(Long userId, PromptRequestDTO request) {
+        return chatBotFeignClient.historicalTripData(userId, request);
+    }
+
 
 }
