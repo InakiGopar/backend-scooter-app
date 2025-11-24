@@ -1,0 +1,569 @@
+openapi: 3.0.3
+info:
+  title: Trip Service API
+  version: 1.0.0
+  description: API para gestionar viajes (Trips) y tarifas (Fees).
+
+servers:
+  - url: http://localhost:8085/api
+    description: Servidor local de desarrollo de Trip Service
+
+paths:
+
+  #########################################
+  #             TRIP CONTROLLER
+  #########################################
+
+  /trip:
+    get:
+      summary: Obtener todos los viajes
+      tags: [Trips]
+      responses:
+        200:
+          description: Lista de viajes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripResponseDTO'
+
+    post:
+      summary: Iniciar un viaje
+      tags: [Trips]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripRequestDTO'
+      responses:
+        201:
+          description: Viaje iniciado exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+
+  /trip/{tripId}:
+    get:
+      summary: Obtener un viaje por ID
+      tags: [Trips]
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Viaje encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+
+    put:
+      summary: Finalizar un viaje
+      tags: [Trips]
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripRequestDTO'
+      responses:
+        200:
+          description: Viaje finalizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+
+    delete:
+      summary: Eliminar un viaje
+      tags: [Trips]
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Viaje eliminado exitosamente
+
+  /trip/startPauseTrip/{tripId}:
+    patch:
+      summary: Iniciar pausa de un viaje
+      tags: [Trips]
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Pausa iniciada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+
+  /trip/endPauseTrip/{tripId}:
+    patch:
+      summary: Finalizar pausa de un viaje
+      tags: [Trips]
+      parameters:
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Pausa finalizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+
+  /trip/by-kilometers:
+    get:
+      summary: Obtener viajes por kilómetros
+      tags: [Trips]
+      parameters:
+        - name: withPause
+          in: query
+          schema:
+            type: boolean
+            default: false
+      responses:
+        200:
+          description: Resultados encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScooterUsageResponseDTO'
+
+  /trip/scooter-by-trips:
+    get:
+      summary: Obtener uso de scooters por cantidad de viajes en un año
+      tags: [Trips]
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: cantTrips
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Datos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripScooterByYearResponseDTO'
+
+  /trip/total-invoice:
+    get:
+      summary: Obtener facturación total
+      tags: [Reports]
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: startMonth
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: endMonth
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Facturación obtenida
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceReportResponseDTO'
+
+  /trip/scooter-user-usage:
+    get:
+      summary: Uso de scooter por usuario
+      tags: [Reports]
+      parameters:
+        - name: monthStart
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: monthEnd
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Datos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripScooterUserUsageDTO'
+
+  /trip/user-usage-period:
+    get:
+      summary: Uso del usuario en un periodo
+      tags: [Reports]
+      parameters:
+        - name: userId
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: accountId
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        200:
+          description: Datos encontrados
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserPeriodUsageResponseDTO'
+
+  #########################################
+  #             FEE CONTROLLER
+  #########################################
+
+  /fee:
+    post:
+      summary: Crear tarifa
+      tags: [Fees]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeRequestDTO'
+      responses:
+        201:
+          description: Tarifa creada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponseDTO'
+
+  /fee/{feeId}:
+    get:
+      summary: Obtener tarifa por ID
+      tags: [Fees]
+      parameters:
+        - name: feeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Tarifa encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponseDTO'
+
+    put:
+      summary: Actualizar tarifa
+      tags: [Fees]
+      parameters:
+        - name: feeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeRequestDTO'
+      responses:
+        200:
+          description: Tarifa actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponseDTO'
+
+    delete:
+      summary: Eliminar tarifa
+      tags: [Fees]
+      parameters:
+        - name: feeId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: Eliminada
+
+  /fee/{feeId}/extraHour:
+    patch:
+      summary: Actualizar precio por hora extra
+      tags: [Fees]
+      parameters:
+        - name: feeId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeeRequestDTO'
+      responses:
+        200:
+          description: Tarifa actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FeeResponseDTO'
+
+###########################################################
+#                      SCHEMAS
+###########################################################
+
+components:
+  schemas:
+
+    #TRIP#
+
+    TripRequestDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        scooterId:
+          type: integer
+        stopStartId:
+          type: integer
+        stopEndId:
+          type: integer
+        kmTraveled:
+          type: integer
+        feeId:
+          type: string
+      required: [userId, scooterId, stopStartId]
+
+    TripResponseDTO:
+      type: object
+      properties:
+        tripId:
+          type: string
+          format: uuid
+        userId:
+          type: integer
+        scooterId:
+          type: integer
+        stopSartId:
+          type: integer
+        stopEndId:
+          type: integer
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        kmTraveled:
+          type: integer
+        startPause:
+          type: string
+          format: date-time
+        endPause:
+          type: string
+          format: date-time
+        totalPrice:
+          type: number
+          format: float
+        feeId:
+          type: string
+
+    ScooterUsageResponseDTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+        totalKilometers:
+          type: integer
+        totalPausesMinutes:
+          type: integer
+
+    TripScooterByYearResponseDTO:
+      type: object
+      properties:
+        ScooterId:
+          type: integer
+        year:
+          type: string
+          format: date-time
+        tripCount:
+          type: integer
+
+    TripScooterUserUsageDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        countScooterUsage:
+          type: integer
+        monthStart:
+          type: integer
+        monthEnd:
+          type: integer
+
+    InvoiceReportResponseDTO:
+      type: object
+      properties:
+        totalInvoiced:
+          type: number
+        totalTrips:
+          type: integer
+
+    UserPeriodUsageResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        totalTrips:
+          type: integer
+        totalKm:
+          type: integer
+        totalDurationMinutes:
+          type: number
+
+    #########################
+    #        FEE
+    #########################
+
+    FeeRequestDTO:
+      type: object
+      properties:
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        pricePerHour:
+          type: number
+          format: float
+        extraHourFee:
+          type: number
+          format: float
+
+    FeeResponseDTO:
+      type: object
+      properties:
+        feeId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        pricePerHour:
+          type: number
+          format: float
+        extraHourFee:
+          type: number
+          format: float
+
+    #########################
+    #   SCOOTER & RELATED
+    #########################
+
+    Scooter:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        state:
+          $ref: '#/components/schemas/ScooterState'
+        currentStop:
+          $ref: '#/components/schemas/Stop'
+        kilometers:
+          type: number
+
+    Stop:
+      type: object
+      properties:
+        stopId:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    ScooterState:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - MAINTENANCE
+
+    #########################
+    #        USER           #
+    #########################
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer

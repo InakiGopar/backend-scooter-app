@@ -14,3 +14,11 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+springdoc:
+  api-docs:
+    enabled: true      # No generar docs automáticas
+  swagger-ui:
+    url: /account-service.yaml   # Archivo YAML estático dentro de /static
+    disable-swagger-default-url: true
+  paths-to-match: /**   # <--- NECESARIO para que Swagger funcione con YAML estático

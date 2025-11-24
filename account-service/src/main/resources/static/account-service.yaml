@@ -6,7 +6,7 @@ info:
 
 servers:
   - url: http://localhost:8083/api
-    description: Servidor local de desarrollo
+    description: Servidor local de desarrollo de Account Service
 
 paths:
   /account:
