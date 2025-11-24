@@ -7,62 +7,225 @@ spring:
 
   cloud:
     gateway:
+
       default-filters:
-        - TokenAuthFilter
+        - JwtAuthFilter
 
       routes:
 
-        # ========== AUTH (PUBLIC) ==========
+        # =====================================
+        # AUTH SERVICE (PUBLIC)
+        # =====================================
         - id: auth-service
-          uri: http://localhost:8091
+          uri: http://localhost:8091/
           predicates:
             - Path=/api/auth/**
+          filters: [ ]
 
+        # =====================================
+        # USER-SERVICE — ADMIN ONLY ENDPOINTS
+        # =====================================
 
-        # ========== ACCOUNT-SERVICE (PROTECTED) ==========
-        - id: account-service
-          uri: http://localhost:8083
+        # POST /api/user    (create user)
+        - id: user-create
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/account/**
+            - Method=POST
+            - Path=/api/user
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-          # ========== CHAT-BOT-SERVICE (PROTECTED) ==========
-        - id: chat-bot-service
-          uri: http://localhost:8090
+        # DELETE /api/user/{id}
+        - id: user-delete
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/chatbot
+            - Method=DELETE
+            - Path=/api/user/*
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-        # ========== SCOOTER-SERVICE (PROTECTED) ==========
-        - id: scooter-service
-          uri: http://localhost:8081
+        # GET /api/user/scooters**
+        - id: user-scooters-admin
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/scooter/**
+            - Path=/api/user/scooters/**
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-        # ========== SUPPORT-SERVICE (PROTECTED) ==========
-        - id: support-service
-          uri: http://localhost:8086
+        # GET /api/user/total-invoice
+        - id: user-total-invoice
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/support/**
+            - Path=/api/user/total-invoice
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-        # ========== TRIP-SERVICE (PROTECTED) ==========
-        - id: trip-service
-          uri: http://localhost:8085
+        # GET /api/user/scooter-user-usage
+        - id: user-scooter-user-usage
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/trip/**
+            - Path=/api/user/scooter-user-usage
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-        # ========== USER-SERVICE (PROTECTED) ==========
-        - id: user-service
-          uri: http://localhost:8082
+        # POST /api/user/fee
+        - id: user-fee-admin
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/user/**
+            - Method=POST
+            - Path=/api/user/fee
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
 
-
-        # ========== WALLET-SERVICE (PROTECTED) ==========
-        - id: wallet-service
-          uri: http://localhost:8084
+        # USER PERMISSIONS → USER-SERVICE
+        # /api/user/near-scooters  (USER only)
+        - id: user-near-scooters
+          uri: http://localhost:8082/
           predicates:
-            - Path=/api/wallet/**
+            - Path=/api/user/near-scooters
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN
+
+        # /api/user/scooter-usages-by-period/{userId}
+        - id: user-scooter-usages
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/user/scooter-usages-by-period/*
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN
+
+        # =====================================
+        # ACCOUNT-SERVICE (ADMIN ONLY ENDPOINTS)
+        # =====================================
+
+        # /api/account/scooter-user-usage
+        - id: account-scooter-user-usage
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/account/scooter-user-usage
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # /api/account/toggleState/{id}
+        - id: account-toggle
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/account/toggleState/*
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # /api/account/users-related-to-account/{userId} (USER)
+        - id: account-users-related
+          uri: http://localhost:8083/
+          predicates:
+            - Path=/api/account/users-related-to-account/*
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN
+
+        # =====================================
+        # SCOOTER-SERVICE
+        # =====================================
+
+        # ADMIN ONLY: /api/scooter/scooters**
+        - id: scooter-scooters-admin
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/scooter/scooters/**
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # USER ONLY: /api/scooter/near-scooters
+        - id: scooter-near-scooters
+          uri: http://localhost:8081/
+          predicates:
+            - Path=/api/scooter/near-scooters
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN
+
+        # =====================================
+        # TRIP-SERVICE
+        # =====================================
+
+        # ADMIN ONLY: /api/trip/scooters**
+        - id: trip-scooters-admin
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/trip/scooters/**
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # ADMIN ONLY: /api/trip/total-invoice
+        - id: trip-total-invoice
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/trip/total-invoice
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # ADMIN ONLY: /api/fee  (Trip-service)
+        - id: trip-fee
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/fee
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # USER ONLY: /api/trip/scooter-usages-by-period
+        - id: trip-scooter-usages
+          uri: http://localhost:8085/
+          predicates:
+            - Path=/api/trip/scooter-usages-by-period
+            - Path=/api/trip/scooter-usages-by-period/*
+          filters:
+            - JwtAuthFilter
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN
