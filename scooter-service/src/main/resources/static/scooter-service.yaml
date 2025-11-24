@@ -274,9 +274,79 @@ paths:
                     longitude:
                       type: number
                       format: double
+  /stop:
+      post:
+        summary: Crear una parada
+        tags: [Stop]
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopRequestDTO'
+        responses:
+            '201':
+              description: Se creo correctamente la parada
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StopResponseDTO'
+  /stop/{stopId}:
+    put:
+      summary: Actualizar una parada
+      tags: [ Stop ]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequestDTO'
+      responses:
+        '200':
+          description: Parada actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponseDTO'
+    delete:
+      summary: Eliminar parada
+      tags: [Stop]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Parada eliminada
+    get:
+      summary: Obtener una parada en base a su ID
+      tags: [ Stop ]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Parada encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponseDTO'
+
 components:
   schemas:
-    #----------Request----------
+                    #----------SCOOTER----------
+          #----------Request----------
     ScooterRequestDTO:
       type: object
       properties:
@@ -314,3 +384,31 @@ components:
         - INACTIVE
         - MAINTENANCE
       description: Estado del monopatin
+
+                    #----------STOP----------
+          #----------Request----------
+    StopRequestDTO:
+      type: object
+      properties:
+        stopId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+          #----------Response----------
+    StopResponseDTO:
+      type: object
+      properties:
+        stopId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
