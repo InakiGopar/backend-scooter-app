@@ -43,6 +43,7 @@
         <module>trip-service</module>
         <module>user-service</module>
         <module>wallet-service</module>
+        <module>gateway-service</module>
     </modules>
 
     <!-- =========================
