@@ -41,7 +41,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         String token = authHeader.substring(7);
 
-        // Validated token use AUTH-SERVICE
+        // Validated token using AUTH-SERVICE
         return webClient.build()
                 .get()
                 .uri("http://localhost:8091/auth/validate")
@@ -54,7 +54,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
                         return unauthorized(exchange, "Invalid token");
                     }
 
-                    // Mutar request enviando info del usuario
                     ServerHttpRequest mutatedRequest = exchange.getRequest()
                             .mutate()
                             .header("X-User-Name", response.username())
@@ -77,7 +76,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1; // Ejecuta antes del enrutamiento
+        return -1;
     }
 
 }

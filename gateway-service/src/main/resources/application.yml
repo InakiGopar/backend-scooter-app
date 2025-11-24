@@ -18,11 +18,20 @@ spring:
           predicates:
             - Path=/auth/**
 
-        # ========== USER-SERVICE (PROTECTED) ==========
-        - id: user-service
-          uri: http://localhost:8082
+
+        # ========== ACCOUNT-SERVICE (PROTECTED) ==========
+        - id: account-service
+          uri: http://localhost:8083
           predicates:
-            - Path=/api/user/**
+            - Path=/api/account/**
+
+
+          # ========== CHAT-BOT-SERVICE (PROTECTED) ==========
+        - id: chat-bot-service
+          uri: http://localhost:8090
+          predicates:
+            - Path=/api/chatbot
+
 
         # ========== SCOOTER-SERVICE (PROTECTED) ==========
         - id: scooter-service
@@ -30,20 +39,30 @@ spring:
           predicates:
             - Path=/api/scooter/**
 
-        # ========== TRIP-SERVICE (PROTECTED) ==========
-        - id: trip-service
-          uri: http://localhost:8085
-          predicates:
-            - Path=/api/trip/**
-
-        # ========== WALLET-SERVICE (PROTECTED) ==========
-        - id: wallet-service
-          uri: http://localhost:8084
-          predicates:
-            - Path=/api/wallet/**
 
         # ========== SUPPORT-SERVICE (PROTECTED) ==========
         - id: support-service
           uri: http://localhost:8086
           predicates:
             - Path=/api/support/**
+
+
+        # ========== TRIP-SERVICE (PROTECTED) ==========
+        - id: trip-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/api/trip/**
+
+
+        # ========== USER-SERVICE (PROTECTED) ==========
+        - id: user-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/user/**
+
+
+        # ========== WALLET-SERVICE (PROTECTED) ==========
+        - id: wallet-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/wallet/**
