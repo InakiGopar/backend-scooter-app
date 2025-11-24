@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+
+  gateway-service:
+    build: ./gateway-service
+    ports:
+      - "8080:8080"   # Unico puerto expuesto al exterior
+    depends_on:
+      - auth-service
+      - user-service
+      - scooter-service
+      - trip-service
+      - account-service
+      - wallet-service
+      - support-service
+    networks:
+      - internal
+
+  auth-service:
+    build: ./auth-service
+    expose:
+      - "8091"
+    networks:
+      - internal
+
+  user-service:
+    build: ./user-service
+    expose:
+      - "8082"
+    networks:
+      - internal
+
+  scooter-service:
+    build: ./scooter-service
+    expose:
+      - "8081"
+    networks:
+      - internal
+
+  trip-service:
+    build: ./trip-service
+    expose:
+      - "8085"
+    networks:
+      - internal
+
+  account-service:
+    build: ./account-service
+    expose:
+      - "8083"
+    networks:
+      - internal
+
+  wallet-service:
+    build: ./wallet-service
+    expose:
+      - "8084"
+    networks:
+      - internal
+
+  support-service:
+    build: ./support-service
+    expose:
+      - "8086"
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge

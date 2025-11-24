@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(name ="user-service", url ="http://localhost:8082/api/user")
 public interface UserFeignClient {
-    @GetMapping("/{userEmail}")
+    @GetMapping("/email/{userEmail}")
     UserResponseDTO findByEmail(@PathVariable String userEmail);
 }

@@ -23,7 +23,7 @@ public class AuthController {
         return ResponseEntity.ok(new LoginResponse(token));
     }
 
-    @PostMapping("/validate")
+    @GetMapping("/validate")
     public ResponseEntity<ValidateTokenResponse> validate(
             @RequestHeader("Authorization") String authHeader
     ) {
@@ -43,7 +43,7 @@ public class AuthController {
         }
 
         String email = jwtUtils.getEmail(token);
-        Role role  = jwtUtils.getRole(token);
+        String role  = jwtUtils.getRole(token);
 
         return ResponseEntity.ok(new ValidateTokenResponse(true, email, role));
     }

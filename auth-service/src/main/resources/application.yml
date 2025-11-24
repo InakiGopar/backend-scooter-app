@@ -10,5 +10,5 @@ user:
     url: http://localhost:8082
 
 jwt:
-  secret: "clave_larga..."
+  secret: "Z4m8Qw1rT9fA3dS6yL2uC7xV5pK0nH8J3wR6bT9fY2lP5vM8qR1sD4gT7hW0k"
   expiration-millis: 3600000

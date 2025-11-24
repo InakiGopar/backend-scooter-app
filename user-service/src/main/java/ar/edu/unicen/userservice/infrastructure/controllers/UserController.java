@@ -4,10 +4,7 @@ import ar.edu.unicen.userservice.application.services.UserService;
 import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.PromptRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.*;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +39,11 @@ public class UserController {
     public ResponseEntity<Void> delete(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/email/{userEmail}")
+    public ResponseEntity<AuthUserResponseDTO> findByEmail(@PathVariable String userEmail) {
+        return ResponseEntity.ok(userService.findByEmail(userEmail));
     }
 
     //Report A

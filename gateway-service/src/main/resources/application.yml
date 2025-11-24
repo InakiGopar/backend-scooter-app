@@ -4,12 +4,11 @@ server:
 spring:
   application:
     name: gateway-service
+  main:
+    web-application-type: reactive
 
   cloud:
     gateway:
-
-      default-filters:
-        - JwtAuthFilter
 
       routes:
 
@@ -33,7 +32,6 @@ spring:
             - Method=POST
             - Path=/api/user
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -45,7 +43,6 @@ spring:
             - Method=DELETE
             - Path=/api/user/*
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -56,7 +53,6 @@ spring:
           predicates:
             - Path=/api/user/scooters/**
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -67,7 +63,6 @@ spring:
           predicates:
             - Path=/api/user/total-invoice
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -78,7 +73,6 @@ spring:
           predicates:
             - Path=/api/user/scooter-user-usage
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -90,7 +84,6 @@ spring:
             - Method=POST
             - Path=/api/user/fee
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -102,7 +95,6 @@ spring:
           predicates:
             - Path=/api/user/near-scooters
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: USER
@@ -113,7 +105,6 @@ spring:
           predicates:
             - Path=/api/user/scooter-usages-by-period/*
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: USER
@@ -128,7 +119,6 @@ spring:
           predicates:
             - Path=/api/account/scooter-user-usage
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -139,7 +129,6 @@ spring:
           predicates:
             - Path=/api/account/toggleState/*
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -150,7 +139,6 @@ spring:
           predicates:
             - Path=/api/account/users-related-to-account/*
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: USER,ADMIN
@@ -165,7 +153,6 @@ spring:
           predicates:
             - Path=/api/scooter/scooters/**
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -176,7 +163,6 @@ spring:
           predicates:
             - Path=/api/scooter/near-scooters
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: USER,ADMIN
@@ -191,7 +177,6 @@ spring:
           predicates:
             - Path=/api/trip/scooters/**
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -202,7 +187,6 @@ spring:
           predicates:
             - Path=/api/trip/total-invoice
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -213,7 +197,6 @@ spring:
           predicates:
             - Path=/api/fee
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: ADMIN
@@ -225,7 +208,16 @@ spring:
             - Path=/api/trip/scooter-usages-by-period
             - Path=/api/trip/scooter-usages-by-period/*
           filters:
-            - JwtAuthFilter
             - name: RoleFilter
               args:
                 allowedRoles: USER,ADMIN
+
+       # ========== CHATBOT-SERVICE (PROTECTED — ANY ROLE) ==========
+        - id: chat-bot-service
+          uri: http://chatbot-service:8090/
+          predicates:
+            - Path=/api/chatbot/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: USER,ADMIN,SUPPORT

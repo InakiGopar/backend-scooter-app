@@ -3,10 +3,7 @@ package ar.edu.unicen.userservice.application.services;
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
 import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
-import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
-import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.*;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
 import ar.edu.unicen.userservice.domain.model.trip.Fee;
@@ -52,7 +49,7 @@ public class UserService {
 
         user.setRole(request.role());
         user.setName(request.name());
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(request.password()));
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPhone(request.phone());
@@ -74,6 +71,10 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new EntityNotFoundException("User not found"));
         userRepository.delete(user);
+    }
+
+    public AuthUserResponseDTO findByEmail(String userEmail) {
+        return AuthUserResponseDTO.toDTO(userRepository.findByEmail(userEmail));
     }
 
     //Report A
