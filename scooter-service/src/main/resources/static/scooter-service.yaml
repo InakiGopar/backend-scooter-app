@@ -1,0 +1,414 @@
+openapi: 3.0.3
+info:
+  title: Scooter Service API
+  version: 1.0.0
+  description: API del microservicio de monopatines de app de scooters
+
+servers:
+  - url: http://localhost:8081/api
+    description: Servidor local de desarrollo
+
+paths:
+  /scooter:
+    post:
+      summary: Crear un monopatin
+      tags: [Scooter]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScooterRequestDTO'
+      responses:
+        '201':
+          description: Se creo correctamente el scooter
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScooterResponseDTO'
+
+  /scooter/{scooterId}:
+    get:
+      summary: Obtener un monopatin en base a su ID
+      tags: [Scooter]
+      parameters:
+        - in: path
+          name: scooterId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: monopatin encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScooterResponseDTO'
+    put:
+      summary: Actualizar un monopatin
+      tags: [Scooter]
+      parameters:
+        - in: path
+          name: scooterId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScooterRequestDTO'
+      responses:
+        '200':
+          description: Monopatin actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScooterResponseDTO'
+    delete:
+      summary: Eliminar monopatin
+      tags: [Scooter]
+      parameters:
+        - in: path
+          name: scooterId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Monopatin eliminado
+  /scooter/{scooterId}/status:
+    patch:
+      summary: Actualiza el estado del monopatin
+      tags: [Scooter]
+      parameters:
+        - in: path
+          name: scooterId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                state:
+                  $ref: '#/components/schemas/ScooterState'
+      responses:
+        '200':
+          description: Estado actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScooterResponseDTO'
+  /scooter/{scooterId}/finishedTrip:
+    patch:
+      summary: Acualiza los valores del monopatin cuando finaliza un viaje
+      tags: [Scooter]
+      parameters:
+        - in: path
+          name: scooterId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  format: double
+                longitude:
+                  type: number
+                  format: double
+                state:
+                  $ref: '#/components/schemas/ScooterState'
+                endStop:
+                  type: number
+                  format: int64
+                kilometers:
+                  type: number
+                  format: float
+      responses:
+        '200':
+          description: Actualizo los valores del monopatin
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScooterResponseDTO'
+  /scooter/by-kilometers:
+    get:
+      summary: Obtener monopatines ordenado por kilometros
+      tags: [Scooter]
+      parameters:
+        - in: query
+          name: withPause
+          schema:
+            type: boolean
+            default: false
+          description: >
+            Indica si incluir información de pausas en los resultados. 
+            Opcional; si no se especifica, no se incluyen datos de pausa (se devuelven null).
+      responses:
+        '200':
+          description: Monopatines ordenados por kilometraje, con datos de pausa opcionales según el query param.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    scooterId:
+                      type: integer
+                      format: int64
+                    kilometers:
+                      type: integer
+                      format: int64
+                      nullable: true
+                      description: Kilómetros recorridos; puede ser null si el monopatín no tiene viajes registrados
+                    pause:
+                      type: integer
+                      format: int64
+                      nullable: true
+                      description: Minutos de pausa; solo se incluye si se pasa `withPause`
+              example:
+                [
+                  {
+                    "scooterId": 1,
+                    "kilometers": 1500,
+                    "pause": 300
+                  },
+                  {
+                    "scooterId": 2,
+                    "kilometers": null,
+                    "pause": null
+                  }
+                ]
+  /scooter/by-travels:
+    get:
+      summary: Obtener monopatines con minimo de viajes en X año
+      tags: [Scooter]
+      parameters:
+        - in: query
+          name: year
+          required: true
+          schema:
+            type: integer
+          description: Filtra por año
+        - in: query
+          name: countTrips
+          required: true
+          schema:
+            type: integer
+          description: Filtra por un minimo de viajes
+      responses:
+        '200':
+          description: Lista de monopatines filtrados (puede ser una lista vacía si no hay resultados)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    scooterId:
+                      type: integer
+                      format: int64
+                    year:
+                      type: integer
+                    totalTrips:
+                      type: integer
+                  required:
+                    - scooterId
+                    - year
+                    - totalTrips
+  /scooter/near-scooters:
+    get:
+      summary: Obtener los monopatines cercanos
+      tags: [Scooter]
+      parameters:
+        - in: query
+          name: latitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Latitud del usuario
+        - in: query
+          name: longitude
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Longitud del usuario
+        - in: query
+          name: radius
+          required: true
+          schema:
+            type: number
+            format: double
+          description: Radio en el que quiere buscar el usuario
+      responses:
+        '200':
+          description: Lista de monopatines filtrado por cercania a la ubicacion del usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    scooterId:
+                      type: integer
+                      format: int64
+                    latitude:
+                      type: number
+                      format: double
+                    longitude:
+                      type: number
+                      format: double
+  /stop:
+      post:
+        summary: Crear una parada
+        tags: [Stop]
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopRequestDTO'
+        responses:
+            '201':
+              description: Se creo correctamente la parada
+              content:
+                application/json:
+                  schema:
+                    $ref: '#/components/schemas/StopResponseDTO'
+  /stop/{stopId}:
+    put:
+      summary: Actualizar una parada
+      tags: [ Stop ]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequestDTO'
+      responses:
+        '200':
+          description: Parada actualizada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponseDTO'
+    delete:
+      summary: Eliminar parada
+      tags: [Stop]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Parada eliminada
+    get:
+      summary: Obtener una parada en base a su ID
+      tags: [ Stop ]
+      parameters:
+        - in: path
+          name: stopId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Parada encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponseDTO'
+
+components:
+  schemas:
+                    #----------SCOOTER----------
+          #----------Request----------
+    ScooterRequestDTO:
+      type: object
+      properties:
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        state:
+          $ref: '#/components/schemas/ScooterState'
+        currentStopId:
+          type: integer
+          format: int64
+          #----------Response----------
+    ScooterResponseDTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        state:
+          $ref: '#/components/schemas/ScooterState'
+          #----------ENUM----------
+    ScooterState:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - MAINTENANCE
+      description: Estado del monopatin
+
+                    #----------STOP----------
+          #----------Request----------
+    StopRequestDTO:
+      type: object
+      properties:
+        stopId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+          #----------Response----------
+    StopResponseDTO:
+      type: object
+      properties:
+        stopId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
