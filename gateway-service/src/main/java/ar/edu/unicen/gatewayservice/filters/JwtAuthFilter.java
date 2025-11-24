@@ -25,8 +25,8 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        // Public routes (login/register)
-        if (path.startsWith("/auth/login") || path.startsWith("/auth/register")) {
+        // Public routes (/api/auth)
+        if (path.startsWith("/api/auth/")) {
             return chain.filter(exchange);
         }
 
@@ -44,7 +44,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // Validated token using AUTH-SERVICE
         return webClient.build()
                 .get()
-                .uri("http://localhost:8091/auth/validate")
+                .uri("http://localhost:8091/api/auth/validate")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(ValidateTokenResponse.class)

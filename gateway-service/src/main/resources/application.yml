@@ -16,7 +16,7 @@ spring:
         - id: auth-service
           uri: http://localhost:8091
           predicates:
-            - Path=/auth/**
+            - Path=/api/auth/**
 
 
         # ========== ACCOUNT-SERVICE (PROTECTED) ==========
