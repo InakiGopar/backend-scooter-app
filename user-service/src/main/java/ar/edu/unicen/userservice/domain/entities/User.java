@@ -16,14 +16,16 @@ public class User {
     private Long userId;
     private Role role;
     private String name;
+    private String password;
     @Column(name = "last_name")
     private String lastName;
     private String email;
     private int phone;
 
-    public User(Role role, String name, String lastName, String email, int phone) {
+    public User(Role role, String name, String password ,String lastName, String email, int phone) {
         this.role = role;
         this.name = name;
+        this.password = password;
         this.lastName = lastName;
         this.email = email;
         this.phone = phone;

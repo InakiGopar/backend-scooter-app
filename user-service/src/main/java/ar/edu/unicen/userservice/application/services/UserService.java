@@ -17,6 +17,7 @@ import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -30,10 +31,14 @@ public class UserService {
     private final TripFeignClient tripFeignClient;
     private final AccountFeignClient accountFeignClient;
     private final ChatBotFeignClient  chatBotFeignClient;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
         User user = request.toEntity();
+
+        //Encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
 
@@ -47,6 +52,7 @@ public class UserService {
 
         user.setRole(request.role());
         user.setName(request.name());
+        user.setPassword(request.password());
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPhone(request.phone());
