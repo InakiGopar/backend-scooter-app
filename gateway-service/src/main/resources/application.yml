@@ -105,7 +105,7 @@ spring:
             - JwtAuthFilter
             - name: RoleFilter
               args:
-                allowedRoles: USER,ADMIN
+                allowedRoles: USER
 
         # /api/user/scooter-usages-by-period/{userId}
         - id: user-scooter-usages
@@ -116,7 +116,7 @@ spring:
             - JwtAuthFilter
             - name: RoleFilter
               args:
-                allowedRoles: USER,ADMIN
+                allowedRoles: USER
 
         # =====================================
         # ACCOUNT-SERVICE (ADMIN ONLY ENDPOINTS)
