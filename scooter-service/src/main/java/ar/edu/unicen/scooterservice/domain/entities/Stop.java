@@ -18,11 +18,11 @@ public class Stop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_stop")
     private Long stopId;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
 
 
-    public Stop(float latitude, float longitude) {
+    public Stop(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }

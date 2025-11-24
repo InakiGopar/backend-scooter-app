@@ -4,8 +4,8 @@ import ar.edu.unicen.tripservice.domain.model.scooter.ScooterState;
 
 public record FeignScooterEndTripRequest(
         Long scooterId,
-        float latitude,
-        float longitude,
+        double latitude,
+        double longitude,
         ScooterState state,
         Long endStopId,
         float kilometers

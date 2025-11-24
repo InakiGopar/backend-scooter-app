@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.time.Instant;
 
 @RestController
 @RequestMapping("api/trip")
@@ -52,18 +51,23 @@ public class TripController {
         tripService.deleteTrip(tripId);
         return ResponseEntity.noContent().build();
     }
+
+    //Report A
     @GetMapping("/by-kilometers")
     public ResponseEntity<List<ScooterUsageResponseDTO>> findAllByPause(
             @RequestParam(required = false, defaultValue = "false") Boolean withPause) {
         return ResponseEntity.ok(tripService.findAllByKilometers(withPause));
     }
 
+    //Report C
     @GetMapping("/scooter-by-trips")
-    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels(int year, int cantTrips){
-        return ResponseEntity.ok(tripService.getScooterByTravels(year,cantTrips));
+    public ResponseEntity<List<TripScooterByYearResponseDTO>> getScooterByTravels( @RequestParam int year,
+                                                                                   @RequestParam int countTrips)
+    {
+        return ResponseEntity.ok(tripService.getScooterByTravels(year, countTrips));
     }
 
-    //Reporte D
+    //Report D
     @GetMapping("/total-invoice")
     public ResponseEntity<InvoiceReportResponseDTO> getTotalInvoice(
             @RequestParam int year,
@@ -71,21 +75,38 @@ public class TripController {
             @RequestParam int endMonth) {
         return ResponseEntity.ok(tripService.getTotalInvoice( year, startMonth, endMonth ));
     }
+
+    //Report E
     @GetMapping("/scooter-user-usage")
     public ResponseEntity<List<TripScooterUserUsageDTO>>getScooterUserUsage(@RequestParam int monthStart, @RequestParam int monthEnd){
         return ResponseEntity.ok(tripService.getScooterUserUsage(monthStart,monthEnd));
     }
 
-    @GetMapping("/user-usage-period")
-    public ResponseEntity<List<UserPeriodUsageResponseDTO>> getUserUsagePeriod(
-            @RequestParam Long userId,
-            @RequestParam String start,
-            @RequestParam String end,
-            @RequestParam(required = false) Long accountId
+    //Report H (two methods)
+    @GetMapping("/scooter-usages-by-period/{userId}")
+    public ResponseEntity<List<UserScooterPeriodUsageDTO>> getUserUsagePeriod(
+            @PathVariable Long userId,
+            @RequestParam int year,
+            @RequestParam int monthStart,
+            @RequestParam int monthEnd
     ){
-        Instant startInstant = Instant.parse(start);
-        Instant endInstant = Instant.parse(end);
+        return ResponseEntity.ok(tripService.getUserUsagePeriod(userId, year ,monthStart, monthEnd));
+    }
 
-        return ResponseEntity.ok(tripService.getUserUsagePeriod(userId, startInstant, endInstant, accountId));
+    @GetMapping("/scooter-usages-by-period")
+    public ResponseEntity<List<UserScooterPeriodUsageDTO>> getUsagePeriodForUsersByAccount(
+            @RequestParam List<Long> userIds,
+            @RequestParam int year,
+            @RequestParam int monthStart,
+            @RequestParam int monthEnd
+    ) {
+        return ResponseEntity.ok(
+                tripService.getUsagePeriodForUsersByAccount(userIds, year, monthStart, monthEnd)
+        );
+    }
+
+    @GetMapping("/stats/{userId}")
+    public ResponseEntity<TripStatsDTO> getTripStats(@PathVariable Long userId) {
+        return ResponseEntity.ok(tripService.getTripsStats(userId));
     }
 }

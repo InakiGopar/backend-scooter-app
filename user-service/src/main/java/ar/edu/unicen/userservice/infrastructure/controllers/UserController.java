@@ -1,15 +1,15 @@
 package ar.edu.unicen.userservice.infrastructure.controllers;
 
 import ar.edu.unicen.userservice.application.services.UserService;
-import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
+import ar.edu.unicen.userservice.domain.dtos.report.*;
+import ar.edu.unicen.userservice.domain.dtos.request.PromptRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.request.UserRequestDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
-import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
+import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,7 +59,7 @@ public class UserController {
 
     //Report C
     @GetMapping("/scooters/usage")
-    public ResponseEntity<List<Scooter>> getScootersReportByTravels(
+    public ResponseEntity<List<ReportScooterByYearDTO>> getScootersReportByTravels(
             @RequestParam int year,
             @RequestParam int countTrips) {
         return ResponseEntity.ok(userService.getScootersReportByTravels(year, countTrips));
@@ -73,7 +73,7 @@ public class UserController {
             @RequestParam int startMonth,
             @RequestParam int endMonth) {
 
-        return ResponseEntity.ok(  userService.getTotalInvoiceReport(year, startMonth, endMonth) );
+        return ResponseEntity.ok(userService.getTotalInvoiceReport(year, startMonth, endMonth));
     }
 
 
@@ -84,12 +84,47 @@ public class UserController {
     }
 
 
+    //Report F
+    @PostMapping("/fee")
+    public ResponseEntity<FeeResponseDTO> createFee(@RequestBody Fee requestFee) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createFee(requestFee));
+    }
+
     //Report G
     @GetMapping("/near-scooters")
     public ResponseEntity<List<NearScooterReportDTO>> getNearScooters(
-            @RequestParam float latitude, @RequestParam float longitude
-    ) {
-        return ResponseEntity.ok( userService.getNearScooters(latitude, longitude) );
+            @RequestParam double latitude, @RequestParam double longitude, @RequestParam double radius
+    )
+    {
+        return ResponseEntity.ok( userService.getNearScooters(latitude, longitude, radius) );
+    }
+
+    //Report H
+    @GetMapping("/scooter-usages-by-period/{userId}")
+    public ResponseEntity<List<UserScooterPeriodUsageDTO>> getScooterUsesByPeriod(
+            @PathVariable Long userId,
+            @RequestParam int year,
+            @RequestParam int monthStart,
+            @RequestParam int monthEnd,
+            @RequestParam(required = false) Boolean withRelatedToMyAccount
+    )
+    {
+        return ResponseEntity.ok( userService.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd, withRelatedToMyAccount ) );
+    }
+
+
+    //Chatbot
+    @PostMapping("/chat")
+    public ResponseEntity<LLMResponseDTO>chat(@RequestBody PromptRequestDTO request) {
+        return ResponseEntity.ok(userService.chat(request));
+    }
+
+    @PostMapping("/historical-data/{userId}")
+    public ResponseEntity<LLMResponseDTO> historicalTripData(
+            @PathVariable Long userId,
+            @RequestBody PromptRequestDTO request)
+    {
+        return ResponseEntity.ok(userService.historicalTripData(userId, request));
     }
 
 }

@@ -1,0 +1,460 @@
+openapi: 3.0.3
+info:
+  title: User Service API
+  version: "1.0.0"
+  description: Documentación OpenAPI generada para UserController
+
+servers:
+  - url: http://localhost:8082/api
+    description: Servidor local de desarrollo de User Service
+
+tags:
+  - name: Users
+    description: Operaciones CRUD y reportes para usuarios y scooters
+
+paths:
+  /user:
+    post:
+      tags:
+        - Users
+      summary: Crear usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '400':
+          description: Request inválido
+
+  /user/{userId}:
+    put:
+      tags:
+        - Users
+      summary: Actualizar usuario por ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequestDTO'
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '404':
+          description: Usuario no encontrado
+
+    get:
+      tags:
+        - Users
+      summary: Obtener usuario por ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponseDTO'
+        '404':
+          description: Usuario no encontrado
+
+    delete:
+      tags:
+        - Users
+      summary: Eliminar usuario por ID
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Eliminado correctamente
+        '404':
+          description: Usuario no encontrado
+
+  /user/scooters:
+    get:
+      tags:
+        - Users
+      summary: Report A - scooters ordenados por kilómetros
+      parameters:
+        - name: withPause
+          in: query
+          required: false
+          schema:
+            type: boolean
+          description: Si true, incluye pause en cálculos
+      responses:
+        '200':
+          description: Lista de ReportADTO
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReportADTO'
+
+  /user/toggleState/{accountId}:
+    patch:
+      tags:
+        - Users
+      summary: Report B - alternar estado de cuenta
+      parameters:
+        - name: accountId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Estado de cuenta alternado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CancelAccountDTO'
+        '404':
+          description: Cuenta no encontrada
+
+  /user/scooters/usage:
+    get:
+      tags:
+        - Users
+      summary: Report C - scooters con más viajes
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: countTrips
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Lista de scooters
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Scooter'
+
+  /user/total-invoice:
+    get:
+      tags:
+        - Users
+      summary: Report D - facturación total
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: startMonth
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: endMonth
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Totales de facturación
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InvoiceReportDTO'
+
+  /user/scooter-user-usage:
+    get:
+      tags:
+        - Users
+      summary: Report E - uso de scooters por usuario
+      parameters:
+        - name: monthStart
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: monthEnd
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: userType
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/AccountType'
+      responses:
+        '200':
+          description: Lista de uso de scooters por usuario
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserScooterUsageResponseDTO'
+
+  /user/near-scooters:
+    get:
+      tags:
+        - Users
+      summary: Report G - scooters cercanos a coordenadas
+      parameters:
+        - name: latitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+        - name: longitude
+          in: query
+          required: true
+          schema:
+            type: number
+            format: float
+      responses:
+        '200':
+          description: Scooters cercanos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NearScooterReportDTO'
+
+components:
+  schemas:
+
+    # ----------- DTOs -----------
+
+    UserRequestDTO:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/Role'
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: integer
+      required:
+        - role
+        - name
+        - lastName
+        - email
+        - phone
+
+    UserResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        role:
+          $ref: '#/components/schemas/Role'
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        phone:
+          type: integer
+      required:
+        - userId
+        - role
+        - name
+        - lastName
+        - email
+        - phone
+
+    ReportADTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+        kilometers:
+          type: integer
+        pause:
+          type: integer
+      required:
+        - scooterId
+        - kilometers
+        - pause
+
+    CancelAccountDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+          format: int64
+        accountName:
+          type: string
+      required:
+        - accountId
+        - accountName
+
+    InvoiceReportDTO:
+      type: object
+      properties:
+        totalInvoiced:
+          type: number
+          format: float
+        totalTrips:
+          type: integer
+      required:
+        - totalInvoiced
+        - totalTrips
+
+    NearScooterReportDTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+        latitude:
+          type: number
+          format: float
+        longitude:
+          type: number
+          format: float
+      required:
+        - scooterId
+        - latitude
+        - longitude
+
+    UserScooterUsageResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: int64
+        countScooterUsage:
+          type: integer
+        monthStart:
+          type: integer
+        monthEnd:
+          type: integer
+        userType:
+          $ref: '#/components/schemas/AccountType'
+      required:
+        - userId
+        - countScooterUsage
+        - monthStart
+        - monthEnd
+        - userType
+
+    # ----------- MODELOS -----------
+
+    Scooter:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+        kilometers:
+          type: number
+        pause:
+          type: integer
+        trips:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+        state:
+          $ref: '#/components/schemas/ScooterState'
+      required:
+        - scooterId
+        - kilometers
+        - pause
+        - trips
+        - latitude
+        - longitude
+        - state
+
+    Trip:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+        totalKilometers:
+          type: number
+        totalPausesMinutes:
+          type: integer
+        totalTrips:
+          type: integer
+      required:
+        - scooterId
+        - totalKilometers
+        - totalPausesMinutes
+        - totalTrips
+
+    # ----------- ENUMS -----------
+
+    Role:
+      type: string
+      description: Rol del usuario
+      enum:
+        - USER
+        - ADMIN
+        - SUPPORT
+      example: USER
+
+    AccountType:
+      type: string
+      enum:
+        - BASIC
+        - PREMIUM
+      example: BASIC
+
+    ScooterState:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - MAINTENANCE
+      example: ACTIVE

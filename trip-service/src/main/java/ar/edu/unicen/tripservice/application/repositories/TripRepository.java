@@ -1,11 +1,7 @@
 package ar.edu.unicen.tripservice.application.repositories;
 
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.InvoiceReportResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.ScooterUsageResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterByYearResponseDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.TripScooterUserUsageDTO;
-import ar.edu.unicen.tripservice.domain.dtos.response.trip.UserPeriodUsageResponseDTO;
-import ar.edu.unicen.tripservice.domain.entities.Trip;
+import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
+import ar.edu.unicen.tripservice.domain.documents.Trip;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -16,9 +12,10 @@ import java.util.List;
 @Repository
 public interface TripRepository extends MongoRepository<Trip, String> {
     @Aggregation(pipeline = {
-            "{ $match: { pauseMinutes: { $exists: true } } }",
-            "{ $group: { _id: '$scooterId', totalKm: { $sum: '$kmTraveled' }, totalPauses: { $sum: '$pauseCount' }, totalTrips: { $sum: 1 } } }",
-            "{ $sort: { totalKm: -1 } }"
+            "{ $match: { pauseCount: { $exists: true } } }",
+            "{ $group: { _id: '$scooterId', totalKilometers: { $sum: '$kmTraveled' }, totalPausesMinutes: { $sum: '$pauseCount' }, totalTrips: { $sum: 1 } } }",
+            "{ $project: { scooterId: '$_id', totalKilometers: 1, totalPausesMinutes: 1, _id: 0 } }",
+            "{ $sort: { totalKilometers: -1 } }"
     })
     List<ScooterUsageResponseDTO> findAllByKilometersAndPause();
 
@@ -39,7 +36,7 @@ public interface TripRepository extends MongoRepository<Trip, String> {
 
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
-            "{ $match: { $and: [ { year: ?0 }, { month: { $gte: ?1, $lte: ?2 } } ] } }",
+            "{ $match: { year: ?0, month: { $gte: ?1, $lte: ?2 } } }",
             "{ $group: { _id: null, totalInvoiced: { $sum: '$totalPrice' }, totalTrips: { $sum: 1 } } }",
             "{ $project: { _id: 0, totalInvoiced: 1, totalTrips: 1 } }"
     })
@@ -48,34 +45,86 @@ public interface TripRepository extends MongoRepository<Trip, String> {
     @Aggregation(pipeline = {
             "{ $addFields: { year: { $year: '$startTime' } } }",
             "{ $match: { year: ?0 } }",
-            "{ $group: { _id: { scooterId: '$scooterId', year: '$year' }, totalTrips: { $sum: '$cantTrips' } } }",
-            "{ $match: { totalTrips: { $gt: ?1 } } }",
+            "{ $group: { _id: { scooterId: '$scooterId', year: '$year' }, totalTrips: { $sum: 1 } } }",
+            "{ $match: { totalTrips: { $gte: ?1 } } }",
             "{ $project: { _id: 0, scooterId: '$_id.scooterId', year: '$_id.year', totalTrips: 1 } }"
     })
     List<TripScooterByYearResponseDTO> getScooterByTripInAYear(int year,int cantTrips);
 
     @Aggregation(pipeline = {
-            // 1️⃣ Agrega campos derivados: año y mes desde el Instant
             "{ $addFields: { year: { $year: '$startTime' }, month: { $month: '$startTime' } } }",
-
-            // 2️⃣ Filtra los viajes entre los meses dados (mismo año)
             "{ $match: { month: { $gte: ?0, $lte: ?1 } } }",
-
-            // 3️⃣ Agrupa por usuario y calcula totales
-            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
-
-            // 4️⃣ Ordena por cantidad de viajes
-            "{ $sort: { totalTrips: -1 } }",
-
-            // 5️⃣ Devuelve el resultado formateado
-            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1 } }"
+            "{ $group: { _id: '$userId', totalScooterUsage: { $sum: 1 } } }",
+            "{ $sort: { totalScooterUsage: -1 } }",
+            "{ $project: { " +
+                    "_id: 0, " +
+                    "userId: '$_id', " +
+                    "totalScooterUsage: 1, " +
+                    "monthStart: { $literal: ?0 }, " +
+                    "monthEnd: { $literal: ?1 } " +
+                    "} }"
     })
     List<TripScooterUserUsageDTO> getScooterUserUsage(int startMonth, int endMonth);
 
     @Aggregation(pipeline = {
-            "{ $match: { userId: { $in: ?0 }, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
-            "{ $group: { _id: '$userId', totalTrips: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' }, totalDurationMinutes: { $sum: { $divide: [ { $subtract: ['$endTime', '$startTime'] }, 60000 ] } } } }",
-            "{ $project: { _id: 0, userId: '$_id', totalTrips: 1, totalKm: 1, totalDurationMinutes: 1 } }"
+            "{ $match: { userId: ?0, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
+            "{ $group: { _id: { userId: '$userId', scooterId: '$scooterId' }, uses: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
+            "{ $project: { _id: 0, userId: '$_id.userId', scooterId: '$_id.scooterId', uses: 1, totalKm: 1 } }"
     })
-    List<UserPeriodUsageResponseDTO> getUsageByUsersAndPeriod(List<Long> userIds, Instant start, Instant end);
+    List<UserScooterPeriodUsageDTO> getUsageByUsersAndPeriod(Long userId, Instant monthStart, Instant monthEnd);
+
+
+    @Aggregation(pipeline = {
+            "{ $match: { userId: { $in: ?0 }, startTime: { $gte: ?1, $lte: ?2 }, endTime: { $exists: true } } }",
+            "{ $group: { _id: { userId: '$userId', scooterId: '$scooterId' }, uses: { $sum: 1 }, totalKm: { $sum: '$kmTraveled' } } }",
+            "{ $project: { _id: 0, userId: '$_id.userId', scooterId: '$_id.scooterId', uses: 1, totalKm: 1 } }"
+    })
+    List<UserScooterPeriodUsageDTO> getUsagePeriodForUsersByAccount(List<Long> userIds, Instant monthStart, Instant monthEnd);
+
+    @Aggregation(pipeline = {
+            "{ $match: { userId: ?0 } }",
+
+            "{ $group: { " +
+                    "_id: '$userId', " +
+                    "totalSpent: { $sum: '$totalPrice' }, " +
+                    "totalKm: { $sum: '$kmTraveled' }, " +
+                    "scooterArray: { $addToSet: '$scooterId' }, " +
+                    "trips: { $push: '$$ROOT' }" +
+                    "} }",
+
+            // Find the travel most expensive
+            "{ $unwind: '$trips' }",
+            "{ $sort: { 'trips.totalPrice': -1 } }",
+            "{ $group: { " +
+                    "_id: '$_id', " +
+                    "totalSpent: { $first: '$totalSpent' }, " +
+                    "totalKm: { $first: '$totalKm' }, " +
+                    "scooterArray: { $first: '$scooterArray' }, " +
+                    "trips: { $push: '$trips' }, " +
+                    "mostExpensiveTrip: { $first: '$trips' }" +
+                    "} }",
+
+            // Find the longer travel
+            "{ $unwind: '$trips' }",
+            "{ $sort: { 'trips.kmTraveled': -1 } }",
+            "{ $group: { " +
+                    "_id: '$_id', " +
+                    "totalSpent: { $first: '$totalSpent' }, " +
+                    "totalKm: { $first: '$totalKm' }, " +
+                    "scooterArray: { $first: '$scooterArray' }, " +
+                    "mostExpensiveTrip: { $first: '$mostExpensiveTrip' }, " +
+                    "longestTrip: { $first: '$trips' }" +
+                    "} }",
+
+            "{ $project: { " +
+                    "totalSpent: 1, " +
+                    "totalKm: 1, " +
+                    "scooterUsed: { $size: '$scooterArray' }, " +
+                    "mostExpensiveTrip: 1, " +
+                    "longestTrip: 1 " +
+                    "} }"
+    })
+    TripStatsDTO getTripsStatsByUserId(Long userId);
 }
+
+

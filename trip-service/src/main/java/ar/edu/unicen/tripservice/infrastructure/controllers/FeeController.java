@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class FeeController {
     private final FeeService feeService;
 
+    //Report F
     @PostMapping
     public ResponseEntity<FeeResponseDTO> createFee(@RequestBody FeeRequestDTO request) {
         return ResponseEntity.status(HttpStatus.CREATED).body(feeService.createFee(request));

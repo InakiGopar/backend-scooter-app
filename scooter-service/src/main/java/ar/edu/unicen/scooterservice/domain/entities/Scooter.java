@@ -16,14 +16,14 @@ public class Scooter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_scooter")
     private Long scooterId;
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private ScooterState state;
     @ManyToOne
     @JoinColumn(name = "id_stop")
     private Stop currentStop;
 
-    public Scooter(float latitude, float longitude, ScooterState state, Stop currentStop) {
+    public Scooter(double latitude, double longitude, ScooterState state, Stop currentStop) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.state = state;

@@ -1,23 +1,25 @@
 package ar.edu.unicen.userservice.application.services;
 
 import ar.edu.unicen.userservice.application.repositories.UserRepository;
-import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
+import ar.edu.unicen.userservice.domain.dtos.report.*;
 import ar.edu.unicen.userservice.domain.dtos.request.*;
 import ar.edu.unicen.userservice.domain.dtos.response.CancelAccountDTO;
+import ar.edu.unicen.userservice.domain.dtos.response.LLMResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserResponseDTO;
 import ar.edu.unicen.userservice.domain.dtos.response.UserScooterUsageResponseDTO;
 import ar.edu.unicen.userservice.domain.entities.User;
 import ar.edu.unicen.userservice.domain.model.account.AccountType;
-import ar.edu.unicen.userservice.domain.model.scooter.Scooter;
-import ar.edu.unicen.userservice.domain.dtos.report.InvoiceReportDTO;
+import ar.edu.unicen.userservice.domain.model.trip.Fee;
 import ar.edu.unicen.userservice.infrastructure.feignClients.AccountFeignClient;
+import ar.edu.unicen.userservice.infrastructure.feignClients.ChatBotFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.ScooterFeignClient;
 import ar.edu.unicen.userservice.infrastructure.feignClients.TripFeignClient;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -28,10 +30,15 @@ public class UserService {
     private final ScooterFeignClient scooterFeignClient;
     private final TripFeignClient tripFeignClient;
     private final AccountFeignClient accountFeignClient;
+    private final ChatBotFeignClient  chatBotFeignClient;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request){
         User user = request.toEntity();
+
+        //Encode the password
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
 
@@ -45,6 +52,7 @@ public class UserService {
 
         user.setRole(request.role());
         user.setName(request.name());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPhone(request.phone());
@@ -78,7 +86,7 @@ public class UserService {
     }
 
     //Report C
-    public List<Scooter> getScootersReportByTravels(int year, int countTrips) {
+    public List<ReportScooterByYearDTO> getScootersReportByTravels(int year, int countTrips) {
         return scooterFeignClient.getScootersByTravels(year, countTrips);
     }
 
@@ -93,8 +101,44 @@ public class UserService {
     }
 
     //Report G
-    public List<NearScooterReportDTO> getNearScooters(float latitude, float longitude) {
-        return scooterFeignClient.getNearScooters(latitude, longitude);
+    public List<NearScooterReportDTO> getNearScooters(double latitude, double longitude, double radius) {
+        return scooterFeignClient.getNearScooters(latitude, longitude, radius);
     }
+
+    //Report F
+    public FeeResponseDTO createFee(@RequestBody Fee requestFee) {
+        return tripFeignClient.createFee(requestFee);
+    }
+
+    //Report H
+    public List<UserScooterPeriodUsageDTO> getScooterUsesByPeriod(
+            Long userId,
+            int year,
+            int monthStart,
+            int monthEnd,
+            Boolean withRelatedToMyAccount )
+    {
+
+        if (withRelatedToMyAccount == null || !withRelatedToMyAccount) {
+            //return all uses of my scooters by a specific period
+            return tripFeignClient.getScooterUsesByPeriod( userId, year ,monthStart, monthEnd );
+        }
+
+        //Get all usersId related to the userId account
+        List<Long> relatedUsers = accountFeignClient.getUsersRelatedToMyAccount(userId);
+
+        //Return all scooter usages by user related to the userId account
+        return tripFeignClient.getUsagePeriodForUsersByAccount(relatedUsers, year ,monthStart, monthEnd);
+    }
+
+    //Chatbot
+    public LLMResponseDTO chat(PromptRequestDTO request) {
+        return chatBotFeignClient.chat(request);
+    }
+
+    public LLMResponseDTO historicalTripData(Long userId, PromptRequestDTO request) {
+        return chatBotFeignClient.historicalTripData(userId, request);
+    }
+
 
 }

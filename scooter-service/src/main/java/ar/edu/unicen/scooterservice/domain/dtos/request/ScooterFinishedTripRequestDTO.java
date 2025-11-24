@@ -4,8 +4,8 @@ import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 
 public record ScooterFinishedTripRequestDTO(
         Long scooterId,
-        float latitude,
-        float longitude,
+        double latitude,
+        double longitude,
         ScooterState state,
         Long endStopId,
         float kilometers

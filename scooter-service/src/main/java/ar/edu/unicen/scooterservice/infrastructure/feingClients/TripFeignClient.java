@@ -1,10 +1,11 @@
 package ar.edu.unicen.scooterservice.infrastructure.feingClients;
 
-import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -18,5 +19,5 @@ public interface TripFeignClient {
 
     //Report C
     @GetMapping("/scooter-by-trips")
-    List<Trip> findAllByTravels(@RequestParam("year") int year, @RequestParam("countTrips") int countTrips);
+    List<ReportScooterByYearDTO> findAllByTravels(@RequestParam int year, @RequestParam int countTrips);
 }

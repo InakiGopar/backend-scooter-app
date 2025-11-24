@@ -39,11 +39,13 @@
         <module>auth-service</module>
         <module>account-service</module>
 
+        <module>chat-bot-service</module>
         <module>scooter-service</module>
         <module>support-service</module>
         <module>trip-service</module>
         <module>user-service</module>
         <module>wallet-service</module>
+        <module>gateway-service</module>
     </modules>
 
     <!-- =========================
