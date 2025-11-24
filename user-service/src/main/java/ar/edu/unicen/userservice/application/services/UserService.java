@@ -52,7 +52,7 @@ public class UserService {
 
         user.setRole(request.role());
         user.setName(request.name());
-        user.setPassword(request.password());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setLastName(request.lastName());
         user.setEmail(request.email());
         user.setPhone(request.phone());
