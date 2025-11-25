@@ -1,392 +1,75 @@
 openapi: 3.0.3
 info:
   title: User Service API
-  version: "1.0.0"
-  description: Documentación OpenAPI generada para UserController
+  version: 1.0.0
+  description: API del microservicio de usuarios
 
 servers:
-  - url: http://localhost:8082/api
-    description: Servidor local de desarrollo de User Service
+  - url: http://localhost:8082/api/user
+
+security:
+  - bearerAuth: [ ]
 
 tags:
   - name: Users
-    description: Operaciones CRUD y reportes para usuarios y scooters
-
-paths:
-  /user:
-    post:
-      tags:
-        - Users
-      summary: Crear usuario
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRequestDTO'
-      responses:
-        '201':
-          description: Usuario creado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponseDTO'
-        '400':
-          description: Request inválido
-
-  /user/{userId}:
-    put:
-      tags:
-        - Users
-      summary: Actualizar usuario por ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserRequestDTO'
-      responses:
-        '200':
-          description: Usuario actualizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponseDTO'
-        '404':
-          description: Usuario no encontrado
-
-    get:
-      tags:
-        - Users
-      summary: Obtener usuario por ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Usuario encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserResponseDTO'
-        '404':
-          description: Usuario no encontrado
-
-    delete:
-      tags:
-        - Users
-      summary: Eliminar usuario por ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: Eliminado correctamente
-        '404':
-          description: Usuario no encontrado
-
-  /user/scooters:
-    get:
-      tags:
-        - Users
-      summary: Report A - scooters ordenados por kilómetros
-      parameters:
-        - name: withPause
-          in: query
-          required: false
-          schema:
-            type: boolean
-          description: Si true, incluye pause en cálculos
-      responses:
-        '200':
-          description: Lista de ReportADTO
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ReportADTO'
-
-  /user/toggleState/{accountId}:
-    patch:
-      tags:
-        - Users
-      summary: Report B - alternar estado de cuenta
-      parameters:
-        - name: accountId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Estado de cuenta alternado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CancelAccountDTO'
-        '404':
-          description: Cuenta no encontrada
-
-  /user/scooters/usage:
-    get:
-      tags:
-        - Users
-      summary: Report C - scooters con más viajes
-      parameters:
-        - name: year
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: countTrips
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Lista de scooters
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Scooter'
-
-  /user/total-invoice:
-    get:
-      tags:
-        - Users
-      summary: Report D - facturación total
-      parameters:
-        - name: year
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: startMonth
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: endMonth
-          in: query
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Totales de facturación
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/InvoiceReportDTO'
-
-  /user/scooter-user-usage:
-    get:
-      tags:
-        - Users
-      summary: Report E - uso de scooters por usuario
-      parameters:
-        - name: monthStart
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: monthEnd
-          in: query
-          required: true
-          schema:
-            type: integer
-        - name: userType
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/AccountType'
-      responses:
-        '200':
-          description: Lista de uso de scooters por usuario
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UserScooterUsageResponseDTO'
-
-  /user/near-scooters:
-    get:
-      tags:
-        - Users
-      summary: Report G - scooters cercanos a coordenadas
-      parameters:
-        - name: latitude
-          in: query
-          required: true
-          schema:
-            type: number
-            format: float
-        - name: longitude
-          in: query
-          required: true
-          schema:
-            type: number
-            format: float
-      responses:
-        '200':
-          description: Scooters cercanos
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/NearScooterReportDTO'
+  - name: Reports
+  - name: Fees
 
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
   schemas:
 
-    # ----------- DTOs -----------
+    # =======================
+    # ENUMS
+    # =======================
+    AccountType:
+      type: string
+      enum:
+        - BASIC
+        - PREMIUM
 
-    UserRequestDTO:
+    AccountState:
+      type: string
+      enum:
+        - ENABLED
+        - DISABLED
+
+    ScooterState:
+      type: string
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - MAINTENANCE
+
+    # =======================
+    # MODELOS DEL DOMINIO
+    # =======================
+    Fee:
       type: object
       properties:
-        role:
-          $ref: '#/components/schemas/Role'
-        name:
+        startDate:
           type: string
-        lastName:
+          format: date-time
+        endDate:
           type: string
-        email:
-          type: string
-          format: email
-        phone:
-          type: integer
-      required:
-        - role
-        - name
-        - lastName
-        - email
-        - phone
-
-    UserResponseDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-          format: int64
-        role:
-          $ref: '#/components/schemas/Role'
-        name:
-          type: string
-        lastName:
-          type: string
-        email:
-          type: string
-          format: email
-        phone:
-          type: integer
-      required:
-        - userId
-        - role
-        - name
-        - lastName
-        - email
-        - phone
-
-    ReportADTO:
-      type: object
-      properties:
-        scooterId:
-          type: integer
-          format: int64
-        kilometers:
-          type: integer
-        pause:
-          type: integer
-      required:
-        - scooterId
-        - kilometers
-        - pause
-
-    CancelAccountDTO:
-      type: object
-      properties:
-        accountId:
-          type: integer
-          format: int64
-        accountName:
-          type: string
-      required:
-        - accountId
-        - accountName
-
-    InvoiceReportDTO:
-      type: object
-      properties:
-        totalInvoiced:
+          format: date-time
+        pricePerHour:
           type: number
           format: float
-        totalTrips:
-          type: integer
-      required:
-        - totalInvoiced
-        - totalTrips
-
-    NearScooterReportDTO:
-      type: object
-      properties:
-        scooterId:
-          type: integer
-          format: int64
-        latitude:
-          type: number
-          format: float
-        longitude:
+        extraHourFee:
           type: number
           format: float
       required:
-        - scooterId
-        - latitude
-        - longitude
-
-    UserScooterUsageResponseDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-          format: int64
-        countScooterUsage:
-          type: integer
-        monthStart:
-          type: integer
-        monthEnd:
-          type: integer
-        userType:
-          $ref: '#/components/schemas/AccountType'
-      required:
-        - userId
-        - countScooterUsage
-        - monthStart
-        - monthEnd
-        - userType
-
-    # ----------- MODELOS -----------
+        - startDate
+        - endDate
+        - pricePerHour
+        - extraHourFee
 
     Scooter:
       type: object
@@ -396,6 +79,7 @@ components:
           format: int64
         kilometers:
           type: number
+          format: float
         pause:
           type: integer
         trips:
@@ -405,56 +89,505 @@ components:
         longitude:
           type: number
         state:
-          $ref: '#/components/schemas/ScooterState'
-      required:
-        - scooterId
-        - kilometers
-        - pause
-        - trips
-        - latitude
-        - longitude
-        - state
+          $ref: "#/components/schemas/ScooterState"
 
     Trip:
       type: object
       properties:
         scooterId:
           type: integer
-          format: int64
         totalKilometers:
           type: number
         totalPausesMinutes:
           type: integer
         totalTrips:
           type: integer
+
+    # =======================
+    # REQUEST DTOs
+    # =======================
+    UserRequestDTO:
+      type: object
+      properties:
+        role:
+          type: string
+        name:
+          type: string
+        password:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: integer
+
+    PromptRequestDTO:
+      type: object
+      properties:
+        message:
+          type: string
       required:
-        - scooterId
-        - totalKilometers
-        - totalPausesMinutes
-        - totalTrips
+        - message
 
-    # ----------- ENUMS -----------
+    # =======================
+    # RESPONSE DTOs
+    # =======================
+    UserResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        role:
+          type: string
+        name:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: integer
 
-    Role:
-      type: string
-      description: Rol del usuario
-      enum:
-        - USER
-        - ADMIN
-        - SUPPORT
-      example: USER
+    AuthUserResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        email:
+          type: string
+        role:
+          type: string
+        password:
+          type: string
 
-    AccountType:
-      type: string
-      enum:
-        - BASIC
-        - PREMIUM
-      example: BASIC
+    ReportADTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+        kilometers:
+          type: integer
+        pause:
+          type: integer
 
-    ScooterState:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-        - MAINTENANCE
-      example: ACTIVE
+    CancelAccountDTO:
+      type: object
+      properties:
+        accountId:
+          type: integer
+        accountName:
+          type: string
+        state:
+          $ref: "#/components/schemas/AccountState"
+
+    ReportScooterByYearDTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+        year:
+          type: integer
+        totalTrips:
+          type: integer
+
+    InvoiceReportDTO:
+      type: object
+      properties:
+        totalInvoiced:
+          type: number
+        totalTrips:
+          type: integer
+
+    UserScooterUsageResponseDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        totalScooterUsage:
+          type: integer
+        monthStart:
+          type: integer
+        monthEnd:
+          type: integer
+        accountType:
+          $ref: "#/components/schemas/AccountType"
+
+    UserScooterPeriodUsageDTO:
+      type: object
+      properties:
+        userId:
+          type: integer
+        scooterId:
+          type: integer
+        uses:
+          type: integer
+        totalKm:
+          type: number
+
+    NearScooterReportDTO:
+      type: object
+      properties:
+        scooterId:
+          type: integer
+        latitude:
+          type: number
+        longitude:
+          type: number
+
+    FeeResponseDTO:
+      type: object
+      properties:
+        feeId:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        pricePerHour:
+          type: number
+        extraHourFee:
+          type: number
+
+    LLMResponseDTO:
+      type: object
+      properties:
+        llmResponse:
+          type: string
+
+paths:
+
+  # =======================
+  # CRUD USER
+  # =======================
+
+  /:
+    post:
+      tags: [ Users ]
+      summary: Crear un usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequestDTO"
+      responses:
+        '201':
+          description: Usuario creado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+
+  /{userId}:
+    get:
+      tags: [ Users ]
+      summary: Obtener usuario por ID
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+
+    put:
+      tags: [ Users ]
+      summary: Actualizar usuario
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserRequestDTO"
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponseDTO"
+
+    delete:
+      tags: [ Users ]
+      summary: Eliminar usuario
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Usuario eliminado
+
+  /email/{userEmail}:
+    get:
+      tags: [ Users ]
+      summary: Buscar usuario por email
+      parameters:
+        - in: path
+          name: userEmail
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Datos del usuario
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthUserResponseDTO"
+
+  # =======================
+  # REPORTES
+  # =======================
+
+  /scooters:
+    get:
+      tags: [ Reports ]
+      summary: Reporte A – Scooters por km
+      parameters:
+        - in: query
+          name: withPause
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportADTO"
+
+  /toggleState/{accountId}:
+    patch:
+      tags: [ Reports ]
+      summary: Reporte B – Alternar estado de cuenta
+      parameters:
+        - in: path
+          name: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CancelAccountDTO"
+
+  /scooters/usage:
+    get:
+      tags: [ Reports ]
+      summary: Reporte C – Uso de scooters por año
+      parameters:
+        - in: query
+          name: year
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: countTrips
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ReportScooterByYearDTO"
+
+  /total-invoice:
+    get:
+      tags: [ Reports ]
+      summary: Reporte D – Facturación total
+      parameters:
+        - in: query
+          name: year
+          schema: { type: integer }
+        - in: query
+          name: startMonth
+          schema: { type: integer }
+        - in: query
+          name: endMonth
+          schema: { type: integer }
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvoiceReportDTO"
+
+  /scooter-user-usage:
+    get:
+      tags: [ Reports ]
+      summary: Reporte E – Uso de scooters por usuario
+      parameters:
+        - in: query
+          name: monthStart
+          schema: { type: integer }
+        - in: query
+          name: monthEnd
+          schema: { type: integer }
+        - in: query
+          name: userType
+          schema:
+            $ref: "#/components/schemas/AccountType"
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserScooterUsageResponseDTO"
+
+  /fee:
+    post:
+      tags: [ Fees ]
+      summary: Crear tarifa
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Fee"
+      responses:
+        '201':
+          description: tarifa creada
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeeResponseDTO"
+
+
+  /near-scooters:
+    get:
+      tags: [ Reports ]
+      summary: Reporte G – Scooters cercanos
+      parameters:
+        - in: query
+          name: latitude
+          schema: { type: number }
+        - in: query
+          name: longitude
+          schema: { type: number }
+        - in: query
+          name: radius
+          schema: { type: number }
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/NearScooterReportDTO"
+
+  /scooter-usages-by-period/{userId}:
+    get:
+      tags: [ Reports ]
+      summary: Reporte H – Uso de scooter por periodo para un usuario
+      description: Devuelve los usos del usuario por scooter para un rango de meses del año indicado. Si withRelatedToMyAccount es true, filtra solo los usos relacionados a la cuenta del userId.
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: year
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: monthStart
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - in: query
+          name: monthEnd
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - in: query
+          name: withRelatedToMyAccount
+          required: false
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Lista de usos por periodo
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserScooterPeriodUsageDTO"
+
+  # =======================
+  # CHAT / LLM
+  # =======================
+  /chat:
+    post:
+      tags: [ Users ]
+      summary: Chat con LLM
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptRequestDTO"
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMResponseDTO"
+
+  /historical-data/{userId}:
+    post:
+      tags: [ Users ]
+      summary: Datos históricos (LLM) para un usuario
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromptRequestDTO"
+      responses:
+        '200':
+          description: datos extraidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LLMResponseDTO"
+
