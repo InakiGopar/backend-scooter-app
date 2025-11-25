@@ -19,7 +19,6 @@ tags:
     description: Endpoints to manage fees / pricing rules
 
 paths:
-
   ################################################################
   # TRIP CONTROLLER
   ################################################################
