@@ -2,25 +2,92 @@ openapi: 3.0.3
 info:
   title: Trip Service API
   version: 1.0.0
-  description: API para gestionar viajes (Trips) y tarifas (Fees).
+  description: >
+    Trip Service microservice API. Contiene endpoints para gestionar viajes (trips)
+    y tarifas (fees). Tipos usados:
+    - Instant => string (format: date-time, ISO 8601)
+    - UUID => string (format: uuid)
 
 servers:
   - url: http://localhost:8085/api
-    description: Servidor local de desarrollo de Trip Service
+    description: Local development server
+
+tags:
+  - name: Trip
+    description: Endpoints to manage trips and trip reports
+  - name: Fee
+    description: Endpoints to manage fees / pricing rules
 
 paths:
-
-  #########################################
-  #             TRIP CONTROLLER
-  #########################################
+  ################################################################
+  # TRIP CONTROLLER
+  ################################################################
 
   /trip:
-    get:
-      summary: Obtener todos los viajes
-      tags: [Trips]
+    post:
+      tags:
+        - Trip
+      summary: Start a new trip
+      description: Create a new Trip based on TripRequestDTO. Returns the created TripResponseDTO.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripRequestDTO'
+            examples:
+              newTrip:
+                summary: Example start-trip request
+                value:
+                  userId: 42
+                  scooterId: 1001
+                  stopStartId: 11
+                  stopEndId: 12
+                  kmTraveled: 0
+                  feeId: "fee_2025_01"
       responses:
-        200:
-          description: Lista de viajes
+        '201':
+          description: Trip created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripResponseDTO'
+              examples:
+                created:
+                  summary: Created trip example
+                  value:
+                    tripId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    userId: 42
+                    scooterId: 1001
+                    stopSartId: 11
+                    stopEndId: 12
+                    startTime: "2025-11-24T21:00:00Z"
+                    endTime: null
+                    kmTraveled: 0
+                    startPause: null
+                    endPause: null
+                    totalPrice: 0.0
+                    feeId: "fee_2025_01"
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalid:
+                  value:
+                    code: 400
+                    message: "Missing required field: userId"
+
+    get:
+      tags:
+        - Trip
+      summary: Get all trips
+      description: Returns list of all trips (TripResponseDTO array).
+      responses:
+        '200':
+          description: Array of trips
           content:
             application/json:
               schema:
@@ -28,50 +95,59 @@ paths:
                 items:
                   $ref: '#/components/schemas/TripResponseDTO'
 
-    post:
-      summary: Iniciar un viaje
-      tags: [Trips]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/TripRequestDTO'
-      responses:
-        201:
-          description: Viaje iniciado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TripResponseDTO'
-
   /trip/{tripId}:
+    parameters:
+      - name: tripId
+        in: path
+        required: true
+        description: Trip UUID
+        schema:
+          type: string
+          format: uuid
+
     get:
-      summary: Obtener un viaje por ID
-      tags: [Trips]
-      parameters:
-        - name: tripId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Trip
+      summary: Find trip by ID
       responses:
-        200:
-          description: Viaje encontrado
+        '200':
+          description: Trip found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TripResponseDTO'
+              examples:
+                example:
+                  value:
+                    tripId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    userId: 42
+                    scooterId: 1001
+                    stopSartId: 11
+                    stopEndId: 12
+                    startTime: "2025-11-24T21:00:00Z"
+                    endTime: "2025-11-24T21:10:00Z"
+                    kmTraveled: 3
+                    startPause: null
+                    endPause: null
+                    totalPrice: 2.5
+                    feeId: "fee_2025_01"
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                notFound:
+                  value:
+                    code: 404
+                    message: "Trip not found"
 
     put:
-      summary: Finalizar un viaje
-      tags: [Trips]
-      parameters:
-        - name: tripId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Trip
+      summary: End trip
+      description: End an existing trip. The request body uses TripRequestDTO to pass final data (e.g. stopEndId, kmTraveled, feeId).
       requestBody:
         required: true
         content:
@@ -79,111 +155,164 @@ paths:
             schema:
               $ref: '#/components/schemas/TripRequestDTO'
       responses:
-        200:
-          description: Viaje finalizado
+        '200':
+          description: Trip ended and returned
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TripResponseDTO'
+        '400':
+          description: Bad request (invalid payload)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
     delete:
-      summary: Eliminar un viaje
-      tags: [Trips]
-      parameters:
-        - name: tripId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Trip
+      summary: Delete trip
+      description: Delete trip by ID.
       responses:
-        204:
-          description: Viaje eliminado exitosamente
+        '204':
+          description: Trip deleted successfully
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /trip/startPauseTrip/{tripId}:
+    parameters:
+      - name: tripId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     patch:
-      summary: Iniciar pausa de un viaje
-      tags: [Trips]
-      parameters:
-        - name: tripId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Trip
+      summary: Start pause on a trip
+      description: Records the startPause Instant for the trip.
       responses:
-        200:
-          description: Pausa iniciada
+        '200':
+          description: Trip updated with startPause
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TripResponseDTO'
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /trip/endPauseTrip/{tripId}:
+    parameters:
+      - name: tripId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
     patch:
-      summary: Finalizar pausa de un viaje
-      tags: [Trips]
-      parameters:
-        - name: tripId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Trip
+      summary: End pause on a trip
+      description: Records the endPause Instant for the trip and computes pause duration if needed.
       responses:
-        200:
-          description: Pausa finalizada
+        '200':
+          description: Trip updated with endPause
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/TripResponseDTO'
+        '404':
+          description: Trip not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /trip/by-kilometers:
     get:
-      summary: Obtener viajes por kilómetros
-      tags: [Trips]
+      tags:
+        - Trip
+      summary: Report A — Find scooters usage by kilometers
+      description: Returns list of scooters and their total kilometers; optional query param to include pause minutes in totals.
       parameters:
         - name: withPause
           in: query
+          required: false
           schema:
             type: boolean
             default: false
+          description: If true, include pauses minutes in calculations.
       responses:
-        200:
-          description: Resultados encontrados
+        '200':
+          description: Scooter usage report
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/ScooterUsageResponseDTO'
+              examples:
+                sample:
+                  value:
+                    - scooterId: 1001
+                      totalKilometers: 12345
+                      totalPausesMinutes: 120
+                    - scooterId: 1002
+                      totalKilometers: 9876
+                      totalPausesMinutes: 30
 
   /trip/scooter-by-trips:
     get:
-      summary: Obtener uso de scooters por cantidad de viajes en un año
-      tags: [Trips]
+      tags:
+        - Trip
+      summary: Report C — Scooters by trips count in a year
+      description: Returns scooters with their trips count for a given year filtered by minimum countTrips.
       parameters:
         - name: year
           in: query
           required: true
           schema:
             type: integer
-        - name: cantTrips
+          description: Year to evaluate (e.g. 2025)
+        - name: countTrips
           in: query
           required: true
           schema:
             type: integer
+          description: Minimum number of trips
       responses:
-        200:
-          description: Datos encontrados
+        '200':
+          description: List of scooters aggregated by year/trips
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/TripScooterByYearResponseDTO'
+              examples:
+                sample:
+                  value:
+                    - scooterId: 1001
+                      year: 2025
+                      totalTrips: 120
+                    - scooterId: 1002
+                      year: 2025
+                      totalTrips: 95
 
   /trip/total-invoice:
     get:
-      summary: Obtener facturación total
-      tags: [Reports]
+      tags:
+        - Trip
+      summary: Report D — Total invoice for range of months in a year
       parameters:
         - name: year
           in: query
@@ -195,24 +324,88 @@ paths:
           required: true
           schema:
             type: integer
+            minimum: 1
+            maximum: 12
         - name: endMonth
           in: query
           required: true
           schema:
             type: integer
+            minimum: 1
+            maximum: 12
       responses:
-        200:
-          description: Facturación obtenida
+        '200':
+          description: Invoice report
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/InvoiceReportResponseDTO'
+              examples:
+                sample:
+                  value:
+                    totalInvoiced: 12500.75
+                    totalTrips: 420
+        '400':
+          description: Invalid months range
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /trip/scooter-user-usage:
     get:
-      summary: Uso de scooter por usuario
-      tags: [Reports]
+      tags:
+        - Trip
+      summary: Report E — Scooter usage by users between months
       parameters:
+        - name: monthStart
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+        - name: monthEnd
+          in: query
+          required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 12
+      responses:
+        '200':
+          description: List of user scooter usage summary
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TripScooterUserUsageDTO'
+              examples:
+                sample:
+                  value:
+                    - userId: 42
+                      totalScooterUsage: 15
+                      monthStart: 1
+                      monthEnd: 3
+
+  /trip/scooter-usages-by-period/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Trip
+      summary: Report H (single user) — Scooter usages by period
+      parameters:
+        - name: year
+          in: query
+          required: true
+          schema:
+            type: integer
         - name: monthStart
           in: query
           required: true
@@ -224,346 +417,670 @@ paths:
           schema:
             type: integer
       responses:
-        200:
-          description: Datos encontrados
+        '200':
+          description: Usage periods for a single user
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TripScooterUserUsageDTO'
+                  $ref: '#/components/schemas/UserScooterPeriodUsageDTO'
+              examples:
+                sample:
+                  value:
+                    - userId: 42
+                      scooterId: 1001
+                      uses: 5
+                      totalKm: 12.4
 
-  /trip/user-usage-period:
+  /trip/scooter-usages-by-period:
     get:
-      summary: Uso del usuario en un periodo
-      tags: [Reports]
+      tags:
+        - Trip
+      summary: Report H (multiple users) — Scooter usages by period for list of users
+      description: Provide `userIds` as repeated query parameter (?userIds=1&userIds=2) or as CSV, depending on client.
       parameters:
-        - name: userId
+        - name: userIds
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: integer
+          description: List of user IDs to evaluate
+        - name: year
           in: query
           required: true
           schema:
             type: integer
-        - name: start
+        - name: monthStart
           in: query
           required: true
           schema:
-            type: string
-            format: date-time
-        - name: end
+            type: integer
+        - name: monthEnd
           in: query
           required: true
-          schema:
-            type: string
-            format: date-time
-        - name: accountId
-          in: query
-          required: false
           schema:
             type: integer
       responses:
-        200:
-          description: Datos encontrados
+        '200':
+          description: Usage periods for multiple users
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/UserPeriodUsageResponseDTO'
+                  $ref: '#/components/schemas/UserScooterPeriodUsageDTO'
 
-  #########################################
-  #             FEE CONTROLLER
-  #########################################
+  /trip/stats/{userId}:
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+    get:
+      tags:
+        - Trip
+      summary: Get aggregated trip stats for a user
+      description: Returns TripStatsDTO including longest and most expensive trips returned as TripResponseDTO.
+      responses:
+        '200':
+          description: User trip stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripStatsDTO'
+              examples:
+                sample:
+                  value:
+                    name: "Juan Pérez"
+                    totalSpent: 120.5
+                    totalKm: 350
+                    scooterUsed: 12
+                    longestTrip:
+                      tripId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                      userId: 42
+                      scooterId: 1001
+                      stopSartId: 11
+                      stopEndId: 20
+                      startTime: "2025-10-01T09:00:00Z"
+                      endTime: "2025-10-01T09:30:00Z"
+                      kmTraveled: 10
+                      startPause: null
+                      endPause: null
+                      totalPrice: 8.5
+                      feeId: "fee_2025_01"
+                    mostExpensiveTrip:
+                      tripId: "b23e8a7c-2f1b-4b5d-9f27-9d4a3a2f1f77"
+                      userId: 42
+                      scooterId: 1002
+                      stopSartId: 2
+                      stopEndId: 18
+                      startTime: "2025-09-20T14:00:00Z"
+                      endTime: "2025-09-20T14:45:00Z"
+                      kmTraveled: 12
+                      startPause: null
+                      endPause: null
+                      totalPrice: 15.0
+                      feeId: "fee_premium"
+
+  ################################################################
+  # FEE CONTROLLER
+  ################################################################
 
   /fee:
     post:
-      summary: Crear tarifa
-      tags: [Fees]
+      tags:
+        - Fee
+      summary: Create a Fee configuration
+      description: Create a new Fee document using FeeRequestDTO.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/FeeRequestDTO'
+            examples:
+              createFee:
+                value:
+                  startDate: "2026-01-01T00:00:00Z"
+                  endDate: "2026-12-31T23:59:59Z"
+                  pricePerHour: 150.0
+                  extraHourFee: 50.0
       responses:
-        201:
-          description: Tarifa creada
+        '201':
+          description: Fee created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeResponseDTO'
+              examples:
+                created:
+                  value:
+                    feeId: "fee_2026_standard"
+                    startDate: "2026-01-01T00:00:00Z"
+                    endDate: "2026-12-31T23:59:59Z"
+                    pricePerHour: 150.0
+                    extraHourFee: 50.0
+        '400':
+          description: Invalid fee data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /fee/{feeId}:
+    parameters:
+      - name: feeId
+        in: path
+        required: true
+        schema:
+          type: string
     get:
-      summary: Obtener tarifa por ID
-      tags: [Fees]
-      parameters:
-        - name: feeId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Fee
+      summary: Get fee by ID
       responses:
-        200:
-          description: Tarifa encontrada
+        '200':
+          description: Fee details
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeResponseDTO'
+              examples:
+                found:
+                  value:
+                    feeId: "fee_2026_standard"
+                    startDate: "2026-01-01T00:00:00Z"
+                    endDate: "2026-12-31T23:59:59Z"
+                    pricePerHour: 150.0
+                    extraHourFee: 50.0
+        '404':
+          description: Fee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
     put:
-      summary: Actualizar tarifa
-      tags: [Fees]
-      parameters:
-        - name: feeId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Fee
+      summary: Update fee
+      description: Replace/update fee values using FeeRequestDTO.
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/FeeRequestDTO'
+            examples:
+              update:
+                value:
+                  startDate: "2026-01-01T00:00:00Z"
+                  endDate: "2026-12-31T23:59:59Z"
+                  pricePerHour: 160.0
+                  extraHourFee: 60.0
       responses:
-        200:
-          description: Tarifa actualizada
+        '200':
+          description: Fee updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeResponseDTO'
+        '404':
+          description: Fee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
     delete:
-      summary: Eliminar tarifa
-      tags: [Fees]
-      parameters:
-        - name: feeId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Fee
+      summary: Delete a fee
       responses:
-        204:
-          description: Eliminada
+        '204':
+          description: Fee deleted
+        '404':
+          description: Fee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /fee/{feeId}/extraHour:
+    parameters:
+      - name: feeId
+        in: path
+        required: true
+        schema:
+          type: string
     patch:
-      summary: Actualizar precio por hora extra
-      tags: [Fees]
-      parameters:
-        - name: feeId
-          in: path
-          required: true
-          schema:
-            type: string
+      tags:
+        - Fee
+      summary: Update extra hour fee
+      description: Update only the extraHourFee (endpoint accepts FeeRequestDTO but only extraHourFee is applied).
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/FeeRequestDTO'
+            examples:
+              patchExtra:
+                value:
+                  startDate: "2026-01-01T00:00:00Z"
+                  endDate: "2026-12-31T23:59:59Z"
+                  pricePerHour: 150.0
+                  extraHourFee: 75.0
       responses:
-        200:
-          description: Tarifa actualizada
+        '200':
+          description: Fee updated (extra hour)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/FeeResponseDTO'
+        '404':
+          description: Fee not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
-###########################################################
-#                      SCHEMAS
-###########################################################
+################################################################
+# COMPONENTS: SCHEMAS
+################################################################
 
 components:
   schemas:
 
-    #TRIP#
+    # Generic error
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: "Bad request"
+
+    #############################################################
+    # Request DTOs (as provided)
+    #############################################################
 
     TripRequestDTO:
       type: object
+      description: Request DTO to create or update a trip.
       properties:
         userId:
           type: integer
+          format: int64
+          description: ID of the user starting the trip
+          example: 42
         scooterId:
           type: integer
+          format: int64
+          description: ID of the scooter used
+          example: 1001
         stopStartId:
           type: integer
+          format: int64
+          description: Start stop identifier
+          example: 11
         stopEndId:
           type: integer
+          format: int64
+          description: End stop identifier (may be null at start)
+          example: 15
         kmTraveled:
           type: integer
+          format: int64
+          description: Kilometers traveled at trip end (0 on start)
+          example: 0
         feeId:
           type: string
-      required: [userId, scooterId, stopStartId]
+          description: Reference to applied fee configuration
+          example: "fee_2025_01"
+      required:
+        - userId
+        - scooterId
+
+    FeeRequestDTO:
+      type: object
+      description: Request DTO to create or update a Fee document.
+      properties:
+        startDate:
+          type: string
+          format: date-time
+          description: Start instant when fee period is valid (ISO 8601)
+          example: "2026-01-01T00:00:00Z"
+        endDate:
+          type: string
+          format: date-time
+          description: End instant when fee period stops (ISO 8601)
+          example: "2026-12-31T23:59:59Z"
+        pricePerHour:
+          type: number
+          format: float
+          description: Base price per hour
+          example: 150.0
+        extraHourFee:
+          type: number
+          format: float
+          description: Fee applied for extra hours beyond standard
+          example: 50.0
+      required:
+        - startDate
+        - pricePerHour
+
+    FeignScooterEndTripRequest:
+      type: object
+      description: DTO used to call scooter service when finishing a trip (feign).
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+          example: 1001
+        latitude:
+          type: number
+          format: double
+          example: -34.6037
+        longitude:
+          type: number
+          format: double
+          example: -58.3816
+        state:
+          $ref: '#/components/schemas/ScooterState'
+        endStopId:
+          type: integer
+          format: int64
+          example: 15
+        kilometers:
+          type: number
+          format: float
+          example: 3.2
+      required:
+        - scooterId
+        - state
+
+    FeignScooterPatchRequest:
+      type: object
+      description: DTO used to change scooter state (feign).
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+          example: 1001
+        state:
+          $ref: '#/components/schemas/ScooterState'
+      required:
+        - scooterId
+        - state
+
+    #############################################################
+    # Response DTOs (as provided)
+    #############################################################
 
     TripResponseDTO:
       type: object
+      description: Response DTO returned for trips.
       properties:
         tripId:
           type: string
           format: uuid
+          description: Trip unique identifier (UUID).
+          example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
         userId:
           type: integer
+          format: int64
+          example: 42
         scooterId:
           type: integer
+          format: int64
+          example: 1001
         stopSartId:
           type: integer
+          format: int64
+          example: 11
         stopEndId:
           type: integer
+          format: int64
+          example: 12
         startTime:
           type: string
           format: date-time
+          description: Trip start instant (ISO 8601)
+          example: "2025-11-24T21:00:00Z"
         endTime:
           type: string
           format: date-time
+          nullable: true
+          description: Trip end instant (ISO 8601)
+          example: "2025-11-24T21:10:00Z"
         kmTraveled:
           type: integer
+          format: int64
+          description: Kilometers traveled during the trip
+          example: 3
         startPause:
           type: string
           format: date-time
+          nullable: true
+          description: Pause start instant
+          example: null
         endPause:
           type: string
           format: date-time
+          nullable: true
+          description: Pause end instant
+          example: null
         totalPrice:
           type: number
           format: float
+          example: 2.5
         feeId:
           type: string
-
-    ScooterUsageResponseDTO:
-      type: object
-      properties:
-        scooterId:
-          type: integer
-        totalKilometers:
-          type: integer
-        totalPausesMinutes:
-          type: integer
-
-    TripScooterByYearResponseDTO:
-      type: object
-      properties:
-        ScooterId:
-          type: integer
-        year:
-          type: string
-          format: date-time
-        tripCount:
-          type: integer
-
-    TripScooterUserUsageDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-        countScooterUsage:
-          type: integer
-        monthStart:
-          type: integer
-        monthEnd:
-          type: integer
-
-    InvoiceReportResponseDTO:
-      type: object
-      properties:
-        totalInvoiced:
-          type: number
-        totalTrips:
-          type: integer
-
-    UserPeriodUsageResponseDTO:
-      type: object
-      properties:
-        userId:
-          type: integer
-        totalTrips:
-          type: integer
-        totalKm:
-          type: integer
-        totalDurationMinutes:
-          type: number
-
-    #########################
-    #        FEE
-    #########################
-
-    FeeRequestDTO:
-      type: object
-      properties:
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        pricePerHour:
-          type: number
-          format: float
-        extraHourFee:
-          type: number
-          format: float
+          example: "fee_2025_01"
 
     FeeResponseDTO:
       type: object
+      description: Response DTO for Fee documents.
       properties:
         feeId:
           type: string
+          example: "fee_2026_standard"
         startDate:
           type: string
           format: date-time
+          example: "2026-01-01T00:00:00Z"
         endDate:
           type: string
           format: date-time
+          example: "2026-12-31T23:59:59Z"
         pricePerHour:
           type: number
           format: float
+          example: 150.0
         extraHourFee:
           type: number
           format: float
+          example: 50.0
 
-    #########################
-    #   SCOOTER & RELATED
-    #########################
-
-    Scooter:
+    ScooterUsageResponseDTO:
       type: object
+      description: DTO for scooter usage report.
       properties:
         scooterId:
           type: integer
+          format: int64
+          example: 1001
+        totalKilometers:
+          type: integer
+          format: int64
+          example: 12345
+        totalPausesMinutes:
+          type: integer
+          example: 120
+
+    InvoiceReportResponseDTO:
+      type: object
+      description: Invoice report DTO (Report D).
+      properties:
+        totalInvoiced:
+          type: number
+          format: float
+          description: Total amount invoiced in the period
+          example: 12500.75
+        totalTrips:
+          type: integer
+          example: 420
+
+    TripScooterByYearResponseDTO:
+      type: object
+      description: Scooter trips aggregated by year.
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+          example: 1001
+        year:
+          type: integer
+          example: 2025
+        totalTrips:
+          type: integer
+          example: 120
+
+    TripScooterUserUsageDTO:
+      type: object
+      description: DTO used by Report E
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 42
+        totalScooterUsage:
+          type: integer
+          format: int64
+          example: 15
+        monthStart:
+          type: integer
+          example: 1
+        monthEnd:
+          type: integer
+          example: 3
+
+    TripStatsDTO:
+      type: object
+      description: Aggregated statistics for a user.
+      properties:
+        name:
+          type: string
+          example: "Nombre Apellido"
+        totalSpent:
+          type: number
+          format: float
+          example: 120.5
+        totalKm:
+          type: integer
+          format: int64
+          example: 350
+        scooterUsed:
+          type: integer
+          format: int64
+          example: 12
+        longestTrip:
+          $ref: '#/components/schemas/TripResponseDTO'
+        mostExpensiveTrip:
+          $ref: '#/components/schemas/TripResponseDTO'
+
+    UserScooterPeriodUsageDTO:
+      type: object
+      description: DTO used by Report H (users usage per period).
+      properties:
+        userId:
+          type: integer
+          format: int64
+          example: 42
+        scooterId:
+          type: integer
+          format: int64
+          example: 1001
+        uses:
+          type: integer
+          example: 5
+        totalKm:
+          type: number
+          format: double
+          example: 12.4
+
+    #############################################################
+    #                       MODELS
+    #############################################################
+
+    ScooterState:
+      type: string
+      description: Enum representing scooter state
+      enum:
+        - ACTIVE
+        - INACTIVE
+        - MAINTENANCE
+      example: ACTIVE
+
+    Scooter:
+      type: object
+      description: Domain model for Scooter (used in Feign calls / examples)
+      properties:
+        scooterId:
+          type: integer
+          format: int64
+          example: 1001
         latitude:
           type: number
+          format: double
+          example: -34.6037
         longitude:
           type: number
+          format: double
+          example: -58.3816
         state:
           $ref: '#/components/schemas/ScooterState'
         currentStop:
           $ref: '#/components/schemas/Stop'
         kilometers:
           type: number
+          format: float
+          example: 123.4
 
     Stop:
       type: object
       properties:
         stopId:
           type: integer
+          format: int64
+          example: 11
         latitude:
           type: number
+          format: double
+          example: -34.6037
         longitude:
           type: number
-
-    ScooterState:
-      type: string
-      enum:
-        - ACTIVE
-        - INACTIVE
-        - MAINTENANCE
-
-    #########################
-    #        USER           #
-    #########################
+          format: double
+          example: -58.3816
 
     User:
       type: object
       properties:
         userId:
           type: integer
+          format: int64
+          example: 42
+        name:
+          type: string
+          example: "Juan Pérez"
+
+################################################################
+# END OF DOCUMENT
+################################################################
