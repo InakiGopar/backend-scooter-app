@@ -31,10 +31,7 @@ spring:
           predicates:
             - Method=POST
             - Path=/api/user
-          filters:
-            - name: RoleFilter
-              args:
-                allowedRoles: ADMIN
+          filters: [] # <-- SIN RoleFilter (público)
 
         # DELETE /api/user/{id}
         - id: user-delete
