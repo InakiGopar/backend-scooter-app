@@ -71,12 +71,12 @@ public class ScooterService {
 
 
     @Transactional
-    public ScooterResponseDTO updateScooterStatus(Long scooterId, ScooterRequestPatchDTO request) {
+    public ScooterResponseDTO updateScooterState(Long scooterId, ScooterState state) {
         Scooter scooter = scooterRepository.findById(scooterId)
                 .orElseThrow(() -> new EntityNotFoundException("Scooter with id " + scooterId + " not found"));
 
 
-        scooter.setState(request.state());
+        scooter.setState(state);
 
         scooterRepository.save(scooter);
 

@@ -117,7 +117,7 @@ public class UserController {
 
     //Chatbot
     @PostMapping("/chat")
-    public ResponseEntity<LLMResponseDTO>chat(@RequestBody PromptRequestDTO request) {
+    public ResponseEntity<LLMResponseDTO> chat(@RequestBody PromptRequestDTO request) {
         return ResponseEntity.ok(userService.chat(request));
     }
 

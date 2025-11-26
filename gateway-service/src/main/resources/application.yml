@@ -109,6 +109,26 @@ spring:
               args:
                 allowedRoles: USER
 
+        # /api/user/chat
+        - id: chat
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/user/chat
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: USER, ADMIN
+
+       # /api/user/historical-data/{userId}
+        - id: chatbot-historical-data
+          uri: http://localhost:8082/
+          predicates:
+            - Path=/api/user/historical-data/*
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: USER, ADMIN
+
         # =====================================
         # ACCOUNT-SERVICE (ADMIN ONLY ENDPOINTS)
         # =====================================
