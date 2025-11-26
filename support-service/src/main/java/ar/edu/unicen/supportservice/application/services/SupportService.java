@@ -38,7 +38,7 @@ public class SupportService {
            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter cannot use");
        }
         // updated the scooter to the state MAINTENANCE
-       scooterFeignClient.updateScooterStatus(request.scooterId(), ScooterState.MAINTENANCE);
+       scooterFeignClient.updateScooterState(request.scooterId(), ScooterState.MAINTENANCE);
 
        // persist the new support
         Support support = request.toEntity();
@@ -82,7 +82,7 @@ public class SupportService {
         );
 
         //updated the scooter to the state INACTIVE because the support ended
-        scooterFeignClient.updateScooterStatus(support.getScooterId(), ScooterState.INACTIVE);
+        scooterFeignClient.updateScooterState(support.getScooterId(), ScooterState.INACTIVE);
 
         supportRepository.deleteById(supportId);
     }

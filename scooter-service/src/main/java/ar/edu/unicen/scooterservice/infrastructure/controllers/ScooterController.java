@@ -9,6 +9,7 @@ import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
+import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +40,11 @@ public class ScooterController {
         return ResponseEntity.ok(scooterService.updateScooter(scooterId, request));
     }
 
-    @PatchMapping("/{scooterId}/status")
-    public ResponseEntity<ScooterResponseDTO> updateScooterStatus(
+    @PatchMapping("/{scooterId}/state")
+    public ResponseEntity<ScooterResponseDTO> updateScooterState(
             @PathVariable Long scooterId,
-            @RequestBody ScooterRequestPatchDTO request) {
-        return ResponseEntity.ok(scooterService.updateScooterStatus(scooterId, request));
+            @RequestParam ScooterState state) {
+        return ResponseEntity.ok(scooterService.updateScooterState(scooterId, state));
     }
 
     @PatchMapping("/{scooterId}/finishedTrip")

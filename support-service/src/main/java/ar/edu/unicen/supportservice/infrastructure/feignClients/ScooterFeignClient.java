@@ -10,7 +10,7 @@ public interface ScooterFeignClient {
     @GetMapping("/{scooterId}")
     Scooter getScooterById(@PathVariable Long scooterId);
 
-    @PatchMapping("/{scooterId}/status")
-    void updateScooterStatus(@PathVariable Long scooterId, @RequestParam ScooterState status);
+    @PatchMapping("/{scooterId}/state")
+    void updateScooterState(@PathVariable Long scooterId, @RequestParam ScooterState state);
 
 }
