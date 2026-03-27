@@ -4,7 +4,7 @@ spring:
   application:
    name: support-service
   datasource:
-    url: jdbc:mysql://localhost:3306/supportdb?createDatabaseIfNotExist=true
+    url: jdbc:mysql://mysql:3306/supportdb?createDatabaseIfNotExist=true
     username: root
     password: root
   jpa:

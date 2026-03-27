@@ -7,7 +7,7 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://localhost:27017/tripdb
+      uri: mongodb://mongo:27017/tripdb
 
 feign:
   httpclient:
