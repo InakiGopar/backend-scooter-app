@@ -3,15 +3,13 @@ package ar.edu.unicen.userservice.infrastructure.feignClients;
 import ar.edu.unicen.userservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.userservice.domain.dtos.report.ReportADTO;
 import ar.edu.unicen.userservice.domain.dtos.report.ReportScooterByYearDTO;
-import ar.edu.unicen.userservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name="scooter-service", url="http://localhost:8081/api/scooter")
+@FeignClient(name="scooter-service", url="http://scooter-service:8081/api/scooter")
 public interface ScooterFeignClient {
 
     //Report A

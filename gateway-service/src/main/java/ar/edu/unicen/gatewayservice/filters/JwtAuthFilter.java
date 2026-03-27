@@ -7,6 +7,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -24,9 +25,12 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         String path = exchange.getRequest().getURI().getPath();
+        HttpMethod method = exchange.getRequest().getMethod();
 
         // Public routes (/api/auth)
-        if (path.startsWith("/api/auth/")) {
+        if ( path.startsWith("/api/auth/")
+                || (path.equals("/api/user") && method == HttpMethod.POST)
+        ) {
             return chain.filter(exchange);
         }
 
@@ -44,7 +48,7 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
         // Validated token using AUTH-SERVICE
         return webClient.build()
                 .get()
-                .uri("http://localhost:8091/api/auth/validate")
+                .uri("http://auth-service:8091/api/auth/validate")
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(ValidateTokenResponse.class)

@@ -7,10 +7,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "account-service", url = "http://localhost:8084/api/AccountUser")
+@FeignClient(name = "account-service", url = "http://account-service:8084/api/AccountUser")
 public interface AccountFeignClient {
     @GetMapping("/{accountId}")
-    List<AccountUserResponseDTO> getAccountUsers(@PathVariable("accountId") Long accountId);
+    List<AccountUserResponseDTO> getAccountUsers(@PathVariable Long accountId);
 
     // DTO local
     record AccountUserResponseDTO(Long accountId, Long userId) {}

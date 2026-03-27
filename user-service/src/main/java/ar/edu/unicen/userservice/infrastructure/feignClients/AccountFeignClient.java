@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name="account-service", url="http://localhost:8083/api/account")
+@FeignClient(name="account-service", url="http://account-service:8083/api/account")
 public interface AccountFeignClient {
 
     @PatchMapping("/toggleState/{accountId}")

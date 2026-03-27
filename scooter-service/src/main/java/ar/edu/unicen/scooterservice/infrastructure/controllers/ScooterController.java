@@ -3,13 +3,11 @@ package ar.edu.unicen.scooterservice.infrastructure.controllers;
 import ar.edu.unicen.scooterservice.application.services.ScooterService;
 import ar.edu.unicen.scooterservice.domain.dtos.report.NearScooterReportDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterFinishedTripRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchDTO;
+import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchStateDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
-import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +41,8 @@ public class ScooterController {
     @PatchMapping("/{scooterId}/state")
     public ResponseEntity<ScooterResponseDTO> updateScooterState(
             @PathVariable Long scooterId,
-            @RequestParam ScooterState state) {
-        return ResponseEntity.ok(scooterService.updateScooterState(scooterId, state));
+            @RequestBody ScooterRequestPatchStateDTO request) {
+        return ResponseEntity.ok(scooterService.updateScooterState(scooterId, request.state()));
     }
 
     @PatchMapping("/{scooterId}/finishedTrip")

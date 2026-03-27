@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "chat-bot-service", url = "http://localhost:8090/api/chatbot")
+@FeignClient(name = "chat-bot-service", url = "http://chat-bot-service:8090/api/chatbot")
 public interface ChatBotFeignClient {
 
     @PostMapping("/chat")

@@ -3,7 +3,7 @@ package ar.edu.unicen.tripservice.application.services;
 import ar.edu.unicen.tripservice.application.helper.TripCostCalculator;
 import ar.edu.unicen.tripservice.application.repositories.TripRepository;
 import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterEndTripRequest;
-import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchRequest;
+import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchStateRequest;
 import ar.edu.unicen.tripservice.domain.dtos.request.trip.TripRequestDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.fee.FeeResponseDTO;
 import ar.edu.unicen.tripservice.domain.dtos.response.trip.*;
@@ -64,9 +64,9 @@ public class TripService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Cannot start trip. Scooter is not available.");
         }
 
-        scooterFeignClient.updateScooterStatus(
+        scooterFeignClient.updateScooterState(
                 scooter.getScooterId(),
-                new FeignScooterPatchRequest(scooter.getScooterId(), ScooterState.ACTIVE)
+                new FeignScooterPatchStateRequest(ScooterState.ACTIVE)
         );
 
         Trip trip = request.toEntity();

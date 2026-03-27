@@ -1,7 +1,7 @@
 package ar.edu.unicen.tripservice.infrastructure.feingClients;
 
 import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterEndTripRequest;
-import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchRequest;
+import ar.edu.unicen.tripservice.domain.dtos.request.scooter.FeignScooterPatchStateRequest;
 import ar.edu.unicen.tripservice.domain.model.scooter.Scooter;
 import ar.edu.unicen.tripservice.domain.model.scooter.Stop;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-@FeignClient(name = "scooter-service", url = "http://localhost:8081/api")
+@FeignClient(name = "scooter-service", url = "http://scooter-service:8081/api")
 public interface ScooterFeignClient {
 
     @GetMapping("/scooter/{scooterId}")
@@ -20,8 +20,8 @@ public interface ScooterFeignClient {
     @PatchMapping("/scooter/{scooterId}/finishedTrip")
     void updateScooterWhenTripEnd(@PathVariable Long scooterId, @RequestBody FeignScooterEndTripRequest scooter);
 
-    @PatchMapping("/scooter/{scooterId}/status")
-    void updateScooterStatus(@PathVariable Long scooterId, @RequestBody FeignScooterPatchRequest scooter);
+    @PatchMapping("/scooter/{scooterId}/state")
+    void updateScooterState(@PathVariable Long scooterId, @RequestBody FeignScooterPatchStateRequest scooter);
 
     @GetMapping("/stop/{stopId}")
     Stop getStopById(@PathVariable Long stopId);

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@FeignClient(name="trip-service",url="http://localhost:8085/api")
+@FeignClient(name="trip-service",url="http://trip-service:8085/api")
 public interface TripFeignClient {
 
 @GetMapping("/trip/kilometers")

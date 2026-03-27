@@ -16,29 +16,30 @@ spring:
         # AUTH SERVICE (PUBLIC)
         # =====================================
         - id: auth-service
-          uri: http://localhost:8091/
+          uri: http://auth-service:8091/
           predicates:
             - Path=/api/auth/**
-          filters: [ ]
+          filters: []
 
         # =====================================
-        # USER-SERVICE — ADMIN ONLY ENDPOINTS
+        # USER SERVICE (PUBLIC)
         # =====================================
-
-        # POST /api/user    (create user)
         - id: user-create
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Method=POST
-            - Path=/api/user
-          filters: [] # <-- SIN RoleFilter (público)
+            - Path=/api/user/**
+          filters: []  # PUBLIC
 
+        # =====================================
+        # USER SERVICE (ADMIN)
+        # =====================================
         # DELETE /api/user/{id}
         - id: user-delete
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Method=DELETE
-            - Path=/api/user/*
+            - Path=/api/user
           filters:
             - name: RoleFilter
               args:
@@ -46,7 +47,7 @@ spring:
 
         # GET /api/user/scooters**
         - id: user-scooters-admin
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/scooters/**
           filters:
@@ -56,7 +57,7 @@ spring:
 
         # GET /api/user/total-invoice
         - id: user-total-invoice
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/total-invoice
           filters:
@@ -66,7 +67,7 @@ spring:
 
         # GET /api/user/scooter-user-usage
         - id: user-scooter-user-usage
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/scooter-user-usage
           filters:
@@ -76,7 +77,7 @@ spring:
 
         # POST /api/user/fee
         - id: user-fee-admin
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Method=POST
             - Path=/api/user/fee
@@ -85,10 +86,13 @@ spring:
               args:
                 allowedRoles: ADMIN
 
-        # USER PERMISSIONS → USER-SERVICE
+        # =====================================
+        # USER SERVICE — USER + ADMIN
+        # =====================================
+
         # /api/user/near-scooters  (USER only)
         - id: user-near-scooters
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/near-scooters
           filters:
@@ -98,7 +102,7 @@ spring:
 
         # /api/user/scooter-usages-by-period/{userId}
         - id: user-scooter-usages
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/scooter-usages-by-period/*
           filters:
@@ -106,9 +110,13 @@ spring:
               args:
                 allowedRoles: USER
 
+        # =====================================
+        # CHATBOT SERVICE — USER + ADMIN
+        # =====================================
+
         # /api/user/chat
         - id: chat
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/chat
           filters:
@@ -118,7 +126,7 @@ spring:
 
        # /api/user/historical-data/{userId}
         - id: chatbot-historical-data
-          uri: http://localhost:8082/
+          uri: http://user-service:8082/
           predicates:
             - Path=/api/user/historical-data/*
           filters:
@@ -127,12 +135,12 @@ spring:
                 allowedRoles: USER, ADMIN
 
         # =====================================
-        # ACCOUNT-SERVICE (ADMIN ONLY ENDPOINTS)
+        # ACCOUNT SERVICE — ADMIN
         # =====================================
 
         # /api/account/scooter-user-usage
         - id: account-scooter-user-usage
-          uri: http://localhost:8083/
+          uri: http://account-service:8083/
           predicates:
             - Path=/api/account/scooter-user-usage
           filters:
@@ -142,7 +150,7 @@ spring:
 
         # /api/account/toggleState/{id}
         - id: account-toggle
-          uri: http://localhost:8083/
+          uri: http://account-service:8083/
           predicates:
             - Path=/api/account/toggleState/*
           filters:
@@ -150,9 +158,13 @@ spring:
               args:
                 allowedRoles: ADMIN
 
+        # =====================================
+        # ACCOUNT — USER PASS-THROUGH
+        # =====================================
+
         # /api/account/users-related-to-account/{userId} (USER)
         - id: account-users-related
-          uri: http://localhost:8083/
+          uri: http://account-service:8083/
           predicates:
             - Path=/api/account/users-related-to-account/*
           filters:
@@ -161,12 +173,207 @@ spring:
                 allowedRoles: USER,ADMIN
 
         # =====================================
-        # SCOOTER-SERVICE
+        # ACCOUNT SERVICE — ADMIN - USER
         # =====================================
 
-        # ADMIN ONLY: /api/scooter/scooters**
-        - id: scooter-scooters-admin
-          uri: http://localhost:8081/
+        - id: account-create
+          uri: http://account-service:8083/
+          predicates:
+            - Method=POST
+            - Path=/api/account
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: account-update
+          uri: http://account-service:8083/
+          predicates:
+            - Method=PUT
+            - Path=/api/account/{accountId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: account-get-by-id
+          uri: http://account-service:8083/
+          predicates:
+            - Method=GET
+            - Path=/api/account/{accountId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: account-delete
+          uri: http://account-service:8083/
+          predicates:
+            - Method=DELETE
+            - Path=/api/account/{accountId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        # =====================================
+        # ACCOUNT USER SERVICE — ADMIN - USER
+        # =====================================
+
+        - id: account-user-create
+          uri: http://account-service:8083/
+          predicates:
+            - Method=POST
+            - Path=/api/AccountUser
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: account-user-get-by-account
+          uri: http://account-service:8083/
+          predicates:
+            - Method=GET
+            - Path=/api/AccountUser/{accountId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: account-user-delete
+          uri: http://account-service:8083/
+          predicates:
+            - Method=DELETE
+            - Path=/api/AccountUser
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        # =====================================
+        # SUPPORT SERVICE — ADMIN - SUPPORT
+        # =====================================
+
+        - id: support-create
+          uri: http://support-service:8086/
+          predicates:
+            - Method=POST
+            - Path=/api/support
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,SUPPORT
+
+        - id: support-update
+          uri: http://support-service:8086/
+          predicates:
+            - Method=PUT
+            - Path=/api/support/{id}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,SUPPORT
+
+        - id: support-delete
+          uri: http://support-service:8086/
+          predicates:
+            - Method=DELETE
+            - Path=/api/support/{id}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,SUPPORT
+
+        - id: support-get-by-id
+          uri: http://support-service:8086/
+          predicates:
+            - Method=GET
+            - Path=/api/support/{id}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,SUPPORT
+
+        # =====================================
+        # WALLET SERVICE — ADMIN - USER
+        # =====================================
+
+        - id: wallet-create
+          uri: http://wallet-service:8084/
+          predicates:
+            - Method=POST
+            - Path=/api/wallet
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: wallet-update
+          uri: http://wallet-service:8084/
+          predicates:
+            - Method=PUT
+            - Path=/api/wallet/{walletId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: wallet-update-amount
+          uri: http://wallet-service:8084/
+          predicates:
+            - Method=PATCH
+            - Path=/api/wallet/userId/{userId}/accountId/{accountId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: wallet-delete
+          uri: http://wallet-service:8084/
+          predicates:
+            - Method=DELETE
+            - Path=/api/wallet/{walletId}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        # =====================================
+        # SCOOTER-SERVICE — ADMIN
+        # =====================================
+
+        - id: scooter-create
+          uri: http://scooter-service:8081/
+          predicates:
+            - Method=POST
+            - Path=/api/scooter
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        - id: scooter-delete
+          uri: http://scooter-service:8081/
+          predicates:
+            - Method=DELETE
+            - Path=/api/scooter/{id}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        - id: scooter-update
+          uri: http://scooter-service:8081/
+          predicates:
+            - Method=PUT
+            - Path=/api/scooter/{id}
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        - id: scooter-admin-list
+          uri: http://scooter-service:8081/
           predicates:
             - Path=/api/scooter/scooters/**
           filters:
@@ -174,9 +381,24 @@ spring:
               args:
                 allowedRoles: ADMIN
 
-        # USER ONLY: /api/scooter/near-scooters
+        # =====================================
+        # STOP — ADMIN
+        # =====================================
+        - id: stop-admin
+          uri: http://scooter-service:8081/
+          predicates:
+            - Path=/api/stop/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+          # =====================================
+          # SCOOTER SERVICE — USER
+          # =====================================
+
         - id: scooter-near-scooters
-          uri: http://localhost:8081/
+          uri: http://scooter-service:8081/
           predicates:
             - Path=/api/scooter/near-scooters
           filters:
@@ -185,22 +407,52 @@ spring:
                 allowedRoles: USER,ADMIN
 
         # =====================================
-        # TRIP-SERVICE
+        # TRIP SERVICE — ADMIN
         # =====================================
 
-        # ADMIN ONLY: /api/trip/scooters**
-        - id: trip-scooters-admin
-          uri: http://localhost:8085/
+        - id: trip-create
+          uri: http://trip-service:8085/
           predicates:
-            - Path=/api/trip/scooters/**
+            - Method=POST
+            - Path=/api/trip
           filters:
             - name: RoleFilter
               args:
-                allowedRoles: ADMIN
+                allowedRoles: ADMIN,USER
 
-        # ADMIN ONLY: /api/trip/total-invoice
+        - id: trip-end
+          uri: http://trip-service:8085/
+          predicates:
+            - Method=PUT
+            - Path=/api/trip/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: trip-start-pause
+          uri: http://trip-service:8085/
+          predicates:
+            - Method=PATCH
+            - Path=/api/trip/startPauseTrip/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        - id: trip-end-pause
+          uri: http://trip-service:8085/
+          predicates:
+            - Method=PATCH
+            - Path=/api/trip/endPauseTrip/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN,USER
+
+        # /api/trip/total-invoice
         - id: trip-total-invoice
-          uri: http://localhost:8085/
+          uri: http://trip-service:8085/
           predicates:
             - Path=/api/trip/total-invoice
           filters:
@@ -208,9 +460,19 @@ spring:
               args:
                 allowedRoles: ADMIN
 
-        # ADMIN ONLY: /api/fee  (Trip-service)
+        # /api/trip/scooters**
+        - id: trip-scooters-admin
+          uri: http://trip-service:8085/
+          predicates:
+            - Path=/api/trip/scooters/**
+          filters:
+            - name: RoleFilter
+              args:
+                allowedRoles: ADMIN
+
+        # /api/fee  (Trip-service)
         - id: trip-fee
-          uri: http://localhost:8085/
+          uri: http://trip-service:8085/
           predicates:
             - Path=/api/fee
           filters:
@@ -218,12 +480,11 @@ spring:
               args:
                 allowedRoles: ADMIN
 
-        # USER ONLY: /api/trip/scooter-usages-by-period
+        #  /api/trip/scooter-usages-by-period
         - id: trip-scooter-usages
-          uri: http://localhost:8085/
+          uri: http://trip-service:8085/
           predicates:
-            - Path=/api/trip/scooter-usages-by-period
-            - Path=/api/trip/scooter-usages-by-period/*
+            - Path=/api/trip/scooter-usages-by-period/**
           filters:
             - name: RoleFilter
               args:
@@ -231,7 +492,7 @@ spring:
 
        # ========== CHATBOT-SERVICE (PROTECTED — ANY ROLE) ==========
         - id: chat-bot-service
-          uri: http://chatbot-service:8090/
+          uri: http://chat-bot-service:8090/
           predicates:
             - Path=/api/chatbot/**
           filters:

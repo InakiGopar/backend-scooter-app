@@ -1,16 +1,14 @@
 package ar.edu.unicen.scooterservice.infrastructure.feingClients;
 
 import ar.edu.unicen.scooterservice.domain.dtos.report.ReportScooterByYearDTO;
-import ar.edu.unicen.scooterservice.domain.dtos.report.UserScooterPeriodUsageDTO;
 import ar.edu.unicen.scooterservice.domain.model.Trip;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name="trip-service",url="http://localhost:8085/api/trip")
+@FeignClient(name="trip-service",url="http://trip-service:8085/api/trip")
 public interface TripFeignClient {
 
     //Report A
