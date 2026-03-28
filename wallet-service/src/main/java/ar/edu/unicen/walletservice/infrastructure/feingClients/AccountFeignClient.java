@@ -5,7 +5,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name="account-service", url="http://localhost:8083/api/account")
+@FeignClient(name="account-service", url="http://account-service:8083/api/account")
 public interface AccountFeignClient {
     @GetMapping("/{id}")
     Account findAccountById(@PathVariable Long id);

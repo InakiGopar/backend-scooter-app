@@ -3,6 +3,7 @@ package ar.edu.unicen.authservice.infrastructure.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -16,13 +17,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login", "/api/auth/validate").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user").permitAll()
                         .anyRequest().authenticated()
                 )
-                .httpBasic(AbstractHttpConfigurer::disable); // o disable()
+                .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

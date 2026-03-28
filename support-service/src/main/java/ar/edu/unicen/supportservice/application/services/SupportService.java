@@ -3,6 +3,7 @@ package ar.edu.unicen.supportservice.application.services;
 import ar.edu.unicen.supportservice.application.repositories.SupportRepository;
 import ar.edu.unicen.supportservice.domain.dtos.request.SupportRequestDTO;
 import ar.edu.unicen.supportservice.domain.dtos.response.SupportResponseDTO;
+import ar.edu.unicen.supportservice.domain.dtos.request.feign.ScooterRequestPatchStateDTO;
 import ar.edu.unicen.supportservice.domain.entities.Support;
 import ar.edu.unicen.supportservice.domain.model.Scooter;
 import ar.edu.unicen.supportservice.domain.model.ScooterState;
@@ -38,7 +39,7 @@ public class SupportService {
            throw new ResponseStatusException(HttpStatus.CONFLICT, "Scooter cannot use");
        }
         // updated the scooter to the state MAINTENANCE
-       scooterFeignClient.updateScooterState(request.scooterId(), ScooterState.MAINTENANCE);
+       scooterFeignClient.updateScooterState(request.scooterId(), new ScooterRequestPatchStateDTO(ScooterState.MAINTENANCE));
 
        // persist the new support
         Support support = request.toEntity();
@@ -82,7 +83,7 @@ public class SupportService {
         );
 
         //updated the scooter to the state INACTIVE because the support ended
-        scooterFeignClient.updateScooterState(support.getScooterId(), ScooterState.INACTIVE);
+        scooterFeignClient.updateScooterState(support.getScooterId(), new ScooterRequestPatchStateDTO(ScooterState.INACTIVE));
 
         supportRepository.deleteById(supportId);
     }

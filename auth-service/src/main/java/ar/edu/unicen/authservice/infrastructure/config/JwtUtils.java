@@ -1,6 +1,5 @@
 package ar.edu.unicen.authservice.infrastructure.config;
 
-import ar.edu.unicen.authservice.domain.model.Role;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
