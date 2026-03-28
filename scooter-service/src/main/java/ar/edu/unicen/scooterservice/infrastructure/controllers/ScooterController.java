@@ -8,6 +8,7 @@ import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.request.ScooterRequestPatchStateDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.response.ScooterResponseDTO;
 import ar.edu.unicen.scooterservice.domain.dtos.report.ScooterTripKMReportDTO;
+import ar.edu.unicen.scooterservice.domain.entities.ScooterState;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
