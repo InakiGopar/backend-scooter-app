@@ -1,8 +1,18 @@
-FROM eclipse-temurin:21-jdk
+FROM maven:3.9-eclipse-temurin-21 AS build
+WORKDIR /app
+
+# Copy the entire service directory
+COPY . .
+
+# Build the application
+RUN mvn -pl chat-bot-service -am clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:21-jre
 
 WORKDIR /app
 
-COPY target/*.jar app.jar
+COPY --from=0 /app/chat-bot-service/target/*.jar app.jar
 
 EXPOSE 8090
 
